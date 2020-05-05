@@ -39,8 +39,8 @@ int main(int argc, char **argv) {
 
     rhizome::ui::Menu menu;
     
-    menu.add_item( "Image Demo", rhizome::types::image_demo );
-    menu.add_item( "IPC Demo", rhizome::ipc::demo );
+//    menu.add_item( "Image Demo", rhizome::types::image_demo );
+//    menu.add_item( "IPC Demo", rhizome::ipc::demo );
     menu.add_item( "\033[1;32mGenesis Demo\033[0m", rhizome::demo::genesis_demo );
     menu.add_item( "Lexer Demo", rhizome::demo::lex_demo );
     menu.add_item( "Types Demo", rhizome::demo::types_demo);
