@@ -18,6 +18,7 @@
 #include "match_type.hpp"
 #include "plus_closure.hpp"
 #include "star_closure.hpp"
+#include "transform.hpp"
 
 #include "core/i_parser.hpp"
 
@@ -95,6 +96,9 @@ namespace rhizome {
         
         /// Match zero or one of a sentence.
         Gramex * maybe( Gramex * inner );
+
+        /// Apply a function to a match sequence
+        Gramex * apply( Gramex * inner, TransformFn f );
 
         
     }

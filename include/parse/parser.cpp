@@ -289,5 +289,10 @@ namespace rhizome {
             }
             return n;
         }
+
+        Gramex * apply( Gramex *inner, TransformFn f ) {
+            Transform *t = new Transform( inner, f );
+            return t;
+        }
     }
 }
