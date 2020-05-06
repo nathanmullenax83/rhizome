@@ -8,41 +8,30 @@ namespace rhizome {
 
         Ruleset::~Ruleset() {
             for( auto i = rules.begin(); i!=rules.end(); ++i) {
-                delete i->second.first;
+                delete i->second;
             }
             
         }
 
-        void Ruleset::rule( string const &w, Gramex *x, ParseFn f ) {
-            pair< Gramex *, ParseFn > rec;
-            rec.first = x;
-            rec.second = f;
-
+        void Ruleset::rule( string const &w, Gramex *x) {
             if( rules.count(w) > 0 ) {
-                rules[w] = rec;
+                rules[w] = x;
             } else {
-                delete rules[w].first;
-                rules[w] = rec;
+                delete rules[w];
+                rules[w] = x;
             }
         }
 
         Gramex *
         Ruleset::lookup( string const &name ) const {
             if( rules.count(name)) {
-                return rules.at(name).first->clone_gramex();
+                return rules.at(name)->clone_gramex();
             } else {
                 throw runtime_error("Rule does not exist.");
             }
 
         }
 
-        ParseFn
-        Ruleset::lookup_parser( string const &name ) const {
-            if( rules.count(name)) {
-                return rules.at(name).second;
-            } else {
-                throw runtime_error("Parser does not exist.");
-            }
-        }
+        
     }
 }

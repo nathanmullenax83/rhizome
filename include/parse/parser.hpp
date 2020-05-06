@@ -47,7 +47,7 @@ namespace rhizome {
             
 
             Parser();
-            void rule( string const &w, Gramex *expr, ParseFn parser);
+            void rule( string const &w, Gramex *expr);
 
             // token-level matchers
             virtual string match_literal( istream &in, string const &token ) override;

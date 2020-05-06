@@ -56,6 +56,7 @@ namespace rhizome {
             lexer.define_token_type( "Comma", ",");
             lexer.define_token_type( "Colon", ":");
             lexer.define_token_type( "Semicolon", ";");
+            lexer.define_token_type( "Plus", "+");
             lexer.define_token_type( "Dot", ".");
             lexer.define_token_type( "Bareword", 
                     new pat::Cat(
@@ -69,8 +70,8 @@ namespace rhizome {
 #pragma GCC diagnostic pop
 
         void
-        Parser::rule( string const &w, Gramex *g, ParseFn parser ) {
-            rules.rule(w,g, parser);
+        Parser::rule( string const &w, Gramex *g ) {
+            rules.rule(w,g);
         }
 
 
@@ -183,11 +184,21 @@ namespace rhizome {
         Parser::parse_thing( string const &start_rule ) {
             
             IGramex *start = lookup(start_rule);
-            ParseFn f = rules.lookup_parser(start_rule);
+            
             GrammarFn static_lookup = [this]( string const &name ) { return this->lookup(name);};
             start->match( &lexer, static_lookup );
-            
-            return f( start->get_matched_tokens()); 
+
+            auto ts = start->get_matched_tokens();
+            if( ts.size() > 1 ) {
+                Tuple *results = new Tuple();
+                            
+                for( auto i =ts.begin(); i!=ts.end(); i++) {
+                    results->append(*i);
+                }
+                return results;
+            } else {
+                return ts[0];
+            }
         }
 
         void

@@ -20,21 +20,21 @@ using std::pair;
 
 namespace rhizome {
     namespace parse {
-        typedef function< Thing * ( deque<Thing*> ) > ParseFn;
+        
         /// Represents a compiler configuration
         class Ruleset {
         private:
-            map<string, pair<Gramex *, ParseFn> > rules;
+            map<string, Gramex * > rules;
 
         public:
             /// Create a new grammar
             Ruleset();
             virtual ~Ruleset();
 
-            void rule( string const &w, Gramex *x, ParseFn f );
+            void rule( string const &w, Gramex *x );
 
             Gramex * lookup( string const &name ) const;
-            ParseFn lookup_parser( string const &name ) const;
+            
             
 
             

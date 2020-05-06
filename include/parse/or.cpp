@@ -29,10 +29,6 @@ namespace rhizome {
         void
         Or::match( ILexer *lexer, GrammarFn lookup ) {
             try {
-#ifdef INSTRUMENTED
-                std::cout << "*\tMatch OR\n";
-                lexer->dump(std::cout);
-#endif
                 for(size_t i=0; i<clauses.size(); ++i) {
                     if( clauses[i]->can_match( lexer, lookup )) {
                         clauses[i]->match(lexer,lookup);
