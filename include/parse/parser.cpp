@@ -57,6 +57,9 @@ namespace rhizome {
             lexer.define_token_type( "Colon", ":");
             lexer.define_token_type( "Semicolon", ";");
             lexer.define_token_type( "Plus", "+");
+            lexer.define_token_type( "Minus", "-");
+            lexer.define_token_type( "Times", "*");
+            lexer.define_token_type( "Div", "/");
             lexer.define_token_type( "Dot", ".");
             lexer.define_token_type( "Bareword", 
                     new pat::Cat(
@@ -188,7 +191,7 @@ namespace rhizome {
             GrammarFn static_lookup = [this]( string const &name ) { return this->lookup(name);};
             start->match( &lexer, static_lookup );
 
-            auto ts = start->get_matched_tokens();
+            auto ts = start->clone_matched_tokens();
             if( ts.size() > 1 ) {
                 Tuple *results = new Tuple();
                             
@@ -227,6 +230,14 @@ namespace rhizome {
             Parser *c = new Parser();
             
             return c;
+        }
+
+        void
+        Parser::dump( std::ostream &out ) const {
+            out << "DEBUG DUMP: parser\n";
+            out << "==================\n";
+            out << "Rules:\n";
+            rules.dump(out);
         }
 
 

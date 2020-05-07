@@ -11,6 +11,7 @@ namespace rhizome {
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         void
         Literal::match( ILexer *lexer, GrammarFn lookup ) {
+            
             Thing *temp = lexer->next_thing();
             stringstream v;
             temp->serialize_to(v);
@@ -19,6 +20,7 @@ namespace rhizome {
                 stringstream ss;
                 ss << "Unmatched token: '" << token_value << "'  [Type is " << temp->rhizome_type() << "]\n";
                 ss << "\tExpected literal '" << value << "'\n";
+                std::cerr << ss.str();
                 delete temp;
                 throw runtime_error(ss.str());
             }

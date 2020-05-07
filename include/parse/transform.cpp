@@ -11,9 +11,11 @@ namespace rhizome {
         }
 
         void Transform::match( ILexer *lexer, GrammarFn lookup ) {
-            inner->match( lexer, lookup );
-            Thing * made = transform( inner->clone_matched_tokens() );
-            inner->clear();
+            Gramex *copy = inner->clone_gramex();
+            copy->match( lexer, lookup );
+            Thing * made = transform( copy->clone_matched_tokens() );
+            copy->clear();
+            delete copy;
             append_all( {made});
         }
 

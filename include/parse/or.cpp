@@ -12,6 +12,28 @@ namespace rhizome {
             }
         }
 
+        void Or::dump( std::ostream &out ) const {
+            try {
+                out << "DEBUG DUMP (gramex::Or)\n";
+                out << "=======================\n";
+                out << "Clauses\n";
+                for(size_t i=0; i<clauses.size();++i) {
+                    out << "\t" << i << ": ";
+                    clauses[i]->serialize_to(out);
+                    out << "\n";
+                }
+                out << "Matched tokens\n";
+                auto tokens = clone_matched_tokens();
+                for(size_t i=0; i<tokens.size(); ++i) {
+                    out << "\t";
+                    tokens[i]->serialize_to(out);
+                    out << "\n";
+                }
+            } catch ( std::exception *e ) {
+                out << "\nGot an error generating debug dump!\n";
+            }
+        }
+
         Gramex *
         Or::clone_gramex() const {
             Or *n = new Or();
@@ -30,17 +52,26 @@ namespace rhizome {
         Or::match( ILexer *lexer, GrammarFn lookup ) {
             try {
                 for(size_t i=0; i<clauses.size(); ++i) {
-                    if( clauses[i]->can_match( lexer, lookup )) {
-                        clauses[i]->match(lexer,lookup);
-                        clear();
-                        append_all( clauses[i]->get_matched_tokens());
+                    Gramex *copy = clauses[i]->clone_gramex();
+                    copy->clear();
+                    if( copy->can_match( lexer, lookup )) {
+                        std::cout << "Matched or clause:";
+                        copy->serialize_to(std::cout);
+                        std::cout << "\n";
+                        copy->match(lexer,lookup);
+                        append_all( copy->clone_matched_tokens());
+                        delete copy;
                         return;
+                    } else {
+                        delete copy;
                     }
                 }
-                throw runtime_error("No match for this rule.");
-            } catch (std::exception e) {
+                //dump(std::cout);
+                //throw runtime_error("No match for this rule.");
+            } catch (std::exception *e) {
                 stringstream ss;
-                ss << "Received an exception matching OR: " << e.what() << "\n";
+                ss << "Received an exception matching OR: " << e->what() << "\n";
+                dump(ss);
                 throw runtime_error(ss.str());
             }
         }

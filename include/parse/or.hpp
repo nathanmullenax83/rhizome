@@ -3,12 +3,14 @@
 
 #include <vector>
 #include "gramex.hpp"
+#include "core/i_debuggable.hpp"
 
 using std::vector;
+using rhizome::core::IDebuggable;
 
 namespace rhizome {
     namespace parse {
-        class Or: public Gramex {
+        class Or: public IDebuggable, public Gramex {
         private:
             vector<Gramex *> clauses;
         public:
@@ -25,6 +27,9 @@ namespace rhizome {
             virtual void serialize_to( ostream &out ) const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
+
+            // debug dump:
+            virtual void dump(std::ostream &out) const override;
         };
     }
 }

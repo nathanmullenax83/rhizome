@@ -21,6 +21,7 @@
 #include "transform.hpp"
 
 #include "core/i_parser.hpp"
+#include "core/i_debuggable.hpp"
 
 using std::pair;
 using std::map;
@@ -36,10 +37,11 @@ namespace lex = rhizome::lex;
 using lex::Lexer;
 using rhizome::core::IParser;
 using rhizome::core::IGramex;
+using rhizome::core::IDebuggable;
 
 namespace rhizome {
     namespace parse {
-        class Parser: public Thing, public IParser {
+        class Parser: public Thing, public IParser, public IDebuggable {
         private:
             Ruleset rules;
             Lexer lexer;
@@ -68,6 +70,8 @@ namespace rhizome {
             virtual void serialize_to( std::ostream &out ) const override;
             virtual bool has_interface( string const &name ) override;
             virtual Thing * clone() const override;
+
+            virtual void dump(std::ostream &out) const override;
 
         };
 

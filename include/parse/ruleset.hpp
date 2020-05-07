@@ -8,6 +8,7 @@
 #include <tuple>
 #include "gramex.hpp"
 #include "core/i_parser.hpp"
+#include "core/i_debuggable.hpp"
 
 
 using std::vector;
@@ -22,7 +23,7 @@ namespace rhizome {
     namespace parse {
         
         /// Represents a compiler configuration
-        class Ruleset {
+        class Ruleset: public IDebuggable {
         private:
             map<string, Gramex * > rules;
 
@@ -35,7 +36,7 @@ namespace rhizome {
 
             Gramex * lookup( string const &name ) const;
             
-            
+            virtual void dump(std::ostream &out) const override;
 
             
         };

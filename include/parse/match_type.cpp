@@ -16,18 +16,24 @@ namespace rhizome {
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         void
         MatchType::match( ILexer *lexer, GrammarFn lookup ) {
-            Thing *temp = lexer->next_thing();
-                
-            if( temp->rhizome_type() != name ) {
-                stringstream ss;
-                ss << "Expected token of type " << name << ", but got " << temp->rhizome_type();
-                delete temp;
-                throw runtime_error(ss.str());
-            } else {
-                append_all({temp->clone()});
-                delete temp;
+            try {
+                Thing *temp = lexer->next_thing();
+                    
+                if( temp->rhizome_type() != name ) {
+                    stringstream ss;
+                    ss << "Expected token of type " << name << ", but got " << temp->rhizome_type();
+                    std::cerr << ss.str();
+                    delete temp;
+                    throw runtime_error(ss.str());
+                } else {
+                    append_all({temp->clone()});
+                    delete temp;
+                }
+            } catch( std::exception *e ) {
+                std::cout << "Error: " << e->what() << "\n";
+                dump(std::cout);
+
             }
-            
 
         }
 
@@ -56,6 +62,14 @@ namespace rhizome {
         bool
         MatchType::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        void
+        MatchType::dump( std::ostream &out ) const {
+            out << "DEBUG DUMP: gramex::MatchType\n";
+            out << "=============================\n";
+            out << "\t" << "Type name: " << name;
+            out << "====== END: gramex::MatchType\n";
         }
     }
 }

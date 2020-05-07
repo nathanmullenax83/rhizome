@@ -23,10 +23,10 @@ namespace rhizome {
             matched_tokens.clear();
         }
 
-        deque<Thing*>
-        Gramex::get_matched_tokens() {
-            return matched_tokens;
-        }
+        // deque<Thing*>
+        // Gramex::get_matched_tokens() {
+        //     return matched_tokens;
+        // }
 
         deque<Thing*>
         Gramex::clone_matched_tokens() const {

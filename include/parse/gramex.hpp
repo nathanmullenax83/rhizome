@@ -43,7 +43,7 @@ namespace rhizome {
             virtual Gramex * clone_gramex() const = 0;
             virtual Thing * clone() const;
 
-            virtual deque<Thing*> get_matched_tokens() override;
+            //virtual deque<Thing*> get_matched_tokens() override;
             virtual deque<Thing*> clone_matched_tokens() const override;
 
             virtual size_t match_count() const;

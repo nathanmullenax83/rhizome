@@ -21,9 +21,10 @@ namespace rhizome {
 
         void
         NonTerminal::match( ILexer *lexer, GrammarFn lookup ) {
-            IGramex *g = ( lookup(name) );
+            std::cout << "Match (non-terminal) " << name << "\n";
+            IGramex *g =  lookup(name);
             g->match( lexer, lookup );
-            append_all( g->get_matched_tokens());
+            append_all( g->clone_matched_tokens());
             delete g;
         }
 

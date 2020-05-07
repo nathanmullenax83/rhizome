@@ -13,6 +13,16 @@ namespace rhizome {
             
         }
 
+        void
+        Ruleset::dump(std::ostream &out) const {
+            for( auto i=rules.begin(); i!=rules.end(); i++) {
+                out << "\t";
+                out << i->first << " := ";
+                i->second->serialize_to(out);
+                out << "\n";
+            }
+        }
+
         void Ruleset::rule( string const &w, Gramex *x) {
             if( rules.count(w) > 0 ) {
                 rules[w] = x;

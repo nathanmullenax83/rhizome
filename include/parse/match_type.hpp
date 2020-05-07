@@ -3,12 +3,14 @@
 
 #include <string>
 #include "gramex.hpp"
+#include "core/i_debuggable.hpp"
 
 using std::string;
+using rhizome::core::IDebuggable;
 
 namespace rhizome {
     namespace parse {
-        class MatchType: public Gramex {
+        class MatchType: public IDebuggable, public Gramex {
         private:
             string name;
         public:
@@ -21,6 +23,8 @@ namespace rhizome {
             virtual void serialize_to( std::ostream &out ) const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
+
+            virtual void dump( std::ostream &out ) const override;
         };
     }
 }
