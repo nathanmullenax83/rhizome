@@ -2,7 +2,6 @@
 #define RHIZOME_PATTERN_ENDUSER
 
 #include "pattern/pattern.hpp"
-
 #include "pattern/beginning.hpp"
 #include "pattern/cat.hpp"
 #include "pattern/cclass.hpp"
@@ -21,6 +20,6 @@
 #include "pattern/hex_digit.hpp"
 #include "pattern/n_times.hpp"
 #include "pattern/negated.hpp"
-
+#include "pattern/chars.hpp"
 
 #endif

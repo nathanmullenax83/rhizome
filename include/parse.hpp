@@ -11,5 +11,6 @@
 #include "parse/plus_closure.hpp"
 #include "parse/star_closure.hpp"
 #include "parse/maybe_closure.hpp"
+#include "parse/transform.hpp"
 
 #endif
