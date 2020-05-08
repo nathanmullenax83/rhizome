@@ -10,10 +10,20 @@ namespace rhizome {
             delete inner;
         }
 
+        bool
+        StarClosure::accepts( GrammarFn lookup ) const {
+            (void)lookup;
+            return true;
+        }
+
         void
         StarClosure::match( ILexer *lexer, GrammarFn lookup ) {
+            std::cout << "-- Star: ";
+            inner->serialize_to(std::cout);
+            std::cout << "\n";
             Gramex *copy = inner->clone_gramex();
             while( lexer->has_next_thing() && copy->can_match(lexer,lookup)) {
+                std::cout << "NEXT\n";
                 copy->clear();
                 copy->match(lexer,lookup);
                 append_all(copy->clone_matched_tokens());
@@ -24,7 +34,7 @@ namespace rhizome {
         bool
         StarClosure::can_match( ILexer *lexer, GrammarFn lookup ) const  {
             Gramex *copy = inner->clone_gramex();
-            bool cm = lexer->has_next_thing() && copy->can_match(lexer,lookup);
+            bool cm = (!lexer->has_next_thing()) || copy->can_match(lexer,lookup);
             delete copy;
             return  cm;
         }

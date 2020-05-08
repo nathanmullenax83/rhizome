@@ -54,5 +54,10 @@ namespace rhizome {
         PlusClosure::rhizome_type() const {
             return "gramex::PlusClosure";
         }
+
+        bool
+        PlusClosure::accepts( GrammarFn lookup ) const {
+            return inner->accepts(lookup);
+        }
     }
 }

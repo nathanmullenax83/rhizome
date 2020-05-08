@@ -23,6 +23,7 @@ namespace rhizome {
             virtual void serialize_to( std::ostream &out ) const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
+            virtual bool accepts(GrammarFn lookup) const override;
         };
     }
 }

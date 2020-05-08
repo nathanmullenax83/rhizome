@@ -11,7 +11,7 @@ namespace rhizome {
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         void
         Literal::match( ILexer *lexer, GrammarFn lookup ) {
-            
+            std::cout << "-- Literal " << value << "\n";
             Thing *temp = lexer->next_thing();
             stringstream v;
             temp->serialize_to(v);
@@ -26,6 +26,7 @@ namespace rhizome {
             }
             delete temp;
             append_all({new rhizome::types::String(token_value)});
+            std::cout << "-- /LITERAL\n";
         }
 
         bool
@@ -46,6 +47,12 @@ namespace rhizome {
         Literal::clone_gramex() const {
             Literal *l = new Literal(value);
             return l;
+        }
+
+        bool
+        Literal::accepts(GrammarFn lookup) const {
+            (void)lookup;
+            return value=="";
         }
 
         void

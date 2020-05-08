@@ -187,6 +187,10 @@ namespace rhizome {
         Parser::parse_thing( string const &start_rule ) {
             
             IGramex *start = lookup(start_rule);
+            std::cout << "-- Start rule: ";
+            ((Gramex*)start)->serialize_to(std::cout);
+            std::cout << "\n";
+            
             
             GrammarFn static_lookup = [this]( string const &name ) { return this->lookup(name);};
             start->match( &lexer, static_lookup );

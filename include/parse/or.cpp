@@ -12,6 +12,15 @@ namespace rhizome {
             }
         }
 
+        bool
+        Or::accepts( GrammarFn lookup ) const {
+            bool t_accept(false); // at least one clause trivially accepts.
+            for(size_t i=0; i<clauses.size(); ++i) {
+                t_accept = t_accept || clauses[i]->accepts(lookup);
+            }
+            return t_accept;
+        }
+
         void Or::dump( std::ostream &out ) const {
             try {
                 out << "DEBUG DUMP (gramex::Or)\n";
@@ -50,11 +59,12 @@ namespace rhizome {
 
         void
         Or::match( ILexer *lexer, GrammarFn lookup ) {
+            std::cout << "-- Or\n";
             try {
                 for(size_t i=0; i<clauses.size(); ++i) {
                     Gramex *copy = clauses[i]->clone_gramex();
                     copy->clear();
-                    if( copy->can_match( lexer, lookup )) {
+                    if( copy->can_match( lexer, lookup ) || copy->accepts(lookup)) {
                         std::cout << "Matched or clause:";
                         copy->serialize_to(std::cout);
                         std::cout << "\n";

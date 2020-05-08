@@ -47,6 +47,8 @@ namespace rhizome {
             virtual deque<Thing*> clone_matched_tokens() const override;
 
             virtual size_t match_count() const;
+            
+            
         };
     }
 }

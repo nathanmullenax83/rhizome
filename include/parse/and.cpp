@@ -21,6 +21,16 @@ namespace rhizome {
             return n;
         }
 
+        bool
+        And::accepts(GrammarFn lookup) const {
+            // all clauses may accept trivially.
+            bool t_accept(true);
+            for(size_t i=0; i<clauses.size();++i) {
+                t_accept = t_accept && clauses[i]->accepts(lookup);
+            }
+            return clauses.size()==0 || t_accept;
+        }
+
         void
         And::append( Gramex *g ) {
             clauses.push_back(g);
@@ -28,6 +38,7 @@ namespace rhizome {
 
         void
         And::match( ILexer *lexer, GrammarFn lookup ) {
+            std::cout << "-- Sequence\n";
             for( size_t i=0; i<clauses.size(); ++i ) {
                 // copy clause
                 Gramex *c_i = clauses[i]->clone_gramex();
@@ -36,24 +47,27 @@ namespace rhizome {
                 append_all( c_i->clone_matched_tokens() );
                 delete c_i;
             }
+            std::cout << "-- /Sequence\n";
         }
 
         bool
         And::can_match( ILexer *lexer, GrammarFn lookup ) const {
+            
             if( !lexer->has_next_thing() ) return false;
             deque<Thing*> matched;
 
             for( size_t i=0; i<clauses.size(); ++i) {
                 Gramex *copy = clauses[i]->clone_gramex();
                 copy->clear();
-                if( copy->can_match(lexer,lookup)) {
+                if( copy->can_match(lexer,lookup) || copy->accepts(lookup)) {
                     copy->match(lexer,lookup);
                     deque<Thing*> ts = copy->clone_matched_tokens();
                     for(size_t j=0; j<ts.size(); ++j) {
-                        matched.push_back( ts[j]->clone() );
+                        matched.push_back( ts[j] );
                     }
                 } else {
                     for(int j=matched.size()-1; j>=0; --j) {
+                        assert( matched[j]!=NULL );
                         lexer->put_back_thing( matched[j]);
                     }
                     return false;

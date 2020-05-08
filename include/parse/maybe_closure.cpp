@@ -9,6 +9,12 @@ namespace rhizome {
         MaybeClosure::~MaybeClosure() {
             delete inner;
         }
+
+        bool MaybeClosure::accepts(GrammarFn lookup) const {
+            (void)lookup;
+            return true;
+        }
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         bool

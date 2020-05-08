@@ -37,7 +37,11 @@ namespace rhizome {
         void dump( string prompt, deque<Thing*> ts ) {
             std::cout << prompt << " (";
             for(size_t i=0; i<ts.size();++i) {
-                ts[i]->serialize_to(std::cout);
+                if( ts[i]!=NULL ) {
+                    ts[i]->serialize_to(std::cout);
+                } else {
+                    std::cout << "=--------> NULL\n";
+                }
                 std::cout << " ";
             }
             std::cout << ")\n";
@@ -54,29 +58,30 @@ namespace rhizome {
             p->rule("Factor",apply(factor,[](deque<Thing*> ts){
                 std::cout << "Parsing factor: ";
                 dump("Factor (ts) = ",ts);
-                ts[0]->serialize_to(std::cout);
-                std::cout << "\n";
-                return ts[0];
+                assert( ts.size()==1 && ts[0]!=NULL );
+                return ts[0]->clone();
             }));
             p->rule("Term", apply(product,
                     [](deque<Thing*> ts){
 
                         std::cout << "Parsing term\n";
                         dump("Term (ts) = ",ts);
-                        rhizome::types::Integer p(1);
-                        p = (*((rhizome::types::Integer*)ts[0]));
-                        for(size_t i=1; i<ts.size(); i+=2) {
+                        rhizome::types::Integer q(1);
+                        q = (*((rhizome::types::Integer*)ts[0]));
+                        for(size_t i=1; (i+1)<ts.size(); i+=2) {
                             if( to_string(ts[i])=="*" ) {
-                                p = p * (*((rhizome::types::Integer*)ts[i+1]));
+                                assert( ts[i+1]->rhizome_type()=="Integer");
+                                q = q * (*((rhizome::types::Integer*)ts[i+1]));
                             } else if ( to_string(ts[i])=="/")  {
-                                p = p / (*((rhizome::types::Integer*)ts[i+1]));
+                                assert( ts[i+1]->rhizome_type()=="Integer");
+                                q = q / (*((rhizome::types::Integer*)ts[i+1]));
                             } else {
                                 ts[i]->serialize_to(std::cerr);
                                 throw runtime_error("Invalid operator.");
 
                             }
                         }
-                        return p.clone();
+                        return q.clone();
                     }) );
 
             p->rule(name, 
@@ -84,13 +89,18 @@ namespace rhizome {
                     summation,
                     [](deque<Thing*> ts){
                         std::cout << "Parsing expression\n";
+                        assert( ts.size() > 0);
                         dump("Expression (ts) = ", ts);
                         rhizome::types::Integer sum(0);
+                        assert( ts[0]->rhizome_type()=="Integer");
                         sum = (*((rhizome::types::Integer*)ts[0]));
-                        for(size_t i=1; i<ts.size()-1; i+=2) {
+                        
+                        for(size_t i=1; (i+1)<ts.size(); i+=2) {
                             if( to_string(ts[i])=="+" ) {
+                                assert( ts[i+1]->rhizome_type()=="Integer");
                                 sum = sum + (*((rhizome::types::Integer*)ts[i+1]));
                             } else {
+                                assert( ts[i+1]->rhizome_type()=="Integer");
                                 sum = sum - (*((rhizome::types::Integer*)ts[i+1]));
                             }
                         }

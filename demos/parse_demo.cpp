@@ -99,6 +99,65 @@ namespace rhizome {
             return true;
         }
 
+        bool TEST_nonterminal() {
+            parse::Parser p;
+            p.rule("S0", non_term("A"));
+            p.rule("A", apply(non_term("B"), [](deque<Thing*> ts){
+                std::cout << "A production.\n";
+                assert(ts.size()==1);
+                return ts[0];
+            }));
+            p.rule("B", lit("C"));
+            p.rule("D",apply(non_term("A"),[]( deque<Thing*> ts ){
+                std::cout << "D production.\n";
+                assert( ts.size()==1);
+                return ts[0];
+            }));
+            std::cout << "non-terminal test:\n";
+            p.dump(std::cout);
+            stringstream s;
+            s << "C";
+            p.q_stream(s);
+            try {
+                Thing *result = p.parse_thing("D");
+                result->serialize_to(std::cout);
+                std::cout << "\n";
+
+                return true;
+            } catch( std::exception * e ) {
+                return false;
+            }
+
+        }
+
+        bool TEST_or() {
+            parse::Parser p;
+            p.rule("S", options({
+                lit("a"),
+                lit("b"),
+                non_term("C")
+            }));
+            p.rule("C",options({
+                lit("d"),
+                seq(lit("e"),star(lit("f")))
+            }));
+            std::cout << "Options test:\n";
+            p.dump(std::cout);
+            stringstream s;
+            s << "e";
+            p.q_stream(s);                              
+            try{
+                Thing *result = p.parse_thing("S");
+                std::cout << "Result:\n";
+                result->serialize_to(std::cout);
+                std::cout << "\n";
+                return true;
+            }catch(std::exception *e) {
+                std::cout << e->what();
+                return false;
+            }
+        }
+
         bool parse_seq() {
             // test only sequences
             parse::Parser grammar;
@@ -279,7 +338,9 @@ namespace rhizome {
                 parse_test_match_type,
                 parse_seq,
                 parse_test_star,
-                parse_test_list
+                parse_test_list,
+                TEST_nonterminal,
+                TEST_or
             });
 
             for( auto i=tests.begin(); i!=tests.end();i++) {

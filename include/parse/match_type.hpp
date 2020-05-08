@@ -25,6 +25,7 @@ namespace rhizome {
             virtual bool has_interface( string const &name ) override;
 
             virtual void dump( std::ostream &out ) const override;
+            virtual bool accepts(GrammarFn lookup) const override;
         };
     }
 }

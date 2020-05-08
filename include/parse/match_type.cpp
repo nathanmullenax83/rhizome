@@ -12,6 +12,12 @@ namespace rhizome {
             return mt;
         }
 
+        bool
+        MatchType::accepts(GrammarFn lookup) const {
+            (void)lookup;
+            return false;
+        }
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         void
