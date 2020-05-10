@@ -58,5 +58,11 @@ namespace rhizome {
             serialize_to_cclass_context(out);
             out << "]";
         }
+
+        Thing *
+        HexDigit::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

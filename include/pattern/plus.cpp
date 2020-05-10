@@ -67,5 +67,11 @@ namespace rhizome {
         Plus::rhizome_type() const {
             return "pattern::Plus";
         }
+
+        Thing *
+        Plus::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

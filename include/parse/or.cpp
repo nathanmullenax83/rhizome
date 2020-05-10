@@ -59,15 +59,19 @@ namespace rhizome {
 
         void
         Or::match( ILexer *lexer, GrammarFn lookup ) {
+#ifdef INSTRUMENTED
             std::cout << "-- Or\n";
+#endif
             try {
                 for(size_t i=0; i<clauses.size(); ++i) {
                     Gramex *copy = clauses[i]->clone_gramex();
                     copy->clear();
                     if( copy->can_match( lexer, lookup ) || copy->accepts(lookup)) {
+#ifdef INSTRUMENTED
                         std::cout << "Matched or clause:";
                         copy->serialize_to(std::cout);
                         std::cout << "\n";
+#endif
                         copy->match(lexer,lookup);
                         append_all( copy->clone_matched_tokens());
                         delete copy;
@@ -115,6 +119,12 @@ namespace rhizome {
         bool
         Or::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        Thing *
+        Or::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Or/invoke/whatever not implemented.");
         }
     }
 }

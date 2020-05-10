@@ -22,7 +22,10 @@ namespace rhizome {
             Chars( string const &cees );
 
             virtual string rhizome_type() const override;
+            
             virtual bool has_interface( string const &w ) override;
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
+
             virtual void serialize_to( std::ostream &out ) const override;
             virtual void serialize_to_cclass_context( std::ostream &out ) const override;
             virtual IPattern * clone_pattern() const override;

@@ -34,6 +34,7 @@ namespace rhizome {
             virtual Pattern * clone() const override;
 
             virtual bool has_interface( string const &name ) override;
+            virtual Thing *invoke( string const &method, Thing *arg ) override;
             virtual string rhizome_type() const override;
 
         };

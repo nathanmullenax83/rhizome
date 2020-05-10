@@ -62,5 +62,11 @@ namespace rhizome {
             CharQueue *copy = new CharQueue(*this);
             return copy;
         }
+
+        Thing *
+        CharQueue::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

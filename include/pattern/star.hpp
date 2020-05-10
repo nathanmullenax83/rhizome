@@ -22,6 +22,7 @@ namespace rhizome {
             virtual void serialize_to( ostream &out ) const;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
             
 
         };

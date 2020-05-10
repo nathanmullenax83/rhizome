@@ -60,5 +60,11 @@ namespace rhizome {
         Whitespace::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Pattern"||name=="Class(Char)"||name=="Thing";
         }
+
+        Thing *
+        Whitespace::invoke( string const &method, Thing *arg ) {
+            if( method=="clone" && arg==NULL ) return clone();
+            throw runtime_error("Invalid invocation.");
+        }
     }
 }

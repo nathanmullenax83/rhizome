@@ -92,5 +92,11 @@ namespace rhizome {
         NTimes::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Pattern"||name=="Closure"||name=="Thing";
         }
+
+        Thing *
+        NTimes::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Invalid invocation.");
+        }
     }
 }

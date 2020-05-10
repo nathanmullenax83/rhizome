@@ -38,7 +38,9 @@ namespace rhizome {
 
         void
         And::match( ILexer *lexer, GrammarFn lookup ) {
+#ifdef INSTRUMENTED
             std::cout << "-- Sequence\n";
+#endif
             for( size_t i=0; i<clauses.size(); ++i ) {
                 // copy clause
                 Gramex *c_i = clauses[i]->clone_gramex();
@@ -47,12 +49,13 @@ namespace rhizome {
                 append_all( c_i->clone_matched_tokens() );
                 delete c_i;
             }
+#ifdef INSTRUMENTED
             std::cout << "-- /Sequence\n";
+#endif
         }
 
         bool
         And::can_match( ILexer *lexer, GrammarFn lookup ) const {
-            
             if( !lexer->has_next_thing() ) return false;
             deque<Thing*> matched;
 
@@ -101,6 +104,11 @@ namespace rhizome {
         bool
         And::has_interface( string const &name) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        Thing * And::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Don't do that!");
         }
     }
 }

@@ -47,5 +47,7 @@ namespace rhizome {
             return (Thing*)clone_pattern();
         }
 
+        
+
     }
 }

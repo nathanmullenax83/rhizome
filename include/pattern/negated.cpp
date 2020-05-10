@@ -38,5 +38,11 @@ namespace rhizome {
             inner->reset();
             this->Pattern::reset();
         }
+
+        Thing *
+        Negated::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

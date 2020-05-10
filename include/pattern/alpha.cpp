@@ -59,5 +59,11 @@ namespace rhizome {
         Alpha::rhizome_type() const {
             return "pattern::Alpha";
         }
+
+        Thing *
+        Alpha::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

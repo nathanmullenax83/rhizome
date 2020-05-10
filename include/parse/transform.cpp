@@ -11,14 +11,18 @@ namespace rhizome {
         }
 
         void Transform::match( ILexer *lexer, GrammarFn lookup ) {
+#ifdef INSTRUMENTED
             std::cout << "-- Transform\n";
+#endif
             Gramex *copy = inner->clone_gramex();
             copy->match( lexer, lookup );
             Thing * made = transform( copy->clone_matched_tokens() );
             copy->clear();
             delete copy;
             append_all( {made});
+#ifdef INSTRUMENTED
             std::cout << "-- /Transform\n";
+#endif
         }
 
         Gramex * Transform::clone_gramex() const {
@@ -42,6 +46,12 @@ namespace rhizome {
 
         bool Transform::accepts( GrammarFn lookup ) const {
             return inner->accepts(lookup);
+        }
+
+        Thing *
+        Transform::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Invoke failed.");
         }
     }
 }

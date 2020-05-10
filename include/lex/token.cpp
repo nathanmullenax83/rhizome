@@ -65,5 +65,11 @@ namespace rhizome {
         Token::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Thing";
         }
+
+        Thing *
+        Token::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

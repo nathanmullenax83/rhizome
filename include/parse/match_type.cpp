@@ -22,6 +22,9 @@ namespace rhizome {
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         void
         MatchType::match( ILexer *lexer, GrammarFn lookup ) {
+#ifdef INSTRUMENTED
+            std::cout << "-- match type " << name << "\n";
+#endif
             try {
                 Thing *temp = lexer->next_thing();
                     
@@ -40,7 +43,9 @@ namespace rhizome {
                 dump(std::cout);
 
             }
-
+#ifdef INSTRUMENTED
+            std::cout << "-- /match type\n";
+#endif
         }
 
         bool
@@ -68,6 +73,12 @@ namespace rhizome {
         bool
         MatchType::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        Thing *
+        MatchType::invoke( string const &method, Thing *arg) {
+            (void)method; (void)arg;
+            throw runtime_error("Invoke not implemented.");
         }
 
         void

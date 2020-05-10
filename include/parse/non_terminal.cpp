@@ -30,15 +30,19 @@ namespace rhizome {
 
         void
         NonTerminal::match( ILexer *lexer, GrammarFn lookup ) {
+#ifdef INSTRUMENTED
             std::cout << "-- non-terminal: " << name << " ";
+#endif
             IGramex *g =  lookup(name);
             assert(g!=NULL && lexer !=NULL);
-            ((Gramex*)g)->serialize_to(std::cout);
-            std::cout << "\n";
+            // ((Gramex*)g)->serialize_to(std::cout);
+            // std::cout << "\n";
             g->match( lexer, lookup );
             append_all( g->clone_matched_tokens());
             delete g;
+#ifdef INSTRUMENTED
             std::cout << "-- non-terminal.";
+#endif
         }
 
         Gramex *
@@ -60,6 +64,12 @@ namespace rhizome {
         bool
         NonTerminal::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        Thing *
+        NonTerminal::invoke( string const &method, Thing *arg ) {
+            (void) method; (void)arg;
+            throw runtime_error("Nope.");
         }
     }
 }

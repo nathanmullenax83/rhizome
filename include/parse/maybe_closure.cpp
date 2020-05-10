@@ -26,12 +26,19 @@ namespace rhizome {
         void
         MaybeClosure::match( ILexer *lexer, GrammarFn lookup) {
             Gramex *copy = inner->clone_gramex();
+#ifdef INSTRUMENTED
+            std::cout << "-- maybe [";
+            copy->serialize_to(std::cout);
+            std::cout << "\n";
+#endif
             if( lexer->has_next_thing() && copy->can_match(lexer,lookup)) {
                 copy->match(lexer,lookup);
                 append_all(copy->clone_matched_tokens());
             }
             delete copy;
-            
+#ifdef INSTRUMENTED
+            std::cout << "-- /maybe\n";
+#endif
         }
 
         Gramex *

@@ -318,6 +318,12 @@ namespace rhizome {
         bool Lexer::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Thing";
         }
+
+        Thing *
+        Lexer::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
         
     }
 }

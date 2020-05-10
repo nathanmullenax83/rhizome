@@ -33,6 +33,8 @@ namespace rhizome {
             virtual bool has_interface( string const &name ) override;
             virtual Thing * clone() const override;
 
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
+
         };
     }
 }

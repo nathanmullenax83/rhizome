@@ -69,6 +69,7 @@ namespace rhizome {
             virtual string rhizome_type() const override;
             virtual void serialize_to( std::ostream &out ) const override;
             virtual bool has_interface( string const &name ) override;
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
             virtual Thing * clone() const override;
 
             virtual void dump(std::ostream &out) const override;

@@ -48,5 +48,11 @@ namespace rhizome {
             p->state = state;
             return p;
         }
+
+        Thing *
+        Any::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

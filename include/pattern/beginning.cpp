@@ -59,5 +59,10 @@ namespace rhizome {
         Beginning::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Pattern"||name=="Thing";
         }
+        Thing *
+        Beginning::invoke( string const &method, Thing *arg ) {
+            (void)method;(void)arg;
+            throw runtime_error("Nothing to invoke.");
+        }
     }
 }

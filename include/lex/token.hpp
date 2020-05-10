@@ -3,11 +3,13 @@
 
 #include <string>
 #include <iostream>
+#include <stdexcept>
 #include "core/thing.hpp"
 #include "core/i_token.hpp"
 
 using std::string;
 using std::ostream;
+using std::runtime_error;
 
 using rhizome::core::Thing;
 using rhizome::core::IToken;
@@ -46,6 +48,7 @@ namespace rhizome {
             
             
             virtual bool has_interface( string const &name ) override;
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
         };
 
         ostream & operator << ( ostream &out, Token const &t );

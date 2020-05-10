@@ -11,7 +11,9 @@ namespace rhizome {
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         void
         Literal::match( ILexer *lexer, GrammarFn lookup ) {
+#ifdef INSTRUMENTED
             std::cout << "-- Literal " << value << "\n";
+#endif
             Thing *temp = lexer->next_thing();
             stringstream v;
             temp->serialize_to(v);
@@ -26,7 +28,9 @@ namespace rhizome {
             }
             delete temp;
             append_all({new rhizome::types::String(token_value)});
+#ifdef INSTRUMENTED
             std::cout << "-- /LITERAL\n";
+#endif
         }
 
         bool
@@ -69,6 +73,11 @@ namespace rhizome {
         bool
         Literal::has_interface(string const &name ) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        Thing * Literal::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Nothing to invoke.");
         }
 
     }

@@ -59,5 +59,11 @@ namespace rhizome {
         PlusClosure::accepts( GrammarFn lookup ) const {
             return inner->accepts(lookup);
         }
+
+        Thing *
+        PlusClosure::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Invoke failed.");
+        }
     }
 }

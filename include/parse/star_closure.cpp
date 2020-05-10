@@ -18,12 +18,14 @@ namespace rhizome {
 
         void
         StarClosure::match( ILexer *lexer, GrammarFn lookup ) {
+#ifdef INSTRUMENTED
             std::cout << "-- Star: ";
             inner->serialize_to(std::cout);
             std::cout << "\n";
+#endif
             Gramex *copy = inner->clone_gramex();
             while( lexer->has_next_thing() && copy->can_match(lexer,lookup)) {
-                std::cout << "NEXT\n";
+                
                 copy->clear();
                 copy->match(lexer,lookup);
                 append_all(copy->clone_matched_tokens());
@@ -59,6 +61,12 @@ namespace rhizome {
         bool
         StarClosure::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        Thing *
+        StarClosure::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Invoke failed.");
         }
     }
 }
