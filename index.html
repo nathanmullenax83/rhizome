@@ -1,16 +1,85 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Rhizome: Open Source Social Networking</title>
-        <script>
-            const init = function() {
+        <title>Rhizome: Support Library for Rhizome Server</title>
+        <style>
 
+        </style>
+        <script>
+            var elems = null;
+            var verbs = null; 
+            var colors = null;
+            const peers = [];
+
+            
+
+            const init = function() {
+                elems = {
+                    up: document.getElementById('up'),
+                    down: document.getElementById('down'),
+                    left: document.getElementById('left'),
+                    right: document.getElementById('right'),
+                    keyword: document.getElementById('keyword'),
+                    content: document.getElementById('content')
+                };
+                verbs = {
+                    up: function() {
+
+                    },
+                    down: function() {
+
+                    },
+                    left: function() {
+
+                    },
+                    right: function() {
+
+                    }
+                };
+                
             };
+            
+
+
         </script>
-    </head>
+    </head>                       
     <body onload="init()">
-        <h1>Rhizome: Open Source Social Networking</h1>
-        
-        
+        <table class="grid">
+            <tr>
+                <td>
+
+                </td>
+                <td id="up">
+
+                </td>
+                <td>
+
+                </td>
+            </tr>
+            <tr>
+                <td id="left">
+
+                </td>
+                <td>
+                    <h1>Rhizome: Open Source Social Networking</h1>
+                    <div id="keyword"></div>
+                    <textarea id="content"></textarea>
+                </td>
+                <td id="right">
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+
+                </td>
+                <td id="down">
+
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+        </table>
     </body>
 </html>
