@@ -42,5 +42,11 @@ namespace rhizome {
         H1::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Thing";
         }
+
+        Thing *
+        H1::invoke( string const &method, Thing *arg ) {
+            (void) method; (void)arg;
+            throw runtime_error("No such method.");
+        }
     }
 }

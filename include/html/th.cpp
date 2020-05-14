@@ -38,15 +38,11 @@ namespace rhizome {
             return "html::Th";
         }
 
-        // rp::Pattern *
-        // Th::make_pattern() const {
-        //     return NULL;
-        // }
-
-        // rp::Pattern *
-        // Th::make_concise_pattern() const {
-        //     return NULL;
-        // }
+        Thing *
+        Th::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("No such method.");
+        }
 
     }
 }

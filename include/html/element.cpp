@@ -17,5 +17,6 @@ namespace rhizome {
         Element::has_interface( string const &name ) {
             return name==rhizome_type();
         }
+        
     }
 }

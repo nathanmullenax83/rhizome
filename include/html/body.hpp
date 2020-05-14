@@ -2,8 +2,10 @@
 #define RHIZOME_HTML_BODY
 
 #include <iostream>
+#include <stdexcept>
 
 using std::ostream;
+using std::runtime_error;
 
 #include "element.hpp"
 #include "container.hpp"
@@ -29,6 +31,7 @@ namespace rhizome {
             virtual Thing * clone() const;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
             
         };
     }

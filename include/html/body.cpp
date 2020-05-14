@@ -42,5 +42,13 @@ namespace rhizome {
         Body::has_interface( string const &name ) {
             return (name==rhizome_type()||name=="Thing");
         }
+
+        Thing *
+        Body::invoke( string const &method, Thing *arg) {
+            (void)arg;
+            stringstream err;
+            err << "No such method: " << method;
+            throw runtime_error(err.str());
+        }
     }
 }

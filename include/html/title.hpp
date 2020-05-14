@@ -2,10 +2,12 @@
 #define RHIZOME_HTML_TITLE_HPP
 
 #include <iostream>
+#include <stdexcept>
 #include "element.hpp"
 
 using std::ostream;
 using std::string;
+using std::runtime_error;
 
 
 
@@ -29,6 +31,7 @@ namespace rhizome {
 
             virtual Thing * clone() const override;
             virtual string rhizome_type() const override;
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
             
         };
     }

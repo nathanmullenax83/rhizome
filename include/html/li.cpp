@@ -42,5 +42,11 @@ namespace rhizome {
         LI::has_interface( string const &name ) {
             return (name==rhizome_type()||name=="Thing");
         }
+
+        Thing *
+        LI::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("I'm unfamiliar with that method.");
+        }
     }
 }

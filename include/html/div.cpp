@@ -26,5 +26,10 @@ namespace rhizome {
         Div::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Thing";
         }
+
+        Thing * invoke( string const &method, Thing *arg ) {
+            (void)arg; (void)method;
+            throw runtime_error("No such method.");
+        }
     }
 }

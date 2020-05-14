@@ -28,24 +28,6 @@ namespace rhizome {
             out << "\")";
         }
 
-        // void
-        // Title::deserialize_from( istream &in, IParser *parser ) {
-        //     parser->match_literal(in,"title");
-        //     parser->match_literal(in,"(");
-        //     cdata = parser->match_qstring(in);
-        //     parser->match_literal(in,")");
-        // }
-
-        // rp::Pattern *
-        // Title::make_pattern() const {
-        //     return NULL;
-        // }
-
-        // rp::Pattern *
-        // Title::make_concise_pattern() const {
-        //     return NULL;
-        // }
-
         Thing * 
         Title::clone() const {
             return new Title(cdata);
@@ -54,6 +36,13 @@ namespace rhizome {
         string
         Title::rhizome_type() const {
             return "html::Title";
+        }
+
+        Thing * Title::invoke( string const &method, Thing *arg ) {
+            (void) arg;
+            stringstream ss;
+            ss << "No such method: " << method;
+            throw runtime_error(ss.str());
         }
     }
 }

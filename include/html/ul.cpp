@@ -29,13 +29,6 @@ namespace rhizome {
             out << ")";
         }
 
-        // void
-        // UL::deserialize_from( istream &in, IParser *parser ) {
-        //     parser->match_literal(in,"ul");
-        //     parser->match_literal(in,"(");
-        //     parser->match_literal(in,")");            
-        // }
-
         LI &
         UL::li( string const &content ) {
             items.push_back( LI(content) );
@@ -51,19 +44,14 @@ namespace rhizome {
             return list;
         }
 
-        // Pattern *
-        // UL::make_pattern() const {
-        //     throw runtime_error("Not implemented.");
-        // }
-
-        // Pattern *
-        // UL::make_concise_pattern() const {
-        //     throw runtime_error("Not implemented.");
-        // }
-
         string
         UL::rhizome_type() const {
             return "html::UL";
+        }
+
+        Thing * UL::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("No such method.");
         }
     }
 

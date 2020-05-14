@@ -29,6 +29,7 @@ namespace rhizome {
 
             // rp::Pattern * make_pattern() const override;
             // rp::Pattern * make_concise_pattern() const override;
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
         };
     }
 }

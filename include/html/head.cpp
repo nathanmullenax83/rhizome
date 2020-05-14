@@ -47,5 +47,13 @@ namespace rhizome {
         Head::has_interface( string const &name ) {
             return (name==rhizome_type()||name=="Thing");
         }
+
+        Thing *
+        Head::invoke( string const &name, Thing *arg ) {
+            (void)arg;
+            stringstream ss;
+            ss << "No such method: " << name;
+            throw runtime_error(ss.str());
+        }
     }
 }
