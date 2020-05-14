@@ -3,13 +3,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "pattern.hpp"
-#include "lex.hpp"
-#include "log.hpp"
-#include "core/machine.hpp"
-#include "core/system.hpp"
-#include "parse.hpp"
-#include "store.hpp"
+#include "rhizome.hpp"
 
 using std::stringstream;
 using rhizome::lex::Lexer;

@@ -1,10 +1,6 @@
+#include "machine_demo.hpp"
+#include "rhizome.hpp"
 
-#include "core/system.hpp"
-#include "core/machine.hpp"
-#include "types.hpp"
-
-#include "parse.hpp"
-#include "store.hpp"
 
 using rhizome::core::System;
 using rhizome::core::Machine;

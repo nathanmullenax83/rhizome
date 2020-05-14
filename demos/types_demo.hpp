@@ -2,7 +2,7 @@
 #define RHIZOME_DEMO_TYPES
 
 #include <iostream>
-#include "types.hpp"
+#include "rhizome.hpp"
 
 using std::cout;
 using std::endl;

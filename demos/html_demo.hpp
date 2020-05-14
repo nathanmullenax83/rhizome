@@ -1,8 +1,7 @@
 #ifndef RHIZOME_DEMO_HTML
 #define RHIZOME_DEMO_HTML
 
-#include "html.hpp"
-#include "log.hpp"
+#include "rhizome.hpp"
 
 namespace rhizome {
     namespace demo {

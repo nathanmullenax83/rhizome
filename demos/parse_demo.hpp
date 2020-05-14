@@ -2,8 +2,7 @@
 #define RHIZOME_PARSE_DEMO
 
 #include <vector>
-#include "lex.hpp"
-#include "parse.hpp"
+#include "rhizome.hpp"
 
 using std::vector;
 

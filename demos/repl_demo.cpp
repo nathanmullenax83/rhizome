@@ -10,8 +10,6 @@
 #include "parse.hpp"
 #include "types.hpp"
 
-
-
 using std::string;
 using std::stringstream;
 using std::function;
@@ -21,7 +19,6 @@ using rhizome::core::Machine;
 using rhizome::parse::Parser;
 using rhizome::types::Tuple;
 using namespace rhizome::parse;
-
 
 // L( statements+ ) <---
 // statement -> << state change >> 
@@ -56,16 +53,16 @@ namespace rhizome {
             Gramex * factor = match_type("Integer");
 
             p->rule("Factor",apply(factor,[](deque<Thing*> ts){
-                std::cout << "Parsing factor: ";
-                dump("Factor (ts) = ",ts);
+                //std::cout << "Parsing factor: ";
+                //dump("Factor (ts) = ",ts);
                 assert( ts.size()==1 && ts[0]!=NULL );
                 return ts[0]->clone();
             }));
             p->rule("Term", apply(product,
                     [](deque<Thing*> ts){
 
-                        std::cout << "Parsing term\n";
-                        dump("Term (ts) = ",ts);
+                        //std::cout << "Parsing term\n";
+                        //dump("Term (ts) = ",ts);
                         rhizome::types::Integer q(1);
                         q = (*((rhizome::types::Integer*)ts[0]));
                         for(size_t i=1; (i+1)<ts.size(); i+=2) {
@@ -88,9 +85,9 @@ namespace rhizome {
                 apply(
                     summation,
                     [](deque<Thing*> ts){
-                        std::cout << "Parsing expression\n";
+                        //std::cout << "Parsing expression\n";
+                        //dump("Expression (ts) = ", ts);
                         assert( ts.size() > 0);
-                        dump("Expression (ts) = ", ts);
                         rhizome::types::Integer sum(0);
                         assert( ts[0]->rhizome_type()=="Integer");
                         sum = (*((rhizome::types::Integer*)ts[0]));
@@ -114,26 +111,52 @@ namespace rhizome {
             
         }
 
-        IParser * create_parser() {
+        typedef map<string, function< Thing *(Thing*)> > CtorTable;
+
+        IParser * create_parser( CtorTable &ctors ) {
             Parser *p = new Parser();
             
             numeric_interpreter("NumericExpression",p);
+
             p->rule("Repl", options({
                 apply(seq(lit("PRINT"), 
                     non_term("NumericExpression")
                 ),[](deque<Thing*> ts){
                     ts[1]->serialize_to(std::cout);
                     return (Thing*)(new Tuple());
+                }),
+                apply(seq(lit("CREATE"), non_term("ThingSpec")),[&ctors](deque<Thing*> ts){
+                    return ts[1];
                 })
             }));
 
+            p->rule("ThingSpec", apply(seq(match_type("Bareword"), non_term("Tuple")),
+            [&ctors](deque<Thing*> ts){
+                std::cout << "Matched rule ThingSpec.\n";
+                auto stringify = []( Thing *t ) { stringstream ss; t->serialize_to(ss); return ss.str(); };
+                string name = stringify( ts[0] );
+                return (Thing*)ctors[name](ts[1]);
+            }));
+
+            p->rule("Tuple", apply(seq(match_type("OParen"),match_type("CParen")), [](deque<Thing*> ts) {
+                (void)ts;
+                return new Tuple();
+            }));
             
             return p;
         }
 
         void repl_demo() {
+            CtorTable ctors;
+            ctors["Str"] = []( Thing *arg ) {
+                std::cout << "String ctor.\n";
+                stringstream ss;
+                arg->serialize_to(ss);
+                String *s = new String(ss.str());
+                return (Thing*)s;
+            };
             
-            IParser *parser = create_parser();
+            IParser *parser = create_parser(ctors);
             string line;
             
             ((Parser*)parser)->dump(std::cout);

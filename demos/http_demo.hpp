@@ -1,7 +1,7 @@
 #ifndef RHIZOME_DEMO_HTTP
 #define RHIZOME_DEMO_HTTP
 
-#include "net/http_server.hpp"
+#include "rhizome.hpp"
 
 namespace rn = rhizome::net;
 

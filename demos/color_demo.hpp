@@ -1,10 +1,7 @@
 #ifndef RHIZOME_DEMO_COLOR
 #define RHIZOME_DEMO_COLOR
 
-#include <iostream>
-#include <vector>
-#include "types.hpp"
-#include "log.hpp"
+#include "rhizome.hpp"
 
 using std::endl;
 using std::cout;

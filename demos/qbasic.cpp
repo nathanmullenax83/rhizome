@@ -24,7 +24,7 @@ namespace rhizome {
                 Tuple * line = new Tuple();
                 line->append( ts[0]);
                 line->append( ts[1]);
-                return line;
+                return (Thing*)line;
             });
 
             parser->rule( "Statement", options({
@@ -38,7 +38,7 @@ namespace rhizome {
                 for(size_t i=0; i<ts.size(); ++i) {
                     statements->append(ts[i]);
                 }
-                return statements;
+                return (Thing*)statements;
             });
 
             parser->rule("GotoStatement",seq(lit("GOTO"), match_type("Integer")),

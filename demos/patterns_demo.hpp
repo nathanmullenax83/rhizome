@@ -4,9 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "pattern.hpp"
-#include "ui.hpp"
-#include "log.hpp"
+#include "rhizome.hpp"
 
 namespace rp = rhizome::pattern;
 namespace ru = rhizome::ui;

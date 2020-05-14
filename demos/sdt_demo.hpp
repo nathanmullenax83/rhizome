@@ -2,7 +2,7 @@
 #define RHIZOME_SDT_DEMO
 
 #include <cstdlib>
-#include "sdt.hpp"
+#include "rhizome.hpp"
 
 namespace sdt = rhizome::sdt;
 
