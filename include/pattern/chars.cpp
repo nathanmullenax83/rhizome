@@ -52,5 +52,10 @@ namespace rhizome {
         bool Chars::accepted() const {
             return state==1;
         }
+
+        Thing * Chars::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Not implemented.");
+        }
     }
 }

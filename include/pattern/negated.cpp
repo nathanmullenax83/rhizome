@@ -44,5 +44,35 @@ namespace rhizome {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
         }
+
+        Pattern *
+        Negated::clone_pattern() const {
+            return new Negated( (CClass*)inner->clone_pattern() );
+        }
+
+        void
+        Negated::serialize_to_cclass_context( std::ostream &out ) const {
+            out << "~";
+            inner->serialize_to(out);
+        }
+
+        void
+        Negated::serialize_to(std::ostream &out) const {
+            out << "[";
+            serialize_to_cclass_context(out);
+            out << "]";
+        }
+
+        bool
+        Negated::has_interface( string const &name ) {
+            return name==rhizome_type()||name=="CClass"||name=="Thing";
+        }
+
+        string
+        Negated::rhizome_type() const {
+            return "cclass::Negated";
+        }
+
+        
     }
 }

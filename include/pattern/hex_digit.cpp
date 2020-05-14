@@ -64,5 +64,15 @@ namespace rhizome {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
         }
+
+        string
+        HexDigit::rhizome_type() const {
+            return "cclass::HexDigit";
+        }
+
+        bool
+        HexDigit::has_interface( string const &name ) {
+            return name==rhizome_type() || name=="cclass" || name=="Thing";
+        }
     }
 }

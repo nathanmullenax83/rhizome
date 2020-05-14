@@ -77,11 +77,13 @@ namespace rhizome {
 
         void
         Or::serialize_to( ostream &out ) const {
-            for(size_t i=0; i<clauses.size()-1; ++i) {
-                ((Thing*)clauses[i])->serialize_to(out);
-                out << "|";
+            for(size_t i=0; i<clauses.size(); ++i) {
+                ((Pattern*)clauses[i])->serialize_to(out);
+                
+                if( i+1 < clauses.size() ) {
+                    out << "|";
+                }
             }
-            ((Thing*)clauses.back())->serialize_to(out);
         }
 
         string
