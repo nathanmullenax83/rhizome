@@ -21,6 +21,7 @@ namespace rhizome {
         string_pattern() {
             pat::Cat *c = new pat::Cat();
             c->append(new pat::Literal("\""));
+            c->append( new pat::Negated(new pat::Chars("\"")));
             c->append( new pat::Literal("\""));
             return new pat::Group(c);
         }
@@ -28,9 +29,7 @@ namespace rhizome {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         Parser::Parser() {
-            types::Float float_proto(0.0);
-            types::Integer int_proto(0);
-            types::String string_proto("");
+            
 
             lexer.define_token_type( "Whitespace", new Group(new pat::Whitespace()),
                 []( IToken *t ){
@@ -71,6 +70,10 @@ namespace rhizome {
                 });
         }
 #pragma GCC diagnostic pop
+        ILexer * Parser::get_lexer() {
+            return &lexer;
+        }
+
 
         void
         Parser::rule( string const &w, Gramex *g ) {

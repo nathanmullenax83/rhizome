@@ -74,6 +74,8 @@ namespace rhizome {
 
             virtual void dump(std::ostream &out) const override;
 
+            virtual ILexer * get_lexer() override;
+
         };
 
         Gramex * lit(string const &w);
