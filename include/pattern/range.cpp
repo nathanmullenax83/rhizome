@@ -1,4 +1,7 @@
 #include "range.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -27,13 +30,18 @@ namespace rhizome {
         void
         Range::reset() {
             state = 0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         IPattern * 
-        Range::clone_pattern() const {
+        Range::clone_pattern(bool withstate) const {
             Range *p = new Range(from,to);
-            p->state = state;
+            if( withstate ) {
+                p->state = state;
+                p->_valid = _valid;
+                p->_captured << _captured.str();
+            }
             return p;
         }
 
@@ -58,6 +66,27 @@ namespace rhizome {
         Range::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        string
+        Range::rhizome_type() const {
+            return "pattern::Range";
+        }
+
+        Thing *
+        Range::captured_plain() {
+            if( accepted() ) {
+                stringstream s;
+                serialize_to(s);
+                return new String(s.str());
+            } else {
+                return new String();
+            }
+        }
+
+        Thing *
+        Range::captured_transformed() {
+            return captured_plain();
         }
     }
 }

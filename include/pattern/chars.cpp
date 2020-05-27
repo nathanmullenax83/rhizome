@@ -1,4 +1,7 @@
 #include "chars.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -34,9 +37,20 @@ namespace rhizome {
             }
         }
 
-        IPattern * Chars::clone_pattern() const {
+        void Chars::reset() {
+            _valid = true;
+            _captured = stringstream();
+            state = 0;
+        }
+
+        IPattern * Chars::clone_pattern(bool withstate) const {
             Chars *copy = new Chars();
             copy->cs = cs;
+            if( withstate ) {
+                copy->_captured << _captured.str();
+                copy->_valid = _valid;
+                copy->state = state;
+            }
             return copy;
         }
 
@@ -45,6 +59,7 @@ namespace rhizome {
         }
 
         void Chars::transition( char c ) {
+            _captured.put(c);
             assert( state==0 && cs.count(c)>0);
 
         }
@@ -56,6 +71,14 @@ namespace rhizome {
         Thing * Chars::invoke( string const &method, Thing *arg ) {
             (void)method; (void)arg;
             throw runtime_error("Not implemented.");
+        }
+
+        Thing * Chars::captured_plain() {
+            return new String(_captured.str());
+        }
+
+        Thing * Chars::captured_transformed() {
+            return captured_plain();
         }
     }
 }

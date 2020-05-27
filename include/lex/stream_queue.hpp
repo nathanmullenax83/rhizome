@@ -35,6 +35,7 @@ namespace rhizome {
         public:
             StreamQueue();
             virtual ~StreamQueue();
+            void clear();
 
             virtual void dump( std::ostream &out ) const override;
 
@@ -42,8 +43,8 @@ namespace rhizome {
             void q( istream &str );
 
             
-            void bypass( istream &str );
-            void remove_bypass();
+            // void bypass( istream &str );
+            // void remove_bypass();
             
             bool empty() const;
             unsigned long long int next();

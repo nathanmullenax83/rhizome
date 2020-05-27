@@ -1,4 +1,7 @@
 #include "any.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -12,7 +15,8 @@ namespace rhizome {
 
         void Any::reset() {
             state = 0;
-            this->Pattern::reset();
+            _captured = stringstream();
+            _valid = true;
         }
 
         bool Any::accepted() const {
@@ -28,6 +32,7 @@ namespace rhizome {
         void 
         Any::transition(char c) {
             if( can_transition(c)) {
+                _captured.put(c);
                 ++state; return;
             } else {
                 throw runtime_error("Couldn't transition!");
@@ -43,9 +48,13 @@ namespace rhizome {
         }
 
         IPattern *
-        Any::clone_pattern() const {
+        Any::clone_pattern(bool withstate) const {
             rp::Any *p = new rp::Any();
-            p->state = state;
+            if( withstate ) {
+                p->state = state;
+                p->_captured << _captured.str();
+                p->_valid = _valid;
+            }
             return p;
         }
 
@@ -53,6 +62,16 @@ namespace rhizome {
         Any::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Thing *
+        Any::captured_plain() {
+            return new String(_captured.str());
+        }
+
+        Thing *
+        Any::captured_transformed() {
+            return captured_plain();
         }
     }
 }

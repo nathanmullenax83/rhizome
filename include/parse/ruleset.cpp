@@ -16,8 +16,8 @@ namespace rhizome {
         void
         Ruleset::dump(std::ostream &out) const {
             for( auto i=rules.begin(); i!=rules.end(); i++) {
-                out << "\t";
-                out << i->first << " := ";
+                out << "  ";
+                out << i->first << " → ";
                 i->second->serialize_to(out);
                 out << "\n";
             }
@@ -34,10 +34,13 @@ namespace rhizome {
 
         Gramex *
         Ruleset::lookup( string const &name ) const {
-            if( rules.count(name)) {
-                return rules.at(name)->clone_gramex();
+            if( rules.count(name) > 0) {
+                return rules.at(name)->clone_gramex(false);
             } else {
-                throw runtime_error("Rule does not exist.");
+                stringstream err;
+                err << "Rule '" << name << "' does not exist in ruleset!\n";
+                dump(err);
+                throw runtime_error(err.str());
             }
 
         }

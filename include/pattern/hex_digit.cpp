@@ -1,5 +1,9 @@
 #include "hex_digit.hpp"
 
+#include "types/string.hpp"
+
+using rhizome::types::String;
+
 namespace rhizome {
     namespace pattern {
         HexDigit::HexDigit(): state(0) {
@@ -13,7 +17,8 @@ namespace rhizome {
         void
         HexDigit::reset() {
             state = 0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         bool
@@ -41,9 +46,13 @@ namespace rhizome {
         }
 
         IPattern *
-        HexDigit::clone_pattern() const {
+        HexDigit::clone_pattern(bool withstate) const {
             HexDigit *p = new HexDigit();
-            p->state = state;
+            if( withstate) {
+                p->state = state;
+                p->_captured << _captured.str();
+                p->_valid = _valid;
+            }
             return p;
         }
 
@@ -73,6 +82,22 @@ namespace rhizome {
         bool
         HexDigit::has_interface( string const &name ) {
             return name==rhizome_type() || name=="cclass" || name=="Thing";
+        }
+
+        Thing *
+        HexDigit::captured_plain() {
+            if( accepted()) {
+                stringstream s;
+                serialize_to(s);
+                return new String(s.str());
+            } else {
+                return new String("");
+            }
+        }
+
+        Thing *
+        HexDigit::captured_transformed() {
+            return captured_plain();
         }
     }
 }

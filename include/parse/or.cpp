@@ -44,10 +44,13 @@ namespace rhizome {
         }
 
         Gramex *
-        Or::clone_gramex() const {
+        Or::clone_gramex(bool withmatches) const {
             Or *n = new Or();
             for(size_t i=0; i<clauses.size(); ++i) {
-                n->clauses.push_back( clauses[i]->clone_gramex() );
+                n->clauses.push_back( clauses[i]->clone_gramex(withmatches) );
+            }
+            if( withmatches ) {
+                n->append_all( clone_matched_tokens() );
             }
             return n;
         }
@@ -58,21 +61,20 @@ namespace rhizome {
         }
 
         void
-        Or::match( ILexer *lexer, GrammarFn lookup ) {
+        Or::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
 #ifdef INSTRUMENTED
             std::cout << "-- Or\n";
 #endif
             try {
                 for(size_t i=0; i<clauses.size(); ++i) {
-                    Gramex *copy = clauses[i]->clone_gramex();
-                    copy->clear();
+                    Gramex *copy = clauses[i]->clone_gramex(false);
                     if( copy->can_match( lexer, lookup ) || copy->accepts(lookup)) {
 #ifdef INSTRUMENTED
                         std::cout << "Matched or clause:";
                         copy->serialize_to(std::cout);
                         std::cout << "\n";
 #endif
-                        copy->match(lexer,lookup);
+                        copy->match(lexer,lookup,captured);
                         append_all( copy->clone_matched_tokens());
                         delete copy;
                         return;

@@ -1,4 +1,7 @@
 #include "group.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -14,7 +17,7 @@ namespace rhizome {
         Group::reset() {
             inner->reset();
             _captured = stringstream();
-            this->Pattern::reset();
+            _valid = true;
         }
         
         bool
@@ -38,14 +41,21 @@ namespace rhizome {
             return inner->can_transition(c);
         }
 
-        string 
-        Group::captured() const {
-            return _captured.str();
+        Thing *
+        Group::captured_plain() {
+            String *s = new String(_captured.str());
+            reset();
+            return s;
+        }
+
+        Thing *
+        Group::captured_transformed() {
+            return inner->captured_transformed();
         }
 
         IPattern * 
-        Group::clone_pattern() const {
-            Group *g = new Group(inner->clone_pattern());
+        Group::clone_pattern(bool withstate) const {
+            Group *g = new Group(inner->clone_pattern(withstate));
             return g;
         }
 

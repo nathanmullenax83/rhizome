@@ -23,12 +23,14 @@ namespace rhizome {
             /// Starts out in 'accept'. 
             virtual bool accepted() const;
 
-            virtual IPattern * clone_pattern() const override;
+            virtual IPattern * clone_pattern(bool withstate) const override;
             virtual void serialize_to( ostream &out ) const override;
 
             virtual bool has_interface( string const &name ) override;
             virtual Thing * invoke( string const &method, Thing *arg ) override;
             virtual string rhizome_type() const override;
+            virtual Thing * captured_plain() override;
+            virtual Thing * captured_transformed() override;
         };
     }
 }

@@ -32,7 +32,7 @@ namespace rhizome {
             void put_back( Token t );
             void q( Token t );  
             */
-
+            void clear();
             /// We need this interface because the lexer emits Thing *
             void put_back( Thing * t);
 

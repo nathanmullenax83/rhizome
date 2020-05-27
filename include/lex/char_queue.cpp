@@ -11,9 +11,15 @@ namespace rhizome {
         CharQueue::dump( ostream &out ) const {
             out << "Character queue, front-to-back.\n\t\t";
             for(size_t i=0; i<chars.size(); ++i) {
-                out << ((char)chars[i]) << ' ';
+                out << "'";
+                out.put(chars[i]);
+                out << "' ";
             }
             out << '\n';
+        }
+
+        void CharQueue::clear() {
+            chars.clear();
         }
 
         void 

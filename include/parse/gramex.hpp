@@ -30,7 +30,7 @@ namespace rhizome {
             virtual void clear();
         public:
             
-
+            Gramex();
             virtual ~Gramex();
             /// Check if the next however-many tokens can match this expression 
             /// without extracting them. Note, we need to be able to expand non-
@@ -38,9 +38,9 @@ namespace rhizome {
             virtual bool can_match( ILexer *lexer, GrammarFn lookup) const = 0;
 
             /// Match and extract tokens or throw an error.
-            virtual void match( ILexer *lexer, GrammarFn lookup ) = 0;
+            virtual void match( ILexer *lexer, GrammarFn lookup, stringstream &captured) = 0;
 
-            virtual Gramex * clone_gramex() const = 0;
+            virtual Gramex * clone_gramex(bool withmatches) const = 0;
             virtual Thing * clone() const;
 
             //virtual deque<Thing*> get_matched_tokens() override;

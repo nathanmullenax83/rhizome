@@ -1,4 +1,6 @@
 #include "star.hpp"
+#include "types/string.hpp"
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -19,14 +21,27 @@ namespace rhizome {
         Star::transition(char c) {
             if( inner->can_transition(c) ) {
                 inner->transition(c);
+                _captured.put(c);
                 if( inner->accepted() ) {
+                    Thing *token = inner->captured_transformed();
+                    if( token != NULL && token->rhizome_type()=="String") {
+                        String *s = (String*)token;
+                        xd << s->native_string();
+                    }
                     inner->reset();
                 }
                 return;
             } else if( inner->accepted() ) {
                 match_count++;
+                // got a match: get transformed token
+                Thing *token = inner->captured_transformed();
+                if( token != NULL && token->rhizome_type()=="String") {
+                    String *s = (String*)token;
+                    xd << s->native_string();
+                }
                 inner->reset();
                 inner->transition(c);
+                _captured.put(c);
                 return;
             } else {
                 throw runtime_error("Star: bad transition.");
@@ -41,20 +56,27 @@ namespace rhizome {
         void
         Star::reset() {
             match_count = 0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
+            xd = stringstream();
         }
 
         IPattern *
-        Star::clone_pattern() const {
-            Star *p = new Star(inner->clone_pattern());
-            p->match_count = match_count;
+        Star::clone_pattern(bool withstate) const {
+            Star *p = new Star(inner->clone_pattern(withstate));
+            if(withstate) {
+                p->match_count = match_count;
+                p->_valid = _valid;
+                p->_captured << _captured.str();
+                p->xd << xd.str();
+            }
             return p;
         }
 
         void
         Star::serialize_to( ostream &out ) const {
             out << "(?:";
-            ((Thing*)inner)->serialize_to(out);
+            ((Pattern*)inner)->serialize_to(out);
             out << ")*";
         }
 
@@ -72,6 +94,32 @@ namespace rhizome {
         Star::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Thing *
+        Star::captured_plain() {
+            return new String(_captured.str());
+        }
+
+        Thing *
+        Star::captured_transformed(){
+            
+            if( inner->accepted() ) {
+                // check for remaining matched repetition.
+                Thing *t = inner->captured_transformed();
+                if( inner != NULL && ((Pattern*)inner)->rhizome_type()=="String" ) {
+                    String *s = (String*)t;
+                    xd << s->native_string();
+                    delete t;
+                    return new String(xd.str());
+                } else {
+                    delete t;
+                    return new String(xd.str());
+                }
+
+            } else {
+                return new String(xd.str());
+            }
         }
     }
 }

@@ -28,11 +28,14 @@ namespace rhizome {
 
             virtual void serialize_to( std::ostream &out ) const override;
             virtual void serialize_to_cclass_context( std::ostream &out ) const override;
-            virtual IPattern * clone_pattern() const override;
+            virtual IPattern * clone_pattern(bool withstate) const override;
 
             virtual bool can_transition(char c) const override;
             virtual void transition(char c) override;
             virtual bool accepted() const override;
+            virtual Thing * captured_plain() override;
+            virtual Thing * captured_transformed() override;
+            virtual void reset() override;
 
         };
     }

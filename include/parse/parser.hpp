@@ -19,6 +19,8 @@
 #include "plus_closure.hpp"
 #include "star_closure.hpp"
 #include "transform.hpp"
+#include "match_rule.hpp"
+#include "maybe_closure.hpp"
 
 #include "core/i_parser.hpp"
 #include "core/i_debuggable.hpp"
@@ -49,20 +51,22 @@ namespace rhizome {
             
 
             Parser();
+            void clear();
             void rule( string const &w, Gramex *expr);
 
             // token-level matchers
-            virtual string match_literal( istream &in, string const &token ) override;
-            virtual string match_float( istream &in ) override;
-            virtual string match_integer( istream &in ) override;
-            virtual string match_qstring( istream &in ) override;
-            virtual string match_pattern( istream &in, Pattern *p ) override;
+            // virtual string match_literal( istream &in, string const &token ) override;
+            // virtual string match_float( istream &in ) override;
+            // virtual string match_integer( istream &in ) override;
+            // virtual string match_qstring( istream &in ) override;
+            // virtual string match_pattern( istream &in, Pattern *p ) override;
 
             virtual IGramex * lookup( string const &name ) const override;
             // virtual Thing * parse_thing( istream &in, string const &start_rule,
             //     IGrammar *grammar, ParseFn f ) override;
             
             virtual Thing * parse_thing( string const &start_rule ) override;
+            virtual Thing * parse_thing( string const &start_rule, string const &thing ) override;
 
             virtual void q_stream( istream &in ) override;
 
@@ -82,12 +86,14 @@ namespace rhizome {
         Gramex * seq(Gramex *a, Gramex *b);
         Gramex * seq(Gramex *a, Gramex *b, Gramex *c);
         Gramex * seq(Gramex *a, Gramex *b, Gramex *c, Gramex *d);
+        Gramex * seq(vector<Gramex*> es);
         
 
         Gramex * options( std::vector<Gramex *> cs );
 
         Gramex * non_term(string const &name);
         Gramex * match_type( string const &tname);
+        Gramex * match_lexer_rule( string const &rule_name );
 
         // match '(' inner ')'
         Gramex * parens( Gramex *inner );

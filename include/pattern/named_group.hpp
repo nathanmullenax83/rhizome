@@ -15,12 +15,13 @@ namespace rhizome {
             string name;
             IPattern *inner;
         public:
+            
             NamedGroup(string const &name, IPattern *p);
             virtual ~NamedGroup();
 
             virtual bool has_interface( string const &name ) override;
             virtual string rhizome_type() const override;
-            virtual IPattern * clone_pattern() const override;
+            virtual IPattern * clone_pattern(bool withstate) const override;
         };
     }
 }

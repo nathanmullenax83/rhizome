@@ -21,6 +21,7 @@ namespace rhizome {
         public:
             virtual void dump( ostream &out ) const override;
             CharQueue();
+            void clear();
 
             void put_back( unsigned long long int c );
             void q( unsigned long long int c );
@@ -32,6 +33,7 @@ namespace rhizome {
             virtual void serialize_to( std::ostream &out ) const override;
             virtual bool has_interface( string const &name ) override;
             virtual Thing * clone() const override;
+            
 
             virtual Thing * invoke( string const &method, Thing *arg ) override;
 

@@ -6,6 +6,8 @@ namespace rhizome {
 
         }
 
+        
+
         NamedGroup::~NamedGroup() {
             delete inner;
         }

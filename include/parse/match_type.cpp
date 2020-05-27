@@ -1,5 +1,7 @@
 #include "match_type.hpp"
 
+#include "log.hpp"
+
 namespace rhizome {
     namespace parse {
         MatchType::MatchType( string const &tname ): name(tname) {
@@ -7,8 +9,11 @@ namespace rhizome {
         }
 
         Gramex *
-        MatchType::clone_gramex() const {
+        MatchType::clone_gramex(bool withmatches) const {
             MatchType *mt = new MatchType(name);
+            if( withmatches ) {
+                mt->append_all( clone_matched_tokens());
+            }
             return mt;
         }
 
@@ -21,22 +26,26 @@ namespace rhizome {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         void
-        MatchType::match( ILexer *lexer, GrammarFn lookup ) {
-#ifdef INSTRUMENTED
-            std::cout << "-- match type " << name << "\n";
-#endif
+        MatchType::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
+            //static rhizome::log::Log log("type_match");
+
             try {
-                Thing *temp = lexer->next_thing();
-                    
-                if( temp->rhizome_type() != name ) {
+                string putback;
+//                log.info("Extracting next thing:");
+                Thing *temp = lexer->next_thing(putback);
+                //log.info("Putback buffer: ");
+                //log.info(putback);
+                if( temp->rhizome_type() != this->name ) {
                     stringstream ss;
-                    ss << "Expected token of type " << name << ", but got " << temp->rhizome_type();
-                    std::cerr << ss.str();
+                    ss << "Expected token of type " << name << ", but got " << temp->rhizome_type() <<" '";
+                    temp->serialize_to(ss);
+                    ss << "'";
+                    
                     delete temp;
                     throw runtime_error(ss.str());
                 } else {
-                    append_all({temp->clone()});
-                    delete temp;
+                    append_all({temp});
+                    captured << putback;
                 }
             } catch( std::exception *e ) {
                 std::cout << "Error: " << e->what() << "\n";
@@ -51,7 +60,7 @@ namespace rhizome {
         bool
         MatchType::can_match( ILexer *lexer, GrammarFn lookup ) const {
             if( lexer->has_next_thing()) {
-                Thing *p = lexer->peek_next_thing(0);
+                Thing *p = (lexer->peek_next_thing(1,true))[0];
                 return p->rhizome_type()==name;
             } else {
                 return false;

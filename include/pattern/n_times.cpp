@@ -1,6 +1,8 @@
 #include "n_times.hpp"
 
+#include "types/string.hpp"
 
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -16,7 +18,9 @@ namespace rhizome {
         NTimes::reset() {
             n=0;
             inner->reset();
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
+            xd = stringstream();
         }
 
         bool
@@ -28,8 +32,8 @@ namespace rhizome {
                 return true;
             } else if ( inner->accepted() ) {
                 if( n < N-1 ) {
-                    IPattern *copy = inner->clone_pattern();
-                    copy->reset();
+
+                    IPattern *copy = inner->clone_pattern(false);
                     bool a = copy->can_transition(c);
                     delete copy;
 #ifdef INSTRUMENTED
@@ -51,13 +55,17 @@ namespace rhizome {
         NTimes::transition(char c) {
             if( inner->can_transition(c) ) {
                 inner->transition(c);
+                _captured.put(c);
                 return;
             } else if( inner->accepted() ) {
                 if( n < N-1 ) {
                     ++n;
+                    // hairy
+                    xd << ((String*)inner->captured_transformed())->native_string();
                     inner->reset();
                     if( inner->can_transition(c)) {
                         inner->transition(c);
+                        _captured.put(c);
                         return;
                     }
                 } 
@@ -71,9 +79,14 @@ namespace rhizome {
         }
 
         IPattern *
-        NTimes::clone_pattern() const {
-            NTimes *p = new NTimes(N,inner->clone_pattern());
-            p->n = n;
+        NTimes::clone_pattern(bool withstate) const {
+            NTimes *p = new NTimes(N,inner->clone_pattern(withstate));
+            if( withstate ) {
+                p->n = n;
+                p->_valid = _valid;
+                p->_captured << _captured.str();
+                p->xd << xd.str();
+            }
             return p;
         }
 
@@ -97,6 +110,20 @@ namespace rhizome {
         NTimes::invoke( string const &method, Thing *arg ) {
             (void)method; (void)arg;
             throw runtime_error("Invalid invocation.");
+        }
+
+        Thing *
+        NTimes::captured_plain()  {
+            return new String(_captured.str());
+        }
+
+        Thing *
+        NTimes::captured_transformed() {
+            if( inner->accepted() ) {
+                Thing *t = inner->captured_transformed();
+                t->serialize_to(xd);
+            }
+            return new String(xd.str());
         }
     }
 }

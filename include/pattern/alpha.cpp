@@ -1,5 +1,9 @@
 #include "alpha.hpp"
 
+#include "types/string.hpp"
+
+using rhizome::types::String;
+
 namespace rhizome {
     namespace pattern {
         Alpha::Alpha(): state(0) {
@@ -9,7 +13,8 @@ namespace rhizome {
         void
         Alpha::reset() {
             state = 0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         bool 
@@ -26,16 +31,21 @@ namespace rhizome {
         Alpha::transition(char c) {
             if( can_transition(c) ) {
                 ++state;
+                _captured.put(c);
             } else {
                 throw runtime_error("Alpha: cannot transition.");
             }
         }
 
         IPattern * 
-        Alpha::clone_pattern() const {
-            Alpha *c = new Alpha();
-            c->state = state;
-            return c;
+        Alpha::clone_pattern(bool withstate) const {
+            Alpha *a = new Alpha();
+            if( withstate ) {
+                a->_captured << _captured.str();
+                a->state = state;
+                a->_valid = _valid;
+            }
+            return a;
         }
 
         void
@@ -64,6 +74,18 @@ namespace rhizome {
         Alpha::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Thing *
+        Alpha::captured_plain() {
+            Thing *s = new String(_captured.str());
+            reset();
+            return s;
+        }
+
+        Thing *
+        Alpha::captured_transformed() {
+            return captured_plain();
         }
     }
 }

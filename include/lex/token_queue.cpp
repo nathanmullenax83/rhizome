@@ -13,6 +13,13 @@ namespace rhizome {
             }
         }
 
+        void TokenQueue::clear() {
+            for(size_t i=0; i<things.size(); ++i){
+                delete things[i];
+            }
+            things.clear();
+        }
+
         bool
         TokenQueue::empty() const {
             return things.size()==0;

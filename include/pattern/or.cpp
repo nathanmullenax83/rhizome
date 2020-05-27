@@ -1,13 +1,31 @@
 #include "or.hpp"
+#include "types/string.hpp"
+
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
+        void
+        Or::dump(std::ostream &out) const {
+            out << "\nDEBUG: pattern::Or " << (_valid?"Valid":"Not valid") << "\n";
+            for( size_t i=0; i<clauses.size(); ++i) {
+                out << "\t";
+                ((Pattern*)clauses[i])->serialize_to(out);
+                out << "\t";
+                out << (clauses[i]->valid()?"Valid":"Not valid");
+                out << "\t'";
+                clauses[i]->captured_plain()->serialize_to(out);
+                out << "'\n";
+            }
+        }
 
         bool
         Or::accepted() const {
+            if( !_valid ) return false;
             bool t(false);
             for(size_t i=0; i<clauses.size(); ++i) {
-                if( clauses[i]->valid() && clauses[i]->accepted() ) {
+                if( clauses[i]->accepted() ) {
                     return true;
                 }
             }
@@ -16,13 +34,24 @@ namespace rhizome {
 
         void
         Or::transition(char c) {
+            bool pass = false;
             for(size_t i=0; i<clauses.size(); ++i) {
-                if( clauses[i]->valid() && clauses[i]->can_transition(c) ) {
+                if( clauses[i]->can_transition(c) ) {
                     clauses[i]->transition(c);
+                    pass = true;
                 } else {
                     clauses[i]->invalidate();
                 }
             }
+            if(!pass) {
+                stringstream err;
+                err << "No transition available for pattern ";
+                serialize_to(err);
+                err << "\n";
+                err << "Captured so far: '" << _captured.str() << "'";
+                throw runtime_error(err.str());
+            }
+            _captured.put(c);
         }
 
         void
@@ -33,7 +62,7 @@ namespace rhizome {
         bool
         Or::can_transition(char c) const {
             for(size_t i=0; i<clauses.size();++i) {
-                if( clauses[i]->valid() && clauses[i]->can_transition(c)) {
+                if( clauses[i]->can_transition(c)) {
                     return true;
                 }
             }
@@ -41,23 +70,28 @@ namespace rhizome {
         }
 
         IPattern *
-        Or::clone_pattern() const {
+        Or::clone_pattern(bool withstate) const {
             vector<IPattern*> new_clauses;
             for(size_t i=0; i<clauses.size(); ++i) {
-                new_clauses.push_back( clauses[i]->clone_pattern() );
+                new_clauses.push_back( clauses[i]->clone_pattern(withstate) );
             }
             Or *p = new Or();
             p->clauses = new_clauses;
+            if( withstate) {
+                p->_valid = _valid;
+                p->_captured << _captured.str();
+            }
             return p;
         }
 
         void
         Or::reset() {
+            //std::cout << "Or reset. \n";
+            _valid = true;
+            _captured = stringstream();
             for(size_t i=0; i<clauses.size(); ++i) {
-                clauses[i]->reset();
+                clauses[i]->reset();   
             }
-            
-            this->Pattern::reset();
         }
 
         Or::Or() {
@@ -100,6 +134,39 @@ namespace rhizome {
         Or::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Thing *
+        Or::captured_plain() {
+            // return capture of first accepted pattern
+            return new String(_captured.str());
+        }
+
+        Thing *
+        Or::captured_transformed() {
+            if( accepted() ) {
+                for(size_t i=0; i<clauses.size(); ++i) {
+                    if( clauses[i]->accepted()) {
+                        return clauses[i]->captured_transformed();
+                    }
+                }
+                {
+                    stringstream err;
+                    err << "Couldn't find a matching clause: ";
+                    serialize_to(err);
+                    err << "\n";
+                    err << "Plain capture so far: '";
+                    err << _captured.str();
+                    throw runtime_error(err.str());
+                }
+            } else {
+                stringstream err;
+                err << "Cannot capture transformed input, "
+                    "as OR expression is not in an accept state.\n";
+                err << "Captured so far: '" << _captured.str() << "'";
+                dump(err);
+                throw runtime_error(err.str());
+            }
         }
     }
 }

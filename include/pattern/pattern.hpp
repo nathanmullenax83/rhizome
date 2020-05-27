@@ -21,6 +21,7 @@ namespace rhizome {
         class Pattern: public Thing, public IPattern {
         protected:
             bool _valid;
+            stringstream _captured;
         public:
             Pattern();
             virtual ~Pattern();
@@ -28,7 +29,7 @@ namespace rhizome {
             // override core::IPattern
             virtual bool accepts( string const &w ) override;
             
-            virtual void reset();
+            virtual void reset() = 0;
 
             
             virtual void invalidate() override;
@@ -36,7 +37,7 @@ namespace rhizome {
 
             
             virtual Thing * clone() const override;
-
+            
 
             
         };

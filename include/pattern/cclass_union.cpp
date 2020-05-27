@@ -1,4 +1,7 @@
 #include "cclass_union.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -14,7 +17,8 @@ namespace rhizome {
         void
         CClassUnion::reset() {
             state = 0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         bool
@@ -30,6 +34,7 @@ namespace rhizome {
         void
         CClassUnion::transition(char c) {
             if( can_transition(c) ) {
+                _captured.put(c);
                 state = 1;
                 return;
             } else {
@@ -43,12 +48,16 @@ namespace rhizome {
         }
 
         IPattern *
-        CClassUnion::clone_pattern() const {
+        CClassUnion::clone_pattern(bool withstate) const {
             CClassUnion *ccu = new CClassUnion();
             for(size_t i=0; i<parts.size();++i) {
                 ccu->parts.push_back( (CClass*)parts[i]->clone() );
             }
-            ccu->state = state;
+            if( withstate ) {
+                ccu->_valid =_valid;
+                ccu->state = state;
+                ccu->_captured << _captured.str();
+            }
             return ccu;
             
         }
@@ -65,6 +74,26 @@ namespace rhizome {
             out << "[";
             serialize_to_cclass_context(out);
             out << "]";
+        }
+
+        Thing *
+        CClassUnion::captured_plain() {
+            return new String(_captured.str());
+        }
+
+        Thing *
+        CClassUnion::captured_transformed() {
+            stringstream xd;
+            for(size_t i=0; i<parts.size(); ++i) {
+                Thing *t_i = parts[i]->captured_transformed();
+                if( t_i != NULL ) {
+                    if( t_i->rhizome_type() == "String") {
+                        String *s = (String*)t_i;
+                        xd << s->native_string();
+                    }
+                }
+            }
+            return new String(xd.str());
         }
     }
 }

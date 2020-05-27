@@ -1,4 +1,7 @@
 #include "cat.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -41,10 +44,12 @@ namespace rhizome {
             } else {
                 if( parts[state]->can_transition(c) ) {
                     parts[state]->transition(c);
+                    _captured.put(c);
                     return;
                 } else if( parts[state]->accepted() ) {
                     ++state;
                     parts[state]->transition(c);
+                    _captured.put(c);
                     return;
                 } else {
                     return;
@@ -69,25 +74,30 @@ namespace rhizome {
             for(size_t i=0; i<parts.size(); ++i) {
                 parts[i]->reset();
             }
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         IPattern *
-        Cat::clone_pattern() const {
+        Cat::clone_pattern(bool withstate) const {
             Cat *p = new Cat();
             vector<IPattern *> new_parts;
             for(size_t i=0; i<parts.size(); ++i) {
-                new_parts.push_back( parts[i]->clone_pattern() );
+                new_parts.push_back( parts[i]->clone_pattern(withstate) );
             }
             p->parts = new_parts;
-            p->state = state;
+            if( withstate ) {
+                p->state = state;
+                p->_captured << _captured.str();
+                p->_valid = _valid;
+            }
             return p;
         }
 
         void
         Cat::serialize_to( ostream &out ) const {
             for(size_t i=0; i<parts.size(); ++i) {
-                ((Thing*)parts[i])->serialize_to(out);
+                ((Pattern*)parts[i])->serialize_to(out);
             }
         }
 
@@ -105,6 +115,25 @@ namespace rhizome {
         Cat::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Thing *
+        Cat::captured_transformed () {
+            // oh boy:
+            stringstream capd;
+            for(size_t i=0; i<parts.size(); ++i) {
+                Thing *s = parts[i]->captured_transformed();
+                if( s!=NULL && s->rhizome_type()=="String") {
+                    String *t = (String*)s;
+                    capd << t->native_string();
+                }
+            }
+            return new String(capd.str());
+        }
+
+        Thing *
+        Cat::captured_plain() {
+            return new String(_captured.str());
         }
     }
 }

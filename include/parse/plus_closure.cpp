@@ -1,5 +1,7 @@
 #include "plus_closure.hpp"
 
+#include "log.hpp"
+
 namespace rhizome {
     namespace parse {
         PlusClosure::PlusClosure( Gramex *inner ): inner(inner) {
@@ -16,17 +18,24 @@ namespace rhizome {
         }
 
         void
-        PlusClosure::match( ILexer *lexer, GrammarFn lookup ) {
+        PlusClosure::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
+            //static rhizome::log::Log log("plus_match");
             // required to match at least once
-            Gramex *copy = inner->clone_gramex();
-            copy->clear();
-        
-            copy->match( lexer, lookup );
+
+            Gramex *copy = inner->clone_gramex(false);
+            //log.info("Created copy of inner pattern.");
+
+
+            copy->match( lexer, lookup, captured );
+            //log.info("Matched first repetition.");
             append_all( copy->clone_matched_tokens() );
+            //log.info("Appended tokens associated with first repetition.");
             copy->clear();
-            
-            while( lexer->has_next_thing() && copy->can_match(lexer,lookup)) {
-                copy->match( lexer, lookup );
+            //log.info("Captured tokens (putback buffer)");
+            //log.info(captured.str());
+            while( copy->can_match(lexer,lookup)) {
+                copy->match( lexer, lookup,captured );
+                //log.info("Matched another repetition.");
                 append_all(copy->clone_matched_tokens());
                 copy->clear();
             }
@@ -39,8 +48,12 @@ namespace rhizome {
         }
 
         Gramex *
-        PlusClosure::clone_gramex() const {
-            return new PlusClosure( inner->clone_gramex() );
+        PlusClosure::clone_gramex(bool withmatches) const {
+            PlusClosure *p = new PlusClosure( inner->clone_gramex(withmatches) );
+            if(withmatches) {
+                p->append_all( clone_matched_tokens());
+            }
+            return p;
         }
 
         void

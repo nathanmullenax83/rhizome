@@ -1,4 +1,9 @@
 #include "plus.hpp"
+#include "types/string.hpp"
+#include "n_times.hpp"
+
+using rhizome::pattern::NTimes;
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -9,7 +14,10 @@ namespace rhizome {
         void
         Plus::reset() {
             n_accepted=0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
+            xd = stringstream();
+            inner->reset();
         }
 
         bool
@@ -17,8 +25,7 @@ namespace rhizome {
             if( inner->can_transition(c)) {
                 return true;
             } else {
-                IPattern *copy = inner->clone_pattern();
-                copy->reset();
+                IPattern *copy = inner->clone_pattern(false);
                 bool p = copy->can_transition(c);
                 delete copy;
                 return p;
@@ -27,34 +34,76 @@ namespace rhizome {
 
         void
         Plus::transition(char c) {
-            if( inner->can_transition(c) ) {
+            if( !inner->can_transition(c) ) {
+                // no transitions available
+                if( inner->accepted()) {
+                    String *s = (String*)inner->captured_transformed();
+                    if( s!=NULL && s->rhizome_type()=="String" ) {
+                        xd << s->native_string();
+                        delete s;
+                    }
+                    inner->reset();
+                    ++n_accepted;
+                } else {
+                    // inner cannot transition before or after reset: error
+                    stringstream err;
+                    err << "Plus: inner pattern cannot transition on '";
+                    err.put(c);
+                    err << "'\n";
+                    ((Pattern*)inner)->serialize_to(err);
+                    throw runtime_error(err.str());
+                }
                 inner->transition(c);
-            } 
-            if( inner->accepted() ) {
-                ++n_accepted;
-                inner->reset();
-                inner->transition(c);
+                _captured.put(c);
             } else {
-                throw runtime_error("Invalid transition.");
-            }
+                inner->transition(c);
+                _captured.put(c);
+            } 
         }
 
         bool
         Plus::accepted() const {
-            return n_accepted>0;
+            return inner->accepted() || n_accepted>0;
         }
 
         IPattern *
-        Plus::clone_pattern() const {
-            Plus *p = new Plus(inner->clone_pattern());
-            p->n_accepted = n_accepted;
+        Plus::clone_pattern(bool withstate) const {
+            Plus *p = new Plus(inner->clone_pattern(withstate));
+            if( withstate ) {
+                p->_valid = _valid;
+                p->n_accepted = n_accepted;
+                p->xd << xd.str();
+                p->_captured << _captured.str();
+            }
             return p;
+        }
+
+        Thing *
+        Plus::captured_transformed() {
+            // there may be captured characters to extract:
+            if( inner->accepted() ) {
+                String *s = (String*)inner->captured_transformed();
+                if( s!=NULL ) {
+                    stringstream __captured;
+                    __captured << xd.str() << s->native_string();
+                    delete s;
+                    return new String(__captured.str());
+                }
+                
+            } 
+            return new String(xd.str());
+            
+        }
+
+        Thing *
+        Plus::captured_plain() {
+            return new String(_captured.str());
         }
 
         void
         Plus::serialize_to( ostream &out ) const {
             out << "(?:";
-            ((Thing*)inner)->serialize_to(out);
+            ((Pattern*)inner)->serialize_to(out);
             out << ")+";
         }
 

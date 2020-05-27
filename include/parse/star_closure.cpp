@@ -1,5 +1,7 @@
 #include "star_closure.hpp"
 
+#include "log.hpp"
+
 namespace rhizome {
     namespace parse {
         StarClosure::StarClosure( Gramex *inner ): inner(inner) {
@@ -17,33 +19,44 @@ namespace rhizome {
         }
 
         void
-        StarClosure::match( ILexer *lexer, GrammarFn lookup ) {
-#ifdef INSTRUMENTED
-            std::cout << "-- Star: ";
-            inner->serialize_to(std::cout);
-            std::cout << "\n";
-#endif
-            Gramex *copy = inner->clone_gramex();
-            while( lexer->has_next_thing() && copy->can_match(lexer,lookup)) {
-                
-                copy->clear();
-                copy->match(lexer,lookup);
+        StarClosure::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
+            //static rhizome::log::Log log("sc_match");
+            
+            //log.info("Match called.");
+
+            Gramex *copy = inner->clone_gramex(false);
+
+            //log.info("Copied gramex.");
+
+            while( copy->can_match(lexer,lookup)) {
+                //log.info("Match available.");
+                copy->match(lexer,lookup,captured);
+                //log.info("Match complete.");
                 append_all(copy->clone_matched_tokens());
+                //log.info("Match extracted.");
+                copy->clear();
+                //log.info("Copy of gramex cleared.");
             }
+
+            //log.info("Match complete. Deleting copy of gramex.");
             delete copy;
         }
 
         bool
         StarClosure::can_match( ILexer *lexer, GrammarFn lookup ) const  {
-            Gramex *copy = inner->clone_gramex();
+            Gramex *copy = inner->clone_gramex(false);
             bool cm = (!lexer->has_next_thing()) || copy->can_match(lexer,lookup);
             delete copy;
             return  cm;
         }
 
         Gramex * 
-        StarClosure::clone_gramex() const {
-            return new StarClosure(inner->clone_gramex());
+        StarClosure::clone_gramex(bool withmatches) const {
+            StarClosure *s = new StarClosure(inner->clone_gramex(withmatches));
+            if(withmatches) {
+                s->append_all(clone_matched_tokens());
+            }
+            return s;
         }
 
         void

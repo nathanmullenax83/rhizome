@@ -25,7 +25,8 @@ namespace rhizome {
         void
         NonGreedy::reset() {
             inner->reset();
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         Thing *
@@ -33,5 +34,7 @@ namespace rhizome {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
         }
+
+        
     }
 }

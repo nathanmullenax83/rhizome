@@ -1,6 +1,9 @@
 #include <stdexcept>
 
 #include "beginning.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 using std::runtime_error;
 
@@ -14,7 +17,8 @@ namespace rhizome {
         void 
         Beginning::reset() {
             state = 0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
 #pragma GCC diagnostic push
@@ -38,9 +42,13 @@ namespace rhizome {
         }
             
         IPattern * 
-        Beginning::clone_pattern() const {
+        Beginning::clone_pattern(bool withstate) const {
             Beginning *b = new Beginning();
-            b->state = state;
+            if(withstate){
+                b->_valid = _valid;
+                b->_captured << _captured.str(); // noop?
+                b->state = state;
+            }
             return b;
         }
         
@@ -63,6 +71,16 @@ namespace rhizome {
         Beginning::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Thing *
+        Beginning::captured_plain() {
+            return new String("");
+        }
+
+        Thing *
+        Beginning::captured_transformed() {
+            return captured_plain();
         }
     }
 }

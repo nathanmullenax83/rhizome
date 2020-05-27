@@ -1,4 +1,7 @@
 #include "negated.hpp"
+#include "types/string.hpp"
+
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
@@ -36,7 +39,8 @@ namespace rhizome {
         Negated::reset() {
             n_accepted = 0;
             inner->reset();
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         Thing *
@@ -46,8 +50,14 @@ namespace rhizome {
         }
 
         Pattern *
-        Negated::clone_pattern() const {
-            return new Negated( (CClass*)inner->clone_pattern() );
+        Negated::clone_pattern(bool withstate) const {
+            Negated *n = new Negated( (CClass*)inner->clone_pattern(withstate) );
+            if( withstate ){
+                n->_valid = _valid;
+                n->_captured<< _captured.str();
+                n->n_accepted = n_accepted;
+            }
+            return n;
         }
 
         void
@@ -72,7 +82,15 @@ namespace rhizome {
         Negated::rhizome_type() const {
             return "cclass::Negated";
         }
+        Thing *
+        Negated::captured_plain() {
+            return new String(_captured.str());
+        }
 
+        Thing *
+        Negated::captured_transformed() {
+            return captured_plain();
+        }
         
     }
 }

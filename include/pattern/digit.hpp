@@ -27,7 +27,7 @@ namespace rhizome {
             virtual bool accepted() const;
             virtual void reset();
 
-            virtual IPattern *clone_pattern() const override;
+            virtual IPattern *clone_pattern(bool withstate) const override;
             virtual void serialize_to( ostream &out ) const;
             virtual void serialize_to_cclass_context( ostream &out ) const;
 
@@ -35,6 +35,8 @@ namespace rhizome {
             virtual Thing * invoke( string const &method, Thing *arg ) override;
 
             virtual string rhizome_type() const override;
+            virtual Thing * captured_plain() override;
+            virtual Thing * captured_transformed() override;
         };
     }
 }

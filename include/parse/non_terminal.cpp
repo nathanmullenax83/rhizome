@@ -29,15 +29,19 @@ namespace rhizome {
         }
 
         void
-        NonTerminal::match( ILexer *lexer, GrammarFn lookup ) {
+        NonTerminal::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
 #ifdef INSTRUMENTED
-            std::cout << "-- non-terminal: " << name << " ";
+            std::cout << "-- non-terminal: '" << name << "' =  ";
 #endif
             IGramex *g =  lookup(name);
-            assert(g!=NULL && lexer !=NULL);
+#ifdef INSTRUMENTED
+            ((Gramex*)g)->serialize_to(std::cout);
+            std::cout << "\n";
+#endif
+            assert( g!=NULL && lexer !=NULL );
             // ((Gramex*)g)->serialize_to(std::cout);
             // std::cout << "\n";
-            g->match( lexer, lookup );
+            g->match( lexer, lookup,captured );
             append_all( g->clone_matched_tokens());
             delete g;
 #ifdef INSTRUMENTED
@@ -46,8 +50,11 @@ namespace rhizome {
         }
 
         Gramex *
-        NonTerminal::clone_gramex() const {
+        NonTerminal::clone_gramex(bool withmatches) const {
             NonTerminal *nt = new NonTerminal(name);
+            if( withmatches ) {
+                nt->append_all( clone_matched_tokens());
+            }
             return nt;
         }
 

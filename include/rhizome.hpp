@@ -18,5 +18,13 @@
 #include "net.hpp"
 #include "sdt.hpp"
 
+namespace rhizome {
+    IParser *create_lexer_grammar();
+
+    ILexer *load_lexer( string const &filename );
+    // system check
+    bool verify();
+}
+
 
 #endif

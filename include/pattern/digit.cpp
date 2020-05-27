@@ -1,5 +1,9 @@
 #include "digit.hpp"
 
+#include "types/string.hpp"
+
+using rhizome::types::String;
+
 namespace rhizome {
     namespace pattern {
         Digit::Digit(): state(0) {
@@ -11,9 +15,13 @@ namespace rhizome {
         }
 
         IPattern * 
-        Digit::clone_pattern() const {
+        Digit::clone_pattern(bool withstate) const {
             Digit *clone = new Digit();
-            clone->state = state;
+            if( withstate ) {
+                clone->state = state;
+                clone->_valid =_valid;
+                clone->_captured << _captured.str();
+            }
             return clone;
         }
 
@@ -30,6 +38,7 @@ namespace rhizome {
         void
         Digit::transition(char c) {
             if( can_transition(c) ) {
+                _captured.put(c);
                 ++state;
                 return;
             }
@@ -39,7 +48,8 @@ namespace rhizome {
         void
         Digit::reset() {
             state = 0;
-            this->Pattern::reset();
+            _valid = true;
+            _captured = stringstream();
         }
 
         void
@@ -68,6 +78,16 @@ namespace rhizome {
         Digit::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Thing *
+        Digit::captured_plain() {
+            return new String(_captured.str());
+        }
+
+        Thing *
+        Digit::captured_transformed() {
+            return captured_plain();
         }
     }
 }

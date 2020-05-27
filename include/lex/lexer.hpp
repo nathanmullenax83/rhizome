@@ -41,27 +41,27 @@ using rhizome::types::String;
 
 namespace rhizome {
     namespace lex {
-        typedef function< Thing *( IToken * ) > TokenConstructor;
-
+       // typedef function< Thing *( IToken * ) > TokenConstructor;
+        class LexerState {
+        public:
+            LexerState();
+            // type registry
+            // name -> type_id
+            map<string, IPattern *> patterns;
+             
+            // input streams
+            StreamQueue streams;
+                
+            // output token stream
+            //TokenQueue tokens;
+        };
 
         /// Converts a character stream into a token stream.
         class Lexer: public ILexer, public IDebuggable, public Thing {
         private:
-            struct PatternRecord {
-                Group *pattern;
-                TokenConstructor ctor;
-            };
+            
 
-            struct LexerState {
-                // type registry
-                // name -> type_id
-                map<string, PatternRecord> patterns;
-                
-                // input streams
-                StreamQueue streams;
-                // output token stream
-                TokenQueue tokens;
-            };
+            
 
             stack< LexerState > states;
         public:
@@ -87,27 +87,36 @@ namespace rhizome {
             /// Bulk define a bunch of keywords of the same type ID.            
             
             void define( string const &name, string const &token_literal );
-
+            //virtual void eat_null_productions();
         public:
-            void define( string const &name, vector<string> const &keywords );
-            bool has_next() const;
-            Thing * next(bool skipcheck=false);
+            /// Clear all streams and queued tokens.
+            void clear();
+            
+            virtual void define( string const &name, vector<string> const &keywords );
+            virtual bool has_next() const;
+            virtual Thing * next(string &putback);
             //void put_back(Token t);
-            void put_back_thing(Thing *t);
+            // virtual void put_back(stringstream &s) override;
+            virtual void put_back( string const &s) override;
 
-            virtual Thing * peek_next_thing( size_t index ) override;
+            
+            virtual deque<Thing *> peek_next_thing( size_t count, bool skipnulls ) override;
 
 
-            bool direct_has_next( istream &in );
-            Thing * direct_next( istream &in );
+            //bool direct_has_next( istream &in );
+            //Thing * direct_next( istream &in );
 
             // lexer interface
-            virtual void define_token_type( string const &name, IPattern *p, function< Thing*(IToken*) > ctor ) override;
+            // virtual void define_token_type( string const &name, IPattern *p, function< Thing*(Thing*) > ctor ) override;
             virtual void define_token_type( string const &name, string const &literal );
-            virtual void define_token_type( string const &name, IPattern *p, function< Thing*(void) > ctor) override;
+            virtual void define_token_type( string const &name, IPattern *p ) override;
+            
+
             virtual void undefine_token_type( string const &name );
             virtual bool has_next_thing() const override;
-            virtual Thing * next_thing() override;
+            virtual Thing * next_thing( string &putback ) override;
+            virtual Thing * next_thing( string const &pattern_name, string &putback ) override;
+            virtual IPattern * clone_pattern( string const &name ) const override;
 
             // thing interface
             virtual void serialize_to( std::ostream &out ) const override;

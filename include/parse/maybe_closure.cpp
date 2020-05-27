@@ -24,15 +24,15 @@ namespace rhizome {
 #pragma GCC diagnostic pop
 
         void
-        MaybeClosure::match( ILexer *lexer, GrammarFn lookup) {
-            Gramex *copy = inner->clone_gramex();
+        MaybeClosure::match( ILexer *lexer, GrammarFn lookup, stringstream &captured) {
+            Gramex *copy = inner->clone_gramex(false);
 #ifdef INSTRUMENTED
             std::cout << "-- maybe [";
             copy->serialize_to(std::cout);
             std::cout << "\n";
 #endif
             if( lexer->has_next_thing() && copy->can_match(lexer,lookup)) {
-                copy->match(lexer,lookup);
+                copy->match(lexer,lookup,captured);
                 append_all(copy->clone_matched_tokens());
             }
             delete copy;
@@ -42,8 +42,12 @@ namespace rhizome {
         }
 
         Gramex *
-        MaybeClosure::clone_gramex() const {
-            return new MaybeClosure( inner->clone_gramex());
+        MaybeClosure::clone_gramex(bool withmatches) const {
+            MaybeClosure *maybe = new MaybeClosure( inner->clone_gramex(withmatches));
+            if( withmatches ) {
+                maybe->append_all( clone_matched_tokens());
+            }
+            return maybe;
         }
 
         void
@@ -62,6 +66,12 @@ namespace rhizome {
         bool
         MaybeClosure::has_interface( string const &name ) {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
+        }
+
+        Thing *
+        MaybeClosure::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Not implemented. (maybe closure)");
         }
     }
 }

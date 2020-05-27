@@ -13,6 +13,12 @@ namespace rhizome {
         }
 
         void
+        StreamQueue::clear() {
+            streams.clear();
+            chars.clear();
+        }
+
+        void
         StreamQueue::dump( ostream &out ) const {
             out << "The stream queue first draws from a put-back buffer\n.";
             if( chars.empty() ) {
@@ -28,19 +34,19 @@ namespace rhizome {
             streams.push_back(&str);
         }
 
-        void
-        StreamQueue::bypass( istream &str ) {
-            streams.push_front( &str );
-        }
+        // void
+        // StreamQueue::bypass( istream &str ) {
+        //     streams.push_front( &str );
+        // }
 
-        void
-        StreamQueue::remove_bypass() {
-            if( !streams.empty() ) {
-                streams.pop_front();
-            } else {
-                throw new runtime_error("No bypass to remove.");
-            }
-        }
+        // void
+        // StreamQueue::remove_bypass() {
+        //     if( !streams.empty() ) {
+        //         streams.pop_front();
+        //     } else {
+        //         throw new runtime_error("No bypass to remove.");
+        //     }
+        // }
 
         bool
         StreamQueue::empty() const {

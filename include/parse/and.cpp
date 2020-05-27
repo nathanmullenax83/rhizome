@@ -1,5 +1,8 @@
 #include "and.hpp"
 
+
+#include "log.hpp"
+
 namespace rhizome {
     namespace parse {
         And::And() {
@@ -13,10 +16,13 @@ namespace rhizome {
         }
 
         Gramex *
-        And::clone_gramex() const {
+        And::clone_gramex(bool withmatches) const {
             And *n = new And();
             for(size_t i=0; i<clauses.size();++i) {
-                n->clauses.push_back( clauses[i]->clone_gramex() );
+                n->clauses.push_back( clauses[i]->clone_gramex(withmatches) );
+            }
+            if( withmatches ) {
+                n->append_all( clone_matched_tokens() );
             }
             return n;
         }
@@ -37,15 +43,24 @@ namespace rhizome {
         }
 
         void
-        And::match( ILexer *lexer, GrammarFn lookup ) {
+        And::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
+            // static rhizome::log::Log log("seq_match");
+            // {
+            //     stringstream p;
+            //     serialize_to(p);
+            //     log.info(p.str());
+            // }
 #ifdef INSTRUMENTED
-            std::cout << "-- Sequence\n";
+            std::cout << "-- Sequence ";
+            serialize_to(std::cout);
+            std::cout << "\n";
 #endif
             for( size_t i=0; i<clauses.size(); ++i ) {
                 // copy clause
-                Gramex *c_i = clauses[i]->clone_gramex();
-                c_i->clear();
-                c_i->match( lexer, lookup );
+                Gramex *c_i = clauses[i]->clone_gramex(false);
+                c_i->match( lexer, lookup, captured );
+                //log.info("Captured: ");
+                //log.info(captured.str());
                 append_all( c_i->clone_matched_tokens() );
                 delete c_i;
             }
@@ -56,31 +71,41 @@ namespace rhizome {
 
         bool
         And::can_match( ILexer *lexer, GrammarFn lookup ) const {
+            //static rhizome::log::Log log("and_canmatch");
             if( !lexer->has_next_thing() ) return false;
+            stringstream captured;
+
             deque<Thing*> matched;
+            auto delete_matched = [&matched] {
+                for(size_t i=0; i<matched.size();++i) {
+                    delete matched[i]; matched[i] = NULL;
+                }
+                matched.clear();
+                return;
+            };
 
             for( size_t i=0; i<clauses.size(); ++i) {
-                Gramex *copy = clauses[i]->clone_gramex();
-                copy->clear();
+                Gramex *copy = clauses[i]->clone_gramex(false);
                 if( copy->can_match(lexer,lookup) || copy->accepts(lookup)) {
-                    copy->match(lexer,lookup);
+                    copy->match(lexer,lookup,captured);
                     deque<Thing*> ts = copy->clone_matched_tokens();
                     for(size_t j=0; j<ts.size(); ++j) {
                         matched.push_back( ts[j] );
                     }
                 } else {
-                    for(int j=matched.size()-1; j>=0; --j) {
-                        assert( matched[j]!=NULL );
-                        lexer->put_back_thing( matched[j]);
-                    }
+                    delete_matched();
+                    //std::cout << "And pattern did not match.\n";
+                    //std::cout << "Putting back: '" << captured.str() << "\n";
+                    lexer->put_back( captured.str() );
+                    
                     return false;
                 }
                 delete copy;
             }
-            // Can match all clauses of AND -- putting back tokens.
-            for(int j=matched.size()-1; j>=0; --j) {
-                lexer->put_back_thing( matched[j]);
-            }
+            delete_matched();
+            //log.info("Putting back:");
+            //log.info(captured.str());
+            lexer->put_back( captured.str());
             return true;
         }
 
@@ -109,6 +134,6 @@ namespace rhizome {
         Thing * And::invoke( string const &method, Thing *arg ) {
             (void)method; (void)arg;
             throw runtime_error("Don't do that!");
-        }
+        } 
     }
 }

@@ -30,23 +30,31 @@ namespace rhizome {
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         Parser::Parser() {
             
-
-            lexer.define_token_type( "Whitespace", new Group(new pat::Whitespace()),
-                []( IToken *t ){
+            lexer.define_token_type( "Newline", new pat::Transform( new pat::Literal("\n"),[](Thing *t){
+                return t;
+            }));
+            lexer.define_token_type( "Whitespace", new pat::Transform( new pat::Plus(new pat::Or(new pat::Literal(" "),new pat::Literal("\t"))),
+                []( Thing *t ){
+                    delete t;
                     return (Thing*)NULL;
-                });
-            lexer.define_token_type( "Float", decimal_pattern(),
-                []( IToken *t ) {
-                    return new rhizome::types::Float(t->token_value());
-                });
-            lexer.define_token_type( "Integer", integer_pattern(),
-                []( IToken *t ) {
-                    return new rhizome::types::Integer(t->token_value());
-                });
-            lexer.define_token_type( "String", string_pattern(),
-                []( IToken *t )     {
-                    return new rhizome::types::String(t->token_value());
-                });
+                }));
+            
+            lexer.define_token_type( "Float", new pat::Transform( decimal_pattern(),
+                []( Thing *t ) {
+                    string v = ((String*)t)->native_string();
+                    delete t;
+                    return new rhizome::types::Float(v);
+                }));
+            lexer.define_token_type( "Integer", new pat::Transform( integer_pattern(),
+                []( Thing *t ) {
+                    string v = ((String*)t)->native_string();
+                    delete t;
+                    return new rhizome::types::Integer(v);
+                }));
+            lexer.define_token_type( "String", new pat::Transform( string_pattern(),
+                []( Thing *t )     {
+                    return t;
+                }));
             
             lexer.define_token_type( "OParen", "(");
             lexer.define_token_type( "CParen", ")");
@@ -60,125 +68,31 @@ namespace rhizome {
             lexer.define_token_type( "Times", "*");
             lexer.define_token_type( "Div", "/");
             lexer.define_token_type( "Dot", ".");
+            lexer.define_token_type( "Equals","=");
+            lexer.define_token_type( "LT", "<");
+            lexer.define_token_type( "GT", ">");
             lexer.define_token_type( "Bareword", 
+                new pat::Transform(
                     new pat::Cat(
                         new pat::Plus( new pat::Alpha() ),
                         new pat::Star( new pat::Or( new pat::Alpha(), new pat::Digit() ))
                     )
-                ,[](IToken *t) {
-                    return new rhizome::types::String(t->token_value());
-                });
+                ,[](Thing *t) {
+                    return t;
+                }));
         }
 #pragma GCC diagnostic pop
         ILexer * Parser::get_lexer() {
             return &lexer;
         }
 
+        void Parser::clear() {
+            lexer.clear();
+        }
 
         void
         Parser::rule( string const &w, Gramex *g ) {
             rules.rule(w,g);
-        }
-
-
-        string Parser::match_integer( istream &in ) {
-            if( lexer.direct_has_next(in)) {
-                Thing *p = lexer.direct_next(in);
-
-                if(  p->rhizome_type() != "Integer") {
-                    stringstream err;
-                    err << "Expected integer, but encounted " << p->rhizome_type();
-                    delete p;
-                    throw runtime_error(err.str());
-                } else {
-                    stringstream t;
-                    p->serialize_to(t);
-                    delete p;
-                    return t.str();
-                }
-            } else {
-                throw runtime_error("Expected integer, but reached end of stream.");
-            }
-        }
-
-        string Parser::match_float( istream &in ) {
-            if( lexer.direct_has_next(in)) {
-                Thing *temp = lexer.direct_next(in);
-                
-                if( temp->rhizome_type() != "Float") {
-                    stringstream err;
-                    err << "Expected float, but encountered " << temp->rhizome_type();
-                    throw runtime_error(err.str());
-                } else {
-                    stringstream v;
-                    temp->serialize_to(v);
-                    delete temp;
-                    return v.str();
-                }
-            } else {
-                throw runtime_error("Expected float, but reach end of stream.");
-            }
-        }
-
-        string Parser::match_pattern( istream &in, Pattern *p ) {
-            // p is some sort of ad-hoc token. 
-            lexer.push_state();
-            lexer.define_token_type("AdHocToken", p, [](IToken*t){ return new rhizome::types::String(t->token_value()); });
-            lexer.q(in);
-            Thing *temp = lexer.next();
-            stringstream v;
-            temp->serialize_to(v);
-            delete temp;
-            lexer.pop_state();
-            return v.str();
-        }
-
-        string Parser::match_qstring( istream &in ) {
-            if( lexer.direct_has_next(in)) {
-                Thing *temp = lexer.direct_next(in);
-                stringstream v;
-                temp->serialize_to(v);
-                delete temp;
-                if( temp->rhizome_type() != "String") {
-                    stringstream err;
-                    err << "Expected string, but encountered " << temp->rhizome_type();
-                    throw runtime_error(err.str());
-                } else {
-                    return v.str();
-                }
-            } else {
-                throw runtime_error("Expected string, but reach end of stream.");
-            }
-        }
-
-        string Parser::match_literal( istream &in, string const &w ) {
-#ifdef INSTRUMENTED
-            std::cout << "Attempting to match literal " << w << "\n";
-#endif
-            if( lexer.direct_has_next(in)) {
-#ifdef INSTRUMENTED
-                std::cout << "The stream is not empty (direct).\n";
-#endif
-                Thing *temp = lexer.direct_next(in);
-                stringstream v;
-                temp->serialize_to(v);
-                string v_str = v.str();
-                //delete temp;
-#ifdef INSTRUMENTED
-                std::cout << "Extracted token: " << v_str << "\n";
-#endif
-                if( v_str != w) {
-                    stringstream err;
-                    err << "Expected '" << w << "' but encountered '" << v_str;
-                    throw runtime_error(err.str());
-                } else {
-                    return v_str;
-                }
-            } else {
-                stringstream err;
-                err << "Expected '" << w << "' but encountered end of stream.";
-                throw runtime_error(err.str());
-            }
         }
 
         IGramex *
@@ -191,13 +105,14 @@ namespace rhizome {
             
             IGramex *start = lookup(start_rule);
 #ifdef INSTRUMENTED
-            std::cout << "-- Start rule: ";
+            std::cout << "-- Start rule: [Parser::parse_thing]\n";
             ((Gramex*)start)->serialize_to(std::cout);
             std::cout << "\n";
 #endif
             
             GrammarFn static_lookup = [this]( string const &name ) { return this->lookup(name);};
-            start->match( &lexer, static_lookup );
+            stringstream captured;
+            start->match( &lexer, static_lookup, captured );
 
             auto ts = start->clone_matched_tokens();
             if( ts.size() > 1 ) {
@@ -210,6 +125,17 @@ namespace rhizome {
             } else {
                 return ts[0];
             }
+#ifdef INSTRUMENTED
+            std::cout << "-- parsed thing [Parser::parse_thing].\n";
+#endif
+        }
+
+        Thing *
+        Parser::parse_thing( string const &start, string const &thing ) {
+            stringstream ss;
+            ss << thing;
+            q_stream(ss);
+            return parse_thing(start);
         }
 
         void
@@ -248,9 +174,7 @@ namespace rhizome {
 
         void
         Parser::dump( std::ostream &out ) const {
-            out << "DEBUG DUMP: parser\n";
-            out << "==================\n";
-            out << "Rules:\n";
+            out << "\n";
             rules.dump(out);
         }
 
@@ -283,6 +207,14 @@ namespace rhizome {
             return p;
         }
 
+        Gramex * seq( vector<Gramex*> ps ) {
+            And *p = new And();
+            for( auto i = ps.begin(); i!=ps.end(); i++ ) {
+                p->append(*i);
+            }
+            return p;
+        }
+
         Gramex * options( std::vector<Gramex *> cs ) {
             Or *p = new Or();
             for( auto i=cs.begin(); i!=cs.end(); ++i) {
@@ -297,6 +229,10 @@ namespace rhizome {
 
         Gramex * match_type( string const &tname ) {
             return new MatchType(tname);
+        }
+
+        Gramex * match_lexer_rule( string const &name ) {
+            return new MatchRule(name);
         }
 
         Gramex * plus( Gramex *inner ) {
@@ -329,6 +265,11 @@ namespace rhizome {
         Gramex * apply( Gramex *inner, TransformFn f ) {
             Transform *t = new Transform( inner, f );
             return t;
+        }
+
+        Gramex * maybe( Gramex *inner ) {
+            MaybeClosure *mb = new MaybeClosure(inner);
+            return mb;
         }
     }
 }

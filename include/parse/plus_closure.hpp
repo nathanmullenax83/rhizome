@@ -13,9 +13,9 @@ namespace rhizome {
             virtual ~PlusClosure();
 
             virtual bool can_match( ILexer *lexer, GrammarFn lookup ) const override;
-            virtual void match( ILexer *lexer, GrammarFn lookup ) override;
+            virtual void match( ILexer *lexer, GrammarFn lookup, stringstream &captured) override;
 
-            virtual Gramex * clone_gramex() const;
+            virtual Gramex * clone_gramex(bool withmatches) const;
 
             virtual void serialize_to(ostream &out) const override;
             virtual string rhizome_type() const override;

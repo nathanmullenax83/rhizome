@@ -21,5 +21,6 @@
 #include "pattern/n_times.hpp"
 #include "pattern/negated.hpp"
 #include "pattern/chars.hpp"
+#include "pattern/transform.hpp"
 
 #endif
