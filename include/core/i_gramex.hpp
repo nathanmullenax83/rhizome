@@ -18,14 +18,18 @@ namespace rhizome {
         class IGramex;
         
         typedef function< IGramex * ( string const & ) > GrammarFn;
+        
 
         class IGramex {
         public:
             virtual ~IGramex() {}
             virtual bool can_match( ILexer *lexer, GrammarFn lookup ) const = 0;
-            virtual void match( ILexer *lexer, GrammarFn lookup ) = 0;
-            virtual deque<Thing *> get_matched_tokens() = 0;
+            virtual void match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) = 0;
+            //virtual deque<Thing *> get_matched_tokens() = 0;
             virtual deque<Thing *> clone_matched_tokens() const = 0;
+
+            // certain expression accept without consuming tokens
+            virtual bool accepts(GrammarFn lookup) const = 0;
         };
     }
 }

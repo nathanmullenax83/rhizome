@@ -153,5 +153,10 @@ namespace rhizome {
             Machine *copy = new Machine(*this);
             return copy;
         }
+
+        Thing * Machine::invoke( string const &method, Thing *arg ) {
+            (void)method; (void)arg;
+            throw runtime_error("Not implemented.");
+        }
     }
 }

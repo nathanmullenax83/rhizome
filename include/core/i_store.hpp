@@ -13,6 +13,7 @@ namespace rhizome {
         /// Named item storage. 
         class IStore {
         public:
+            virtual ~IStore() {}
             virtual void set( string const &name, Thing *thing ) = 0;
             virtual Thing * get( string const &name ) = 0;
             virtual Thing * get_clone( string const &name ) const  = 0;

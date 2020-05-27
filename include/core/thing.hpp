@@ -36,16 +36,14 @@ namespace rhizome {
             /// starting with a capital letter e.g., Integer. 
             virtual string rhizome_type() const = 0;
 
-            
-
-
-
             /// In general, we need to be able to query an object for an interface.
             /// In anticipation of interfaces themselves being virtually constructed,
             /// all 'things' must implement has_interface. Notes:
             /// 1. This is a non-const method, so a 'thing' may construct an interface
             ///    upon request.
             virtual bool has_interface( string const &name ) = 0;
+
+            virtual Thing * invoke( string const &method, Thing *argument ) = 0;
             
 
 

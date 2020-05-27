@@ -22,7 +22,9 @@ namespace rhizome {
             virtual bool valid() const = 0;
             
 
-            virtual IPattern * clone_pattern() const = 0;
+            virtual IPattern * clone_pattern(bool withstate) const = 0;
+            virtual Thing * captured_plain() = 0;
+            virtual Thing * captured_transformed() = 0;
             //virtual void serialize_to( ostream &out ) const = 0;
         };
     }

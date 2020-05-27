@@ -6,6 +6,11 @@ namespace rhizome {
             
         }
 
+        System::~System() {
+            delete parser;
+            delete store;
+        }
+
         string
         System::rhizome_type() const {
             return "System";
@@ -30,6 +35,22 @@ namespace rhizome {
         bool
         System::has_interface( string const &name ) {
             return name==rhizome_type() || name=="Thing";
+        }
+
+        Thing *
+        System::invoke( string const &method, Thing *arg ) {
+            if( arg==NULL ) {
+                if( method=="clone" ) {
+                    return clone();
+                } else if( method=="type" ) {
+                    
+                } else if( method=="parse") {
+                    stringstream ss;
+                    arg->serialize_to(ss);
+                    return parser->parse_thing( ss.str() );
+                }
+            }
+            throw runtime_error("Not implemented.");
         }
         
     }
