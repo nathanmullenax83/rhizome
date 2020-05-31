@@ -29,6 +29,8 @@ namespace rhizome {
 
             /// Check if there is another token available
             virtual bool has_next_thing() const = 0;
+            /// Check if there is an instance of a particular rule available
+            virtual bool has_next_thing( string const &rule ) = 0;
 
             /// Extract the next token
             virtual Thing * next_thing( string &putback) = 0;
@@ -48,9 +50,7 @@ namespace rhizome {
             /// Look up a pattern by name (you own the pointer!)
             virtual IPattern * clone_pattern( string const &name ) const = 0;
 
-            virtual void dump( std::ostream &out ) {
-                out << "Debugging dump not implemented (ILexer)\n";
-            };
+            
 
         };
         
