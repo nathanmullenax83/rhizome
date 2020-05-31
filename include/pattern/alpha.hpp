@@ -13,6 +13,7 @@ namespace rhizome {
         class Alpha: public CClass {
         private:
             size_t state;
+            
         public:
             Alpha();
 

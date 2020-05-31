@@ -8,7 +8,7 @@ namespace rhizome {
 
         bool
         NonGreedy::accepted() const {
-            return inner->accepted();
+            return _valid && inner->accepted();
         }
 
         bool

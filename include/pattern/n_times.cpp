@@ -75,7 +75,7 @@ namespace rhizome {
         
         bool
         NTimes::accepted() const {
-            return n==N-1 && inner->accepted();
+            return _valid && n==N-1 && inner->accepted();
         }
 
         IPattern *
@@ -92,7 +92,7 @@ namespace rhizome {
 
         void
         NTimes::serialize_to( ostream &out ) const {
-            ((Thing*)inner)->serialize_to(out);
+            ((Pattern*)inner)->serialize_to(out);
             out << "{" << N << "}";
         }
 

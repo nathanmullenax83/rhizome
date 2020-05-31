@@ -40,7 +40,7 @@ namespace rhizome {
 
         bool 
         Whitespace::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 
         IPattern *
@@ -71,14 +71,12 @@ namespace rhizome {
 
         void 
         Whitespace::serialize_to_cclass_context( ostream &out ) const {
-            out << ":space:";
+            out << "␣";
         }
 
         void 
         Whitespace::serialize_to( ostream &out ) const {
-            out << "[";
             serialize_to_cclass_context(out);
-            out << "]";
         }
 
         string

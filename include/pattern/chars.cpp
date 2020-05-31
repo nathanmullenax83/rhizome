@@ -1,6 +1,10 @@
 #include "chars.hpp"
 #include "types/string.hpp"
 
+#include <string>
+#include <locale>
+#include <codecvt>
+
 using rhizome::types::String;
 
 namespace rhizome {
@@ -10,8 +14,11 @@ namespace rhizome {
         }
 
         Chars::Chars( string const &cees ): state(0) {
-            for( size_t i=0; i<cees.size(); ++i) {
-                cs.emplace( cees[i]);
+            std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+            std::wstring ws = converter.from_bytes(cees);   
+
+            for( size_t i=0; i<ws.size(); ++i) {
+                cs.emplace( ws[i]);
             }
         }
 
@@ -24,16 +31,16 @@ namespace rhizome {
         }
 
         void Chars::serialize_to( std::ostream &out ) const {
-            out << "[";
+            out << "{";
             for( auto i=cs.begin(); i!=cs.end(); i++) {
-                out << (*i);
+                out.put(*i);
             }
-            out << "]";
+            out << "}";
         }
 
         void Chars::serialize_to_cclass_context( std::ostream &out ) const {
             for( auto i=cs.begin(); i!=cs.end(); i++) {
-                out << (*i);
+                out.put (*i);
             }
         }
 
@@ -65,7 +72,7 @@ namespace rhizome {
         }
 
         bool Chars::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 
         Thing * Chars::invoke( string const &method, Thing *arg ) {

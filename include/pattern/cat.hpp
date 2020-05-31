@@ -2,6 +2,7 @@
 #define RHIZOME_PATTERN_CAT_HPP
 
 #include <vector>
+#include <cassert>
 #include "pattern.hpp"
 
 using std::vector;
@@ -33,6 +34,8 @@ namespace rhizome {
             virtual Thing * captured_plain() override;
             virtual Thing * captured_transformed() override;
         };
+
+        Cat * cat( vector<IPattern*> const &parts );
     }
 }
 

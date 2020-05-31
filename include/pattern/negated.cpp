@@ -15,7 +15,7 @@ namespace rhizome {
 
         bool 
         Negated::accepted() const {
-            return n_accepted==1 && !inner->accepted();
+            return _valid && n_accepted==1 && !inner->accepted();
         }
 
         bool

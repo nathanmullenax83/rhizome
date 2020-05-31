@@ -20,7 +20,7 @@ namespace rhizome {
         }
 
         bool Any::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"

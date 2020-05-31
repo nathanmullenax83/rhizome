@@ -63,7 +63,7 @@ namespace rhizome {
 
         bool
         Plus::accepted() const {
-            return inner->accepted() || n_accepted>0;
+            return _valid && (inner->accepted() || n_accepted>0);
         }
 
         IPattern *
@@ -102,9 +102,8 @@ namespace rhizome {
 
         void
         Plus::serialize_to( ostream &out ) const {
-            out << "(?:";
             ((Pattern*)inner)->serialize_to(out);
-            out << ")+";
+            out << "+";
         }
 
         bool
@@ -121,6 +120,10 @@ namespace rhizome {
         Plus::invoke( string const &method, Thing *arg ) {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        Plus * plus( IPattern *inner ) {
+            return new Plus(inner);
         }
     }
 }

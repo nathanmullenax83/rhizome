@@ -30,6 +30,8 @@ namespace rhizome {
 
         bool 
         Cat::accepted() const {
+            if( !_valid) return false;
+            
             bool all(true);
             for(size_t i=0; i<parts.size(); ++i) {
                 all = parts[i]->accepted() && all;
@@ -45,25 +47,29 @@ namespace rhizome {
                 if( parts[state]->can_transition(c) ) {
                     parts[state]->transition(c);
                     _captured.put(c);
+                    
                     return;
-                } else if( parts[state]->accepted() ) {
+                } else if( parts[state]->accepted() && (state+1 < parts.size())) {
                     ++state;
                     parts[state]->transition(c);
                     _captured.put(c);
                     return;
                 } else {
-                    return;
+                    throw runtime_error("Cat: no transition available.");
                 }
             }
         }
 
         bool
         Cat::can_transition(char c) const {
-            if( state >= parts.size() ) return false;
-            if( parts[state]->can_transition(c) ) return true;
-            
-            if( state+1 < parts.size() ) {
-                return parts[state]->accepted() && parts[state+1]->can_transition(c);
+            if( state < parts.size() ) {
+                if( parts[state]->can_transition(c)) {
+                    return true;
+                } else if( parts[state]->accepted() ) {
+                    if( state+1 < parts.size() ) {
+                        return parts[state+1]->can_transition(c);
+                    }
+                } 
             }
             return false;
         }
@@ -72,7 +78,7 @@ namespace rhizome {
         Cat::reset() {
             state = 0;
             for(size_t i=0; i<parts.size(); ++i) {
-                parts[i]->reset();
+                ((Pattern*)parts[i])->reset();
             }
             _valid = true;
             _captured = stringstream();
@@ -98,6 +104,9 @@ namespace rhizome {
         Cat::serialize_to( ostream &out ) const {
             for(size_t i=0; i<parts.size(); ++i) {
                 ((Pattern*)parts[i])->serialize_to(out);
+                if( i+1<parts.size() ) {
+                    out << "⁀";
+                }
             }
         }
 
@@ -119,14 +128,16 @@ namespace rhizome {
 
         Thing *
         Cat::captured_transformed () {
+            assert( accepted() );
             // oh boy:
             stringstream capd;
             for(size_t i=0; i<parts.size(); ++i) {
+                
                 Thing *s = parts[i]->captured_transformed();
                 if( s!=NULL && s->rhizome_type()=="String") {
-                    String *t = (String*)s;
-                    capd << t->native_string();
+                    s->serialize_to(capd);
                 }
+                
             }
             return new String(capd.str());
         }
@@ -134,6 +145,14 @@ namespace rhizome {
         Thing *
         Cat::captured_plain() {
             return new String(_captured.str());
+        }
+
+        Cat * cat( vector<IPattern *> const &parts ) {
+            Cat *c = new Cat();
+            for(size_t i=0; i<parts.size(); ++i) {
+                c->append((Pattern*)parts.at(i));
+            }
+            return c;
         }
     }
 }

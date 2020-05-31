@@ -32,6 +32,8 @@ namespace rhizome {
             virtual Thing * captured_plain() override;
             virtual Thing * captured_transformed() override;
         };
+
+        Literal * literal( string const &w );
     }
 }
 

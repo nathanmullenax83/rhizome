@@ -11,7 +11,7 @@ namespace rhizome {
 
         bool
         Range::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 
         void

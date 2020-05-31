@@ -27,7 +27,7 @@ namespace rhizome {
 
         bool
         Digit::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 
         bool
@@ -54,7 +54,7 @@ namespace rhizome {
 
         void
         Digit::serialize_to_cclass_context( ostream &out ) const {
-            out << ":digit:";
+            out << "⁹";
         }
 
         string
@@ -69,9 +69,7 @@ namespace rhizome {
 
         void
         Digit::serialize_to( ostream &out ) const {
-            out << "[";
             serialize_to_cclass_context(out);
-            out << "]";
         }
 
         Thing *

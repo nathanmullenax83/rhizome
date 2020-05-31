@@ -14,7 +14,7 @@ namespace rhizome {
 
         bool
         Star::accepted() const {
-            return true;
+            return _valid && true;
         }
 
         void
@@ -75,9 +75,8 @@ namespace rhizome {
 
         void
         Star::serialize_to( ostream &out ) const {
-            out << "(?:";
             ((Pattern*)inner)->serialize_to(out);
-            out << ")*";
+            out << "*";
         }
 
         string

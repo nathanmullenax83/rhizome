@@ -42,7 +42,7 @@ namespace rhizome {
 
         bool
         HexDigit::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 
         IPattern *
@@ -58,7 +58,7 @@ namespace rhizome {
 
         void
         HexDigit::serialize_to_cclass_context( ostream &out ) const {
-            out << ":xdigit:";
+            out << "⑯";
         }
 
         void

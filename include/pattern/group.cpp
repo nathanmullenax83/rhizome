@@ -22,7 +22,7 @@ namespace rhizome {
         
         bool
         Group::accepted() const {
-            return inner->accepted();
+            return _valid && inner->accepted();
         }
 
         void

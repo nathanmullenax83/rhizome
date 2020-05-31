@@ -1,20 +1,19 @@
-#ifndef RHIZOME_PATTERN_PLUS
-#define RHIZOME_PATTERN_PLUS
-
-#include <stdexcept>
+#ifndef RHIZOME_PATTERN_MAYBE_HPP
+#define RHIZOME_PATTERN_MAYBE_HPP
+#include <cassert>
 #include "pattern.hpp"
+#include "types/string.hpp"
 
-using std::runtime_error;
+using rhizome::types::String;
 
 namespace rhizome {
     namespace pattern {
-        class Plus: public Pattern {
+        class Maybe: public Pattern  {
         private:
             IPattern *inner;
-            size_t n_accepted;
-            stringstream xd; // transformed input
         public:
-            Plus( IPattern *inner );
+            Maybe( IPattern *inner );
+            ~Maybe();
 
             virtual void reset();
             virtual bool can_transition(char c) const;
@@ -25,13 +24,17 @@ namespace rhizome {
             virtual void serialize_to( ostream &out ) const;
 
             virtual bool has_interface( string const &name ) override;
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            
             virtual string rhizome_type() const override;
+
             virtual Thing * captured_plain() override;
             virtual Thing * captured_transformed() override;
+
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
         };
 
-        Plus * plus( IPattern *inner );
+        Maybe * maybe( IPattern *inner );
+        
     }
 }
 

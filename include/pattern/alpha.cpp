@@ -19,7 +19,7 @@ namespace rhizome {
 
         bool 
         Alpha::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 
         bool
@@ -57,7 +57,7 @@ namespace rhizome {
 
         void
         Alpha::serialize_to_cclass_context( ostream &out ) const {
-            out << ":alpha:";
+            out << "α";
         }
 
         bool

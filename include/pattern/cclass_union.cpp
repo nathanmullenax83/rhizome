@@ -44,7 +44,7 @@ namespace rhizome {
 
         bool
         CClassUnion::accepted() const {
-            return state==1;
+            return _valid && state==1;
         }
 
         IPattern *

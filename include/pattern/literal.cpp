@@ -45,7 +45,7 @@ namespace rhizome {
 
         bool
         Literal::accepted() const {
-            return state==w.size();
+            return _valid && state==w.size();
         }
 
         void
@@ -69,7 +69,7 @@ namespace rhizome {
 
         void
         Literal::serialize_to( ostream &out ) const {
-            out << "\"" << w << "\"";
+            out << "«" << w << "»";
         }
 
         string
@@ -90,12 +90,21 @@ namespace rhizome {
 
         Thing *
         Literal::captured_plain() {
+            //std::cout << "Captured literal: " << _captured.str() << "\n";
             return new String(_captured.str());
         }
 
         Thing *
         Literal::captured_transformed() {
-            return captured_plain();
+            Thing *c = captured_plain();
+            //std::cout << "Literal captured: ";
+            //c->serialize_to(std::cout);
+            //std::cout << "\n";
+            return c;
+        }
+
+        Literal * literal( string const &v ) {
+            return new Literal(v);
         }
     }
 }

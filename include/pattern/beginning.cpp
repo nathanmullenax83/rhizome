@@ -38,7 +38,7 @@ namespace rhizome {
 #pragma GCC diagnostic pop        
         bool 
         Beginning::accepted() const{
-            return true;
+            return _valid && true;
         }
             
         IPattern * 

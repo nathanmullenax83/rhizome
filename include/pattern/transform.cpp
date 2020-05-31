@@ -41,7 +41,7 @@ namespace rhizome {
 
         bool 
         Transform::accepted() const {
-            return inner->accepted();
+            return _valid && inner->accepted();
         }
 
         IPattern *
@@ -58,9 +58,9 @@ namespace rhizome {
 
         void 
         Transform::serialize_to( ostream &out ) const {
-            out << "λ(";
+            out << "λ❨";
             ((Pattern*)inner)->serialize_to(out);
-            out << ")";
+            out << "❩";
         }
 
         string
