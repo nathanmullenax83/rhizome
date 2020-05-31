@@ -5,97 +5,36 @@ using rhizome::types::Integer;
 using rhizome::types::String;
 using rhizome::types::Table;
 
+using rhizome::parse::Parser;
+
 namespace rhizome {
     namespace demo {
-        
 
-        parse::Parser * create_BASIC_grammar() {
-            
-            parse::Parser *parser = new parse::Parser();
-                parser->rule( 
-                    "Program", apply(plus(non_term("Statement")),
-                    [](deque<Thing*> ts){
-                        Table *t = new rhizome::types::Table();
-                        for(size_t i=0; i<ts.size();++i) {
-                            Tuple *line = (rhizome::types::Tuple*)ts[i];
-                            rhizome::types::Integer *line_no = (rhizome::types::Integer*)line->at(0);
-                            rhizome::core::Thing *stmt = line->at(1);
-                            stringstream ss;
-                            line_no->serialize_to(ss);
-                            t->set( ss.str(), stmt );
-                        }
-                        return t;
-                    }));
-                parser->rule( 
-                    "Statement", 
-                        apply(seq(non_term("LineNo"),
-                        options({
-                            non_term("EndStatement"),
-                            non_term("GotoStatement"),
-                            non_term("LocateStatement"),
-                            non_term("PrintStatement"),
-                            non_term("LineStatement"),
-                            non_term("InputStatement"),
-                            non_term("IfStatement"),
-                            non_term("NextStatement"),
-                            non_term("ForStatement"),
-                            non_term("AssignmentStatement"),
-                            non_term("RandomizeStatement"),
-                            non_term("ClsStatement"),
-                            non_term("ScreenStatement")
-                        })),
-                []( deque<Thing*> ts ) {
-                    rhizome::types::Tuple *t = new rhizome::types::Tuple();
-                    assert( ts.size()==2 );
-                    t->append( ts[0]);
-                    t->append( ts[1]);
-                    return t;
-                })
-                
-            );
-            parser->rule(
-                    "EndStatement",
-                    apply(lit("END"),
-                    []( deque<Thing*> ts ) {
-                        return ts[0];
-                    }));
-            parser->rule(
-                    "ClsStatement",
-                    apply(lit("CLS"),
-                    []( deque<Thing*> ts ) {
-                        return ts[0];
-                    }));
-            parser->rule(
-                    "GotoStatement",
-                    apply(seq(lit("GOTO"),non_term("LineNo")),
-                    []( deque<Thing*> ts ) {
-                        Tuple *t = new Tuple();
-                        t->append(ts[0]);
-                        t->append(ts[1]);
-                        return t;
-                    }));
-            
-
-            return parser;
+        string test_title( string const &title, Parser *parser ) {
+            stringstream f_title;
+            f_title << "\033[1m" << title << rhizome::ui::RESET_COLOR << "\n";
+            f_title << string(title.size(),'=') << "\n";
+            parser->dump(f_title);
+            f_title << "\n";
+            return f_title.str();
         }
-
+        
         bool parse_test_star() {
-            parse::Parser grammar;
+            Parser grammar;
+            std::cout << test_title( "Star Closure Test", &grammar);
             grammar.rule( "<start>", apply(star(seq(lit("A"),lit("B"))), [](deque<Thing*> ts){
                 Tuple *t  = new Tuple();
                 for(size_t i=0; i<ts.size(); ++i) {
-                    t->append( ts[i]->clone() );
+                    t->append( ts[i] );
                 }
                 return t;
             }));
-            stringstream test0;
-            test0 << "A B A B";
-
-            grammar.q_stream(test0);
-            Thing * result = grammar.parse_thing("<start>");
+            grammar.dump(std::cout);
+            Thing * result = grammar.parse_thing("<start>", "A B A B");
             std::cout << "Result: ";
             result->serialize_to(std::cout);
             std::cout << "\n";
+            delete result;
             return true;
         }
 
@@ -103,18 +42,18 @@ namespace rhizome {
             parse::Parser p;
             p.rule("S0", non_term("A"));
             p.rule("A", apply(non_term("B"), [](deque<Thing*> ts){
-                std::cout << "A production.\n";
+                //std::cout << "A production.\n";
                 assert(ts.size()==1);
                 return ts[0];
             }));
             p.rule("B", lit("C"));
             p.rule("D",apply(non_term("A"),[]( deque<Thing*> ts ){
-                std::cout << "D production.\n";
+                //std::cout << "D production.\n";
                 assert( ts.size()==1);
                 return ts[0];
             }));
-            std::cout << "non-terminal test:\n";
-            p.dump(std::cout);
+            
+            std::cout << test_title("Non-terminals test",&p);
             stringstream s;
             s << "C";
             p.q_stream(s);
@@ -141,14 +80,15 @@ namespace rhizome {
                 lit("d"),
                 seq(lit("e"),star(lit("f")))
             }));
-            std::cout << "Options test:\n";
-            p.dump(std::cout);
+            std::cout << test_title("Options and non-terminals",&p);
+            
+            
             stringstream s;
             s << "e";
             p.q_stream(s);                              
             try{
                 Thing *result = p.parse_thing("S");
-                std::cout << "Result:\n";
+                std::cout << "Result: ";
                 result->serialize_to(std::cout);
                 std::cout << "\n";
                 return true;
@@ -173,6 +113,7 @@ namespace rhizome {
                     return s;
                 }
             ));
+            std::cout << test_title("Sequence of Literals", &grammar);
             stringstream test0;
             test0 << "a b c";
 
@@ -195,8 +136,8 @@ namespace rhizome {
                 }
                 return t;
             }));
-            std::cout << "Testing literal match:\n";
-            std::cout << "======================\n";
+            std::cout << test_title("Testing literal match", &grammar);
+            
             stringstream test0;
             test0 << "START";
             grammar.q_stream(test0);
@@ -212,6 +153,7 @@ namespace rhizome {
         }
 
         bool parse_test_match_type() {
+            
             parse::Parser grammar;
             grammar.rule("Start",
                 apply(plus(match_type("Integer")), [](deque<Thing*> ts){
@@ -221,6 +163,7 @@ namespace rhizome {
                 }
                 return t;
             }));
+            std::cout << test_title("Type Match", &grammar);
 
             bool pass(true);
             auto debug_print = [&pass]( string const &vname, Thing *t )  {
@@ -254,13 +197,14 @@ namespace rhizome {
             grammar.rule("Start",apply(star(lit("A")), [](deque<Thing*> ts){
                 Tuple *t = new Tuple();
                 for(size_t i=0; i<ts.size(); ++i) {
-                    t->append(ts[i]);
-                    std::cout << i << " = ";
-                    ts[i]->serialize_to(std::cout);
-                    std::cout << "\n";
+                    if( ts[i]!=NULL ) {
+                        t->append(ts[i]);
+                    }
                 }
                 return t;
             }));
+            std::cout << test_title( "Star closure", &grammar);
+            
 
             bool pass(true);
             auto debug_print = [&pass]( string const &vname, Thing *t )  {
@@ -270,18 +214,10 @@ namespace rhizome {
                 std::cout << "\n";
             };
 
-            
-            stringstream example;
-            example << "A A A A A";
-            grammar.q_stream(example);
-            Tuple *vs = (Tuple*)grammar.parse_thing("Start");    
+            Tuple *vs = (Tuple*)grammar.parse_thing("Start","A A A A A");    
             pass &= (vs->size()==5);
             debug_print("vs", vs );
-
-            stringstream example2;
-            example2 << "A A";
-            grammar.q_stream(example2);
-            Tuple *vs_also = (Tuple*)grammar.parse_thing("Start");
+            Tuple *vs_also = (Tuple*)grammar.parse_thing("Start","A A");
             pass &= (vs_also->size()==2);
             debug_print("vs", vs_also );
             delete vs;
@@ -289,72 +225,80 @@ namespace rhizome {
             return pass;
         }
 
+        bool parse_negative_integer() {
+            parse::Parser grammar;
+            grammar.rule( "S", match_lexer_rule("Integer"));
+            std::cout << test_title("Single negative integer",&grammar);
+            Thing *result = grammar.parse_thing("S", "-567");
+            bool pass = true;
+            pass = pass && result != NULL;
+            pass = pass && result->rhizome_type()=="Integer";
+            pass = pass && ((rhizome::types::Integer*)result)->native_int()==-567; 
+
+            return pass;
+        }
+
         bool parse_test_list() {
             parse::Parser grammar;
             grammar.rule( "Start",
-                apply(seq(match_type("Integer"), plus(seq(lit(","),match_type("Integer")))),
+                apply(seq(match_lexer_rule("Integer"), star(seq(lit(","),match_lexer_rule("Integer")))),
                 []( deque<Thing*> ts ){
                     rhizome::types::Tuple *tuple = new rhizome::types::Tuple();
                     for( size_t i=0; i<ts.size(); ++i) {
-                        stringstream ss;
-                        ts[i]->serialize_to(ss);
-                        std::cout << i << " = ";
-                        ts[i]->serialize_to(std::cout);
-                        std::cout << "\n";
                         if( ts[i]->rhizome_type()=="Integer") {
-                            tuple->append( new rhizome::types::Integer(ss.str()));
+                            tuple->append( ts[i] );
                         }
                     }
                     return tuple;
                 }
-            ));
-            std::cout << "Looking up start rule...\n";
-            Thing * thing = dynamic_cast<Thing*>(grammar.lookup("Start"));
-            if( thing ) {
-                std::cout << "Grammar:\nStart -> ";
-                thing->serialize_to(std::cout);
-                std::cout << "\n";
+            )); 
+            std::cout << test_title( "Comma delimited list of integers", &grammar);
+            bool pass = true;
+            stringstream alist;
+            alist << "0";
+            for(size_t i=1;i<10; ++i) {
+                
+                std::cout << "\tInput: '" << rhizome::ui::FG_WHITE_ON << alist.str() << rhizome::ui::RESET_COLOR << "'\n";
+                rhizome::types::Tuple *vs = (rhizome::types::Tuple*)grammar.parse_thing("Start",alist.str());
+                std::cout << "\tOutput: '" << rhizome::ui::FG_GREEN_ON;
+                vs->serialize_to(std::cout);
+                std::cout << rhizome::ui::RESET_COLOR << "'\n";
+                pass = pass && (vs->size()==i);
+                alist << "," << ((int)(rand()%100)-50);
             }
-
-            
-            stringstream test0;
-            test0 << "1,2,3,4,5,6";
-            grammar.q_stream(test0);
-            
-            rhizome::types::Tuple *vs = (rhizome::types::Tuple*)grammar.parse_thing("Start");
-            
-            bool pass = (vs->size()==6);
-            vs->serialize_to(std::cout);
-            std::cout << "\n";
             
             return pass;
         }
 
         void parse_demo() {
+            rhizome::ui::Console console(std::cout);
+            console.termios_getch(false); // eat newline.
+
+
             typedef function< bool() > ParseTest;
             vector<ParseTest> tests({
                 parse_literal,
                 parse_test_literal_star,
                 parse_test_match_type,
                 parse_seq,
-                parse_test_star,
-                parse_test_list,
                 TEST_nonterminal,
-                TEST_or
+                TEST_or,
+                parse_test_star,
+                parse_negative_integer,
+                parse_test_list
+                
             });
 
             for( auto i=tests.begin(); i!=tests.end();i++) {
-                std::cout << "Test: \n";
-                std::cout << "======\n";
                 if( i->operator()() ) {
-                    std::cout << "Success!\n";
+                    std::cout << rhizome::ui::FG_GREEN_ON << "  Success!\n\n" << rhizome::ui::RESET_COLOR;
                 } else {
-                    std::cout << "Failure!\n";
+                    std::cout << rhizome::ui::FG_RED_ON << "  Failure!\n\n" << rhizome::ui::RESET_COLOR;
                 }
-                std::cout << "\n\n";
+                
             }
-
-            
+            // wait for the any key
+            console.termios_getch(false);
 
         }
     }

@@ -9,12 +9,13 @@ namespace rhizome {
         void tt_rgb_triple( IParser *p ) {
             p->get_lexer()->define_token_type(
                 "HexTriple", 
+                new rhizome::pattern::Transform(
                 new rhizome::pattern::Cat(
                     new rhizome::pattern::Literal("#"),
                     new rhizome::pattern::NTimes(6,new rhizome::pattern::HexDigit())
-                ), [](IToken *t){
+                ), [](Thing *t){
                     Color *c = new Color();
-                    string s = t->token_value();
+                    string s = ((String*)t)->native_string();
                     auto hd = []( char c ) { 
                         if ( isdigit(c)) return c - '0';
                         if( isupper(c)) return c - 'A';
@@ -28,7 +29,7 @@ namespace rhizome {
                     c->b =  hv( s[5], s[6]) ;
                     return c; 
 
-                });
+                }));
         }
         
 

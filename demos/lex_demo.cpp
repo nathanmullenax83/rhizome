@@ -1,9 +1,17 @@
 #include "lex_demo.hpp"
+#include <functional>
+#include <vector>
+#include "ui.hpp"
 
 using rhizome::lex::Token;
 using rhizome::core::Machine;
 using rhizome::core::System;
 using rhizome::store::Store;
+
+using std::function;
+using std::vector;
+
+using namespace rhizome::pattern;
 
 namespace rhizome {
     namespace demo {
@@ -12,26 +20,30 @@ namespace rhizome {
             rlex::Lexer lexer;
 
             // special tokens can construct core objects
-            lexer.define_token_type( "☭Store", new rhizome::pattern::Literal("☭System"),[](void){
+            lexer.define_token_type( "☭Store", new Transform(new rhizome::pattern::Literal("☭System"),[](Thing* t){
+                delete t;
                 return (Thing*)new Store(".rhizome");
-            });
+            }));
 
-            lexer.define_token_type( "☭Parser", new rhizome::pattern::Literal("☭Parser"),[](void){
+            lexer.define_token_type( "☭Parser", new Transform(new rhizome::pattern::Literal("☭Parser"),[](Thing*t){
+                delete t;
                 return (Thing*)new Parser();
-            });
+            }));
 
-            lexer.define_token_type( "☭Machine", new rhizome::pattern::Literal("☭Machine"),[](void){
+            lexer.define_token_type( "☭Machine", new Transform(new rhizome::pattern::Literal("☭Machine"),[](Thing *t){
+                delete t;
                 return (Thing*)new Machine();
-            });
+            }));
 
             // special tokens can manipulate the lexer
 
 
             // ignore whitespace rule.
             std::cout << "Defining whitespace rule...\n";
-            lexer.define_token_type( "WS", new rhizome::pattern::Whitespace(), [](void){
+            lexer.define_token_type( "WS", new Transform(new rhizome::pattern::Whitespace(), [](Thing*t){
+                delete t;
                 return (Thing*)NULL;
-            });
+            }));
             std::cout << "Preparing unicode test...\n";
             stringstream test;
             test << "☭Parser ☭Machine";
@@ -39,17 +51,20 @@ namespace rhizome {
             
             try {
                 lexer.q(test);
-                while( lexer.has_next_thing() ){
-                    Thing *t = lexer.next_thing();
-                    std::cout << "Extracted: ";
-                    t->serialize_to(std::cout);
-                    std::cout << "\n";
-                }
+                stringstream captured;
+                //std::cout << "Attempting to look ahead.";
+                deque<Thing *> parser_NULL_machine = lexer.peek_next_thing(3,false);
+                Thing *t_parser = parser_NULL_machine[0];
+                Thing *t_machine = parser_NULL_machine[2];
+                std::cout << "Parser? " << t_parser->rhizome_type();
+                std::cout << "Machine? " << t_machine->rhizome_type();
+
+                
             } catch( std::exception e ) {
                 std::cout << "Error extracting tokens. " << e.what() << "\n";
                 return false;
             }
-            return true;
+            return true; 
         }
 
         void test_stream_queue() {
@@ -67,7 +82,59 @@ namespace rhizome {
             std::cout << std::endl;
         }
 
+        bool test_null_lexer_productions() {
+            Lexer l0;
+            
+            l0.define_token_type("Space", new rhizome::pattern::Transform( new rhizome::pattern::Plus(new rhizome::pattern::Whitespace()),[](Thing* a){
+                (void)a;
+                return (Thing*)NULL;
+            }));
+            l0.define_token_type("Word", new rhizome::pattern::Plus( new rhizome::pattern::Alpha()));
+
+            stringstream s;
+            s << "this is a test";
+            
+            l0.q(s);
+            //l0.dump(std::cout);
+
+            deque<Thing*> produced;
+            bool pass = true;
+            while( l0.has_next_thing()) {
+                string captured;
+                Thing *t = l0.next_thing(captured);
+                
+                if( t!= NULL ) {
+                    produced.push_back(t);
+                }
+                
+                //std::cout << "\n-----\n";
+                pass = pass && (t!=NULL);
+            }
+            if( !pass ) {
+                stringstream err;
+                err << "Received null productions from 'Lexer::next_thing. This should never happen.\n";
+                throw runtime_error(err.str());
+            }
+            pass = pass && produced.size()==4;
+            if( !pass ) {
+                stringstream err;
+                err << "Lexer produced wrong number of tokens. Expected 4 and got " << produced.size() << "\n";
+                throw runtime_error(err.str());
+            }
+            return pass;
+        }
+
         void lex_demo() {
+            vector< function<bool(void)> > tests ({test_null_lexer_productions});
+            for( auto i=tests.begin(); i!=tests.end(); ++i) {
+                auto f = *i;
+                if( f() ) {
+                    std::cout << rhizome::ui::FG_GREEN_ON << "Passed\n" << rhizome::ui::RESET_COLOR;
+                } else {
+                    std::cout << rhizome::ui::FG_RED_ON << "Failed\n" << rhizome::ui::RESET_COLOR;
+                }
+            }
+
 #ifdef INSTRUMENTED
             static rhizome::log::Log log("demos",false);
             log.info("Lex demo launched.");
@@ -83,14 +150,13 @@ namespace rhizome {
             }
 
             Lexer lexer;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-            lexer.define_token_type( "whitespace", new rp::Group(new rp::Plus( new rp::Whitespace())),
-                []( IToken *t) {
-                    
+
+            lexer.define_token_type( "whitespace", new Transform(new rp::Plus( new rp::Whitespace()),
+                []( Thing *t) { 
+                    (void)t;
                     return (Thing*)NULL;
-                });
-#pragma GCC diagnostic pop
+                }));
+
 
             vector<string> kws({"for","next","then","if","else","end","each"});
             lexer.define("keyword",kws);
@@ -100,28 +166,23 @@ namespace rhizome {
             lexer.q(example);
 
             while( lexer.has_next_thing()) {
-                Thing *temp = lexer.next_thing();
-                
-                std::cout << "'";
-                temp->serialize_to(std::cout);
-                std::cout << " - ";
-                std::cout << temp->rhizome_type() << '\n';
-                delete temp;
+                string cap;
+                Thing *temp = lexer.next_thing(cap);
+                if( temp != NULL ) {
+                    std::cout << "'";
+                    temp->serialize_to(std::cout);
+                    std::cout << "' - ";
+                    std::cout << temp->rhizome_type() << '\n';
+                    delete temp;
+                }
             }
 
-            std::cout << "Attempting to put back a few things: \n";
-            lexer.put_back_thing( new rhizome::types::Integer(5));
-            lexer.put_back_thing( new rhizome::types::String("Hello world."));
-            Thing *X = lexer.peek_next_thing(0);
-            Thing *Y = lexer.peek_next_thing(1);
-
-            Thing *x = lexer.next_thing();
-            Thing *y = lexer.next_thing();
-            x->serialize_to(std::cout); std::cout << '\n';
-            y->serialize_to(std::cout); std::cout << '\n';
-            X->serialize_to(std::cout); std::cout << '\n';
-            Y->serialize_to(std::cout); std::cout << '\n'; 
             
+            
+
+            ILexer *l = rhizome::load_lexer("lexers/http.lexer");
+            ((Lexer*)l)->dump(std::cout);
+            delete l;
 #ifdef INSTRUMENTED
             log.info("Lexing demo ended normally.");
 #endif

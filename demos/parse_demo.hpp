@@ -4,6 +4,7 @@
 #include <vector>
 #include "rhizome.hpp"
 
+
 using std::vector;
 
 using namespace rhizome::parse;

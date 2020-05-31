@@ -9,6 +9,7 @@
 #include "core/machine.hpp"
 #include "parse.hpp"
 #include "types.hpp"
+#include "ui.hpp"
 
 using std::string;
 using std::stringstream;
@@ -18,6 +19,7 @@ using rhizome::core::Thing;
 using rhizome::core::Machine;
 using rhizome::parse::Parser;
 using rhizome::types::Tuple;
+using rhizome::types::Integer;
 using namespace rhizome::parse;
 
 // L( statements+ ) <---
@@ -45,18 +47,30 @@ namespace rhizome {
         }
 
         /// Numeric expression interpreters
-        void numeric_interpreter( string const &name,Parser *p ) {
+        void numeric_interpreter( string const &name,Parser *p, map<string,Thing*> &vars ) {
             Gramex * term_op = options({lit("+"),lit("-")});
             Gramex * factor_op = options({lit("*"),lit("/")});
             Gramex * summation = seq( non_term("Term"), star( seq(term_op, non_term("Term"))));
             Gramex * product = seq( non_term("Factor"), star( seq(factor_op, non_term("Factor"))));
-            Gramex * factor = match_type("Integer");
+            Gramex * factor = options({
+                match_type("Integer"),
+                apply(match_lexer_rule("Bareword"),[&vars]( deque<Thing*>ts ){
+                    assert(ts.size()==1);
+                    String *name = (String*)ts[0];
+                    if( vars.count(name->native_string())==0){
+                        stringstream err;
+                        err << "Variable '" << name->native_string() <<"' is not defined!";
+                        throw runtime_error(err.str());
+                    }
+                    return vars[name->native_string()];
+                })
+            });
 
             p->rule("Factor",apply(factor,[](deque<Thing*> ts){
                 //std::cout << "Parsing factor: ";
                 //dump("Factor (ts) = ",ts);
                 assert( ts.size()==1 && ts[0]!=NULL );
-                return ts[0]->clone();
+                return ts[0];
             }));
             p->rule("Term", apply(product,
                     [](deque<Thing*> ts){
@@ -113,12 +127,14 @@ namespace rhizome {
 
         typedef map<string, function< Thing *(Thing*)> > CtorTable;
 
-        IParser * create_parser( CtorTable &ctors ) {
+        IParser * create_parser( CtorTable &ctors, bool &quit, rhizome::ui::Console &console, map<string, Thing*> &vars ) {
             Parser *p = new Parser();
             
-            numeric_interpreter("NumericExpression",p);
+            numeric_interpreter("NumericExpression",p, vars);
 
-            p->rule("Repl", options({
+            p->rule("Repl", seq(non_term("Expr"), star(seq(lit(":"), non_term("Expr")))));
+
+            p->rule("Expr", options({
                 apply(seq(lit("PRINT"), 
                     non_term("NumericExpression")
                 ),[](deque<Thing*> ts){
@@ -127,6 +143,36 @@ namespace rhizome {
                 }),
                 apply(seq(lit("CREATE"), non_term("ThingSpec")),[&ctors](deque<Thing*> ts){
                     return ts[1];
+                }),
+                apply(options({lit("END"),lit("QUIT")}), [&quit](deque<Thing*> ts) {
+                    (void)ts;
+                    quit = true;
+                    return (Thing*)(new Tuple());
+                }),
+                apply(lit("CLS"),[&console](deque<Thing*> ts){
+                    (void)ts;
+                    console.clear();
+                    return (Thing*)(new Tuple());
+                }),
+                apply(
+                    seq(
+                        lit("LOCATE"),
+                        non_term("NumericExpression"),
+                        lit(","),
+                        non_term("NumericExpression")),
+                        [&console](deque<Thing*>ts){
+                            Integer *row = (Integer*)ts[1];
+                            Integer *col = (Integer*)ts[3];
+                            console.locate(col->native_int(),row->native_int());
+                            return new Tuple();
+                        }),
+                apply(seq(match_type("String"),lit("="),non_term("NumericExpression")),[&vars](deque<Thing*> ts){
+                    String *vname = (String*)ts[0];
+                    vars[vname->native_string()] = ts[2];
+                    for(size_t i=0; i<ts.size()-1; ++i) {
+                        if( ts[i]!=NULL) { delete ts[i]; }
+                    }
+                    return (Thing*)(new Tuple());
                 })
             }));
 
@@ -147,6 +193,8 @@ namespace rhizome {
         }
 
         void repl_demo() {
+            rhizome::ui::Console console(std::cout);
+
             CtorTable ctors;
             ctors["Str"] = []( Thing *arg ) {
                 std::cout << "String ctor.\n";
@@ -156,14 +204,17 @@ namespace rhizome {
                 return (Thing*)s;
             };
             
-            IParser *parser = create_parser(ctors);
+            map<string, Thing *> vars;
+
+            bool quit = false;
+            IParser *parser = create_parser(ctors, quit, console, vars);
             string line;
             
             ((Parser*)parser)->dump(std::cout);
+            std::cout << "\n";
 
-
-
-            while( std::getline( std::cin, line )) {
+            
+            while( (!quit) && std::getline( std::cin, line )) {
                 try {
                     if( line != "" ) {
                         stringstream ss;
