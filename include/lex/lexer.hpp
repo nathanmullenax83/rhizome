@@ -82,7 +82,7 @@ namespace rhizome {
             /// process this stream after whatever else is queued
             void q( istream &str );
         private:
-            void define( string const &name, rhizome::pattern::Group *g);
+            void define( string const &name, IPattern *g);
 
             /// Bulk define a bunch of keywords of the same type ID.            
             
@@ -114,6 +114,7 @@ namespace rhizome {
 
             virtual void undefine_token_type( string const &name );
             virtual bool has_next_thing() const override;
+            virtual bool has_next_thing( string const & ) override;
             virtual Thing * next_thing( string &putback ) override;
             virtual Thing * next_thing( string const &pattern_name, string &putback ) override;
             virtual IPattern * clone_pattern( string const &name ) const override;

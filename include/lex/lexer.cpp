@@ -68,7 +68,14 @@ namespace rhizome {
             out << "\t" << "There are " << states.size() << " entries in the state stack.\n";
             out << "\t" << "The topmost entry contains the following patterns:\n";
             for( auto i=states.top().patterns.begin(); i!=states.top().patterns.end();++i) {
-                ((Pattern*)i->second)->serialize_to(out);
+                Pattern *p = (Pattern*)i->second;
+                if( p->valid() ) {
+                    out << rhizome::ui::FG_GREEN_ON;
+                } else {
+                    out << rhizome::ui::FG_RED_ON;
+                }
+                p->serialize_to(out);
+                out << rhizome::ui::RESET_COLOR;
                 out << "\t";
             }
             out << "\t" << "The stream_queue buffers characters.\n";
@@ -127,13 +134,28 @@ namespace rhizome {
             return has_next();
         }
 
+        bool
+        Lexer::has_next_thing( string const &rule ) {
+            if( !has_next()) { 
+                return false; 
+            }
+            string putback;
+            
+            Thing *n = next_thing(rule,putback);
+            delete n;
+            put_back(putback);
+            return true;
+            
+            
+        }
+
         Thing *
         Lexer::next_thing(string &putback) {
             static rhizome::log::Log log("Lexer__next_thing");
             stringstream pbb;
             string pb;
 
-            while( (peek_next_thing(1,false))[0]==NULL ) 
+            while( has_next_thing() && (peek_next_thing(1,false))[0]==NULL ) 
                 { 
                     next(pb); pbb << pb; 
                     // log.info("Skipped NULL production.\n");
@@ -141,10 +163,14 @@ namespace rhizome {
             if( has_next_thing() ) {
                 //log.info("has_next_thing reports that there are tokens to extract.");
                 Thing *t = next(pb);
-                //log.info("Extracted token.");
-                //log.info( t==NULL?"Token is NULL":"Token is not NULL.");
+                log.info("Extracted token.");
+                log.info( t==NULL?"Token is NULL":"Token is not NULL.");
                 pbb << pb;
-               //std::cout << "Next returned object of type " << t->rhizome_type() << "\n";
+                if( t!=NULL ) {
+                    std::cout << "Next returned object of type " << t->rhizome_type() << " '";
+                    t->serialize_to(std::cout);
+                    std::cout << "\n";
+                }
                 putback = pbb.str();
                 return t;
             } else {
@@ -157,15 +183,30 @@ namespace rhizome {
 
         Thing *
         Lexer::next_thing(string const &pattern_name, string &putback) {
+            if( !has_next() ) {
+                throw runtime_error("Nothing to extract.");
+            }
             IPattern *p = states.top().patterns.at(pattern_name)->clone_pattern(false);
             p->reset();
-            unsigned long long int c = states.top().streams.next();
-            while( p->can_transition(c)) {
-                p->transition(c);
-                
-                c = states.top().streams.next();
+            std::cout << "Got pattern for " << pattern_name << "\n";
+
+            
+            
+            bool exit = false;
+            while( !states.top().streams.empty() && !exit ) {
+                unsigned long long int c = states.top().streams.next();
+                std::cout << "Got '";
+                std::cout.put(c);
+                std::cout << "'\n";
+
+                if( p->can_transition(c)) {
+                    p->transition(c);
+                } else {
+                    states.top().streams.put_back(c);
+                    exit = true;
+                }
             }
-            states.top().streams.put_back(c);
+            
             if( p->accepted() ) {
                 putback = ((String*)p->captured_plain())->native_string();
                 return p->captured_transformed();
@@ -206,6 +247,8 @@ namespace rhizome {
                     
                     trs.push_back(i->first);
                     bail = false;
+                } else {
+                    i->second->invalidate();
                 }
             }
 
@@ -237,6 +280,9 @@ namespace rhizome {
             
             while( !bail && trs.size() > 0 && !states.top().streams.empty() ) {
                 vector<string> next_can_transition;
+                // keep track of the patterns that can't transition
+                // in the current iteration.
+                vector<string> couldnt;
                 c = states.top().streams.next();
                 states.top().streams.put_back(c);
                 //P.put(c);
@@ -247,12 +293,20 @@ namespace rhizome {
                         dict[trs[i]]->transition(c);
                         next_can_transition.push_back(trs[i]);
                         bail = false;
-                    } 
+                    } else {
+                        if( dict[trs[i]]->valid()) {
+                            couldnt.push_back( trs[i]);
+                        }
+                    }
                 }
                 if( next_can_transition.size() > 0 ) {
                     trs = next_can_transition;
                     P.put(c);
                     states.top().streams.next();
+                    // put all patterns that couldn't match in 'invalid' state.
+                    for(size_t i=0; i<couldnt.size(); ++i) {
+                        dict[couldnt[i]]->invalidate();
+                    }
                 } else {
                     bail = true;
                 }
@@ -273,10 +327,6 @@ namespace rhizome {
                     t = p->captured_transformed();
                     //std::cout << "Got transformed capture: " << t << "\n";
                     // t may be NULL!
-                    if( t!=NULL ) {
-             //           t->serialize_to(std::cout);
-                        // std::cout << "^ Transform applied?\n";
-                    }
                     found = true;
                 }
             }
@@ -288,7 +338,7 @@ namespace rhizome {
         }
 
         void
-        Lexer::define( string const &name, rhizome::pattern::Group *g ) {
+        Lexer::define( string const &name, IPattern *g ) {
             auto &ps = states.top().patterns;
             if( ps.count(name)>0 ){
                 delete ps[name];
@@ -308,7 +358,7 @@ namespace rhizome {
         void
         Lexer::define( string const &name, string const &token_literal ) {
             rhizome::pattern::Literal *lit = new rhizome::pattern::Literal(token_literal);
-            define(name, new rhizome::pattern::Group(lit));
+            define(name, lit);
         }
 
         void
