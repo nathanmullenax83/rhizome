@@ -2,6 +2,15 @@
 
 namespace rhizome {
     namespace alphabet {
+
+        Classifier::Classifier() {
+
+        }
+
+        Classifier::~Classifier() {
+            
+        }
+
         set< string >
         Classifier::classes( unsigned long long c ) const {
             set<string> cs;

@@ -28,9 +28,13 @@ using rhizome::types::Char;
 
 namespace rhizome {
     namespace alphabet {
+        /// Classifier is going to be the basis for the second revision
+        /// of the programmable lexer. It is elsewhere referred to as 
+        /// a 'sublexer'. 
         class Classifier: public Thing {
         private:
             map< string, function< bool( unsigned long long) > > fns;
+
             
         public:
             Classifier();
