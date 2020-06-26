@@ -85,7 +85,7 @@ namespace rhizome {
         void
         Log::info( string const &msg ) {
             
-            string m = when(cat(green("[Info] "),msg));
+            string m = when(cat(green(cat(section,":[Info] ")),msg));
             log(m);
             if( echo ) {
                 std::cout << m << std::endl;
