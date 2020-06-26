@@ -8,6 +8,21 @@ WARN = -Werror -Wall -Wextra -pedantic
 OPTIMIZE = 
 CC   = c++ $(WARN) $(STD) $(LIBD) $(INCL) $(OPTIMIZE) -ggdb
 
+# sublexer / character classifier
+build/alphabet-classifier.o: $(SRC)/alphabet/classifier.cpp $(SRC)/alphabet/classifier.hpp
+	$(CC) -c $(SRC)/alphabet/classifier.cpp -o build/alphabet-classifier.o
+build/alphabet-mapping.o: $(SRC)/alphabet/mapping.cpp $(SRC)/alphabet/mapping.hpp
+	$(CC) -c $(SRC)/alphabet/mapping.cpp -o build/alphabet-mapping.o
+ALPHABET_OBJECTS = build/alphabet-classifier.o build/alphabet-mapping.o
+# alpha
+lib/libalphabet.a: $(ALPHABET_OBJECTS)
+
+# word struct
+build/words-dictionary.o: $(SRC)/words/dictionary.cpp $(SRC)/words/dictionary.hpp
+	$(CC) -c $(SRC)/words/dictionary.cpp -o build/words-dictionary.o
+WORDS_OBJECTS = build/words-dictionary.o 
+lib/libwords.a: $(WORDS_OBJECTS)
+
 # lexer component
 
 
@@ -119,7 +134,10 @@ build/types-enumeration.o: $(SRC)/types/enumeration.cpp $(SRC)/types/enumeration
 build/types-dir.o: $(SRC)/types/dir.cpp $(SRC)/types/dir.hpp
 	$(CC) -c $(SRC)/types/dir.cpp -o build/types-dir.o
 
-TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o
+build/types-operator.o: $(SRC)/types/operator.cpp $(SRC)/types/operator.hpp
+	$(CC) -c $(SRC)/types/operator.cpp -o build/types-operator.o
+
+TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o build/types-operator.o
 
 lib/libtypes.a: $(TYPES_OBJECTS)
 	ar scr lib/libtypes.a $(TYPES_OBJECTS)
@@ -190,7 +208,16 @@ build/pattern-n-times.o: $(SRC)/pattern/n_times.cpp $(SRC)/pattern/n_times.hpp
 build/pattern-negated.o: $(SRC)/pattern/negated.cpp $(SRC)/pattern/negated.hpp
 	$(CC) -c $(SRC)/pattern/negated.cpp -o build/pattern-negated.o
 
-PATTERN_OBJECTS = build/pattern.o build/pattern-literal.o build/pattern-or.o build/pattern-cat.o build/pattern-star.o build/pattern-plus.o build/pattern-range.o build/pattern-group.o build/pattern-beginning.o build/pattern-cclass-union.o build/pattern-whitespace.o build/pattern-alpha.o build/pattern-nongreedy.o build/pattern-any.o build/pattern-digit.o build/pattern-hex-digit.o build/pattern-n-times.o build/pattern-negated.o
+build/pattern-chars.o: $(SRC)/pattern/chars.cpp $(SRC)/pattern/chars.hpp
+	$(CC) -c $(SRC)/pattern/chars.cpp -o build/pattern-chars.o
+
+build/pattern-transform.o: $(SRC)/pattern/transform.cpp $(SRC)/pattern/transform.hpp
+	$(CC) -c $(SRC)/pattern/transform.cpp -o build/pattern-transform.o
+
+build/pattern-maybe.o: $(SRC)/pattern/maybe.cpp $(SRC)/pattern/maybe.hpp
+	$(CC) -c $(SRC)/pattern/maybe.cpp -obuild/pattern-maybe.o
+
+PATTERN_OBJECTS = build/pattern.o build/pattern-literal.o build/pattern-or.o build/pattern-cat.o build/pattern-star.o build/pattern-plus.o build/pattern-range.o build/pattern-group.o build/pattern-beginning.o build/pattern-cclass-union.o build/pattern-whitespace.o build/pattern-alpha.o build/pattern-nongreedy.o build/pattern-any.o build/pattern-digit.o build/pattern-hex-digit.o build/pattern-n-times.o build/pattern-negated.o build/pattern-chars.o build/pattern-transform.o build/pattern-maybe.o
 
 lib/libpattern.a: $(PATTERN_OBJECTS)
 	ar scr lib/libpattern.a $(PATTERN_OBJECTS)
@@ -269,36 +296,42 @@ build/parse-gramex.o: $(SRC)/parse/gramex.cpp $(SRC)/parse/gramex.hpp
 	$(CC) -c $(SRC)/parse/gramex.cpp -o build/parse-gramex.o
 
 build/parse-non-terminal.o: $(SRC)/parse/non_terminal.cpp $(SRC)/parse/non_terminal.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/non_terminal.cpp -o build/parse-non-terminal.o
+	$(CC) -c $(SRC)/parse/non_terminal.cpp -o build/parse-non-terminal.o
 
 build/parse-parser.o: $(SRC)/parse/parser.cpp $(SRC)/parse/parser.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/parser.cpp -o build/parse-parser.o
+	$(CC) -c $(SRC)/parse/parser.cpp -o build/parse-parser.o
 
 build/parse-ruleset.o: $(SRC)/parse/ruleset.cpp $(SRC)/parse/ruleset.hpp
 	$(CC) -c $(SRC)/parse/ruleset.cpp -o build/parse-ruleset.o
 
 build/parse-or.o: $(SRC)/parse/or.cpp $(SRC)/parse/or.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/or.cpp -o build/parse-or.o
+	$(CC) -c $(SRC)/parse/or.cpp -o build/parse-or.o
 
 build/parse-and.o: $(SRC)/parse/and.cpp $(SRC)/parse/and.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/and.cpp -o build/parse-and.o
+	$(CC) -c $(SRC)/parse/and.cpp -o build/parse-and.o
 
 build/parse-literal.o: $(SRC)/parse/literal.cpp $(SRC)/parse/literal.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/literal.cpp -o build/parse-literal.o
+	$(CC) -c $(SRC)/parse/literal.cpp -o build/parse-literal.o
 
 build/parse-match-type.o: $(SRC)/parse/match_type.cpp $(SRC)/parse/match_type.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/match_type.cpp -o build/parse-match-type.o
+	$(CC) -c $(SRC)/parse/match_type.cpp -o build/parse-match-type.o
 
 build/parse-plus-closure.o: $(SRC)/parse/plus_closure.cpp $(SRC)/parse/plus_closure.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/plus_closure.cpp -o build/parse-plus-closure.o
+	$(CC) -c $(SRC)/parse/plus_closure.cpp -o build/parse-plus-closure.o
 
 build/parse-star-closure.o: $(SRC)/parse/star_closure.cpp $(SRC)/parse/star_closure.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/star_closure.cpp -o build/parse-star-closure.o
+	$(CC) -c $(SRC)/parse/star_closure.cpp -o build/parse-star-closure.o
 
 build/parse-maybe-closure.o: $(SRC)/parse/maybe_closure.cpp $(SRC)/parse/maybe_closure.hpp
-	$(CC) -DINSTRUMENTED -c $(SRC)/parse/maybe_closure.cpp -o build/parse-maybe-closure.o
+	$(CC) -c $(SRC)/parse/maybe_closure.cpp -o build/parse-maybe-closure.o
 
-PARSE_OBJECTS = build/parse-gramex.o build/parse-non-terminal.o build/parse-parser.o build/parse-ruleset.o build/parse-or.o build/parse-and.o build/parse-literal.o build/parse-match-type.o build/parse-plus-closure.o build/parse-star-closure.o build/parse-maybe-closure.o
+build/parse-transform.o: $(SRC)/parse/transform.cpp $(SRC)/parse/transform.hpp
+	$(CC) -c $(SRC)/parse/transform.cpp -o build/parse-transform.o
+
+build/parse-match-rule.o: $(SRC)/parse/match_rule.cpp $(SRC)/parse/match_rule.hpp
+	$(CC) -c $(SRC)/parse/match_rule.cpp -o build/parse-match-rule.o
+
+PARSE_OBJECTS = build/parse-gramex.o build/parse-non-terminal.o build/parse-parser.o build/parse-ruleset.o build/parse-or.o build/parse-and.o build/parse-literal.o build/parse-match-type.o build/parse-plus-closure.o build/parse-star-closure.o build/parse-maybe-closure.o build/parse-transform.o build/parse-match-rule.o
 
 lib/libparse.a: $(PARSE_OBJECTS)
 	ar cr lib/libparse.a $(PARSE_OBJECTS)
@@ -331,7 +364,13 @@ build/core-machine.o: $(SRC)/core/machine.cpp $(SRC)/core/machine.hpp
 build/core-system.o: $(SRC)/core/system.cpp $(SRC)/core/system.hpp
 	$(CC) -c $(SRC)/core/system.cpp -o build/core-system.o
 
-CORE_OBJECTS = build/core-system.o build/core-machine.o
+build/core-universe.o: $(SRC)/core/universe.cpp $(SRC)/core/universe.hpp
+	$(CC) -c $(SRC)/core/universe.cpp -o build/core-universe.o
+
+build/core-i-lexer.o: $(SRC)/core/i_lexer.cpp $(SRC)/core/i_lexer.hpp
+	$(CC) -c $(SRC)/core/i_lexer.cpp -o build/core-i-lexer.o
+
+CORE_OBJECTS = build/core-system.o build/core-machine.o build/core-universe.o build/core-i-lexer.o
 
 lib/libcore.a: $(CORE_OBJECTS)
 	ar cr lib/libcore.a $(CORE_OBJECTS)
@@ -374,13 +413,29 @@ build/store-demo.o: demos/store_demo.cpp demos/store_demo.hpp
 build/machine-demo.o: demos/machine_demo.cpp demos/machine_demo.hpp
 	$(CC) -c demos/machine_demo.cpp -o build/machine-demo.o
 
+build/repl-demo.o: demos/repl_demo.cpp demos/repl_demo.hpp
+	$(CC) -c demos/repl_demo.cpp -o build/repl-demo.o
+
+build/alphabet-demo.o: demos/alphabet_demo.cpp demos/alphabet_demo.hpp
+	$(CC) -c demos/alphabet_demo.cpp -o build/alphabet-demo.o
+
+build/plank.o: demos/plank.cpp demos/plank.hpp
+	$(CC) -c demos/plank.cpp -o build/plank.o
+
+build/int-ops.o: demos/int_ops.cpp demos/int_ops.hpp
+	$(CC) -c demos/int_ops.cpp -o build/int-ops.o
+
+build/meta.o: $(SRC)/rhizome.cpp $(SRC)/rhizome.hpp
+	$(CC) -c $(SRC)/rhizome.cpp -o build/meta.o
+META_OBJECTS = build/meta.o
+
 # build archive of demos
-DEMOS = build/patterns-demo.o build/html-demo.o build/http-demo.o build/console-demo.o build/color-demo.o build/types-demo.o build/lex-demo.o build/parse-demo.o build/genesis-demo.o build/sdt-demo.o build/store-demo.o build/machine-demo.o
+DEMOS = build/patterns-demo.o build/html-demo.o build/http-demo.o build/console-demo.o build/color-demo.o build/types-demo.o build/lex-demo.o build/parse-demo.o build/genesis-demo.o build/sdt-demo.o build/store-demo.o build/machine-demo.o build/repl-demo.o build/alphabet-demo.o build/plank.o build/int-ops.o
 build/librhizome-demos.a: $(DEMOS)
 	ar scr build/librhizome-demos.a $(DEMOS)
 
 # build archive of libs
-LIB_OBJECTS = $(PATTERN_OBJECTS) $(TYPES_OBJECTS) $(LEXER_OBJECTS) $(LOG_OBJECTS) $(UI_OBJECTS) $(COLOR_OBJECTS) $(HTML_OBJECTS) $(LOGIC_OBJECTS) $(IMAGE_OBJECTS) $(IPC_OBJECTS) $(NET_OBJECTS) $(STORE_OBJECTS) $(PARSE_OBJECTS) $(SDT_OBJECTS) $(CORE_OBJECTS)
+LIB_OBJECTS = $(ALPHABET_OBJECTS) $(WORDS_OBJECTS) $(PATTERN_OBJECTS) $(TYPES_OBJECTS) $(LEXER_OBJECTS) $(LOG_OBJECTS) $(UI_OBJECTS) $(COLOR_OBJECTS) $(HTML_OBJECTS) $(LOGIC_OBJECTS) $(IMAGE_OBJECTS) $(IPC_OBJECTS) $(NET_OBJECTS) $(STORE_OBJECTS) $(PARSE_OBJECTS) $(SDT_OBJECTS) $(CORE_OBJECTS) $(META_OBJECTS)
 lib/librhizome.a: $(LIB_OBJECTS)
 	ar scr lib/librhizome.a $(LIB_OBJECTS)
 
@@ -388,7 +443,7 @@ lib/librhizome.a: $(LIB_OBJECTS)
 
 # issue 1
 
-rhizome: $(SRC)/vm/*.tpp main.cpp $(DEMOS) lib/librhizome.a
+rhizome: main.cpp $(DEMOS) lib/librhizome.a
 	$(CC) main.cpp $(DEMOS) -lrhizome -lrt -lgmp -lgmpxx `libpng-config --ldflags` -lfreeimage -lfreeimageplus -orhizome
 
 clean:
