@@ -1,14 +1,45 @@
 #ifndef RHIZOME_NET_PUBLIC_SERVER
 #define RHIZOME_NET_PUBLIC_SERVER
 
+#include <cwctype>
+#include <string>
+#include <codecvt>
+#include <locale>
+
+using std::wstring;
+using std::string;
+
+#include "sdt/article.hpp"
+#include "types/uuid.hpp"
+#include "types/dir.hpp"
+#include "alphabet.hpp"
+
+using rhizome::sdt::Article;
+using rhizome::types::UUID;
+using rhizome::types::Dir;
+using rhizome::alphabet::Classifier;
+
 namespace rhizome {
     namespace net {
+        /// This encodes slashes as well, so use with caution.
+        string url_encode_utf8( wstring const &docname );
+        string url_encode_windows1252( wstring const &docname );
+
         /// Let's assume you have an apache 2 install somewhere.
         /// This class is for reading its configuration to see if
         /// we have write-permission somewhere so we can publish
         /// dynamically generated documents using a regular-old server.
         class PublicServer {
+            wstring root_dir;
+            UUID intance_id;
+            Classifier classifier;
+        public:
+            /// Where is your web directory? (or a subdirectory that this process has access to)
+            /// Using PublicServer to push out static pages will put them in a temporary
+            /// folder. These folders are (er., will be) swept as necessary.
+            PublicServer(string root_dir);
 
+            void write_document( wstring filename, Article *article );
         };
 
         /* To consider: is there an application of this framework that does not

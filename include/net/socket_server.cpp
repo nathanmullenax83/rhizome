@@ -29,14 +29,6 @@ namespace rhizome {
             }
         }
 
-        // rp::Pattern *
-        // SocketServer::make_pattern() {
-        //     return NULL;
-        // }
-
-        // rp::Pattern *
-        // SocketServer::make_concise_pattern() {
-        //     return NULL;
-        // }
+        
     }
 }

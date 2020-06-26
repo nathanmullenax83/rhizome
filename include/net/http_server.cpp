@@ -37,5 +37,11 @@ namespace rhizome {
             return name==rhizome_type()||name=="Thing";
         }
 
+        Thing *
+        HTTPServer::invoke( string const &method, Thing *arg ) {
+            (void)arg; (void)method;
+            throw runtime_error("Not implemented.");
+        }
+
     }
 }

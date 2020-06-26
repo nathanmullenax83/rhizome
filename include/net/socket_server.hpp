@@ -29,12 +29,7 @@ namespace rhizome {
             struct sockaddr_in address;
 
         public:
-            
-            SocketServer( int port_no, size_t queue_length=100 );
-            // virtual rp::Pattern * make_pattern();
-            // virtual rp::Pattern * make_concise_pattern();
-
-            
+            SocketServer( int port_no, size_t queue_length=100 );            
         };
     }
 }
