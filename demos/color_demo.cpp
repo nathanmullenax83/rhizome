@@ -66,7 +66,7 @@ namespace rhizome {
 
         void color_demo() {
             IParser *parser = create_parser();
-            IStore *store = new rhizome::store::Store(".colors");
+            IStore *store = new rhizome::store::Store(".colors",parser);
             rhizome::core::System * csystem = rhizome::core::create_system( parser, store );
             
             

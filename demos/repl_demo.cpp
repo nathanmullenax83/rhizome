@@ -20,6 +20,7 @@ using rhizome::core::Machine;
 using rhizome::parse::Parser;
 using rhizome::types::Tuple;
 using rhizome::types::Integer;
+using rhizome::types::Operator;
 using namespace rhizome::parse;
 
 // L( statements+ ) <---
@@ -154,6 +155,7 @@ namespace rhizome {
                     console.clear();
                     return (Thing*)(new Tuple());
                 }),
+                
                 apply(
                     seq(
                         lit("LOCATE"),
@@ -175,6 +177,8 @@ namespace rhizome {
                     return (Thing*)(new Tuple());
                 })
             }));
+
+            
 
             p->rule("ThingSpec", apply(seq(match_type("Bareword"), non_term("Tuple")),
             [&ctors](deque<Thing*> ts){

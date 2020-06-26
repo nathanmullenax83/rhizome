@@ -20,9 +20,9 @@ namespace rhizome {
             rlex::Lexer lexer;
 
             // special tokens can construct core objects
-            lexer.define_token_type( "☭Store", new Transform(new rhizome::pattern::Literal("☭System"),[](Thing* t){
+            lexer.define_token_type( "☭Store", new Transform(new rhizome::pattern::Literal("☭System"),[&lexer](Thing* t){
                 delete t;
-                return (Thing*)new Store(".rhizome");
+                return (Thing*)new Store(".rhizome", new rhizome::parse::Parser(&lexer));
             }));
 
             lexer.define_token_type( "☭Parser", new Transform(new rhizome::pattern::Literal("☭Parser"),[](Thing*t){

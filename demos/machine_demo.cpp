@@ -14,7 +14,7 @@ namespace rhizome {
     namespace demo {
         void machine_demo() {
             IParser * parser = new Parser();
-            IStore * store = new Store(".rhizome");
+            IStore * store = new Store(".rhizome",parser);
             /// parser is by default primed with constructors for basic system types!
             
             // now parser is constructing objects for a particular
