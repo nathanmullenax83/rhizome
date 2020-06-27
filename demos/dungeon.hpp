@@ -1,9 +1,11 @@
 #ifndef RHIZOME_DEMOS_DUNGEON
 #define RHIZOME_DEMOS_DUNGEON
 
-namespace rhizome {
-    /// demoing ghost processes
-    
-}
+#include "rhizome.hpp"
 
+namespace rhizome {
+    namespace demo {
+        void dungeon();
+    }
+}
 #endif
