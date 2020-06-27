@@ -28,14 +28,15 @@ namespace rhizome {
 
         Thing *
         Bool::invoke( string const &method, Thing *argument ) {
-            if( method=="!" && argument==NULL ) return new Bool( !value );
+            if( (method=="!" || method=="not" || method=="~") && argument==NULL ) return new Bool( !value );
             if( method=="==" && argument!=NULL ) {
                 if( argument->rhizome_type() == rhizome_type() ) {
                     Bool *b = (Bool*)argument;
                     return new Bool(b->value==value);
                 }
             }
-            throw runtime_error("");
+            
+            throw runtime_error("I'm not familiar with that operation.");
         }
     }
 }

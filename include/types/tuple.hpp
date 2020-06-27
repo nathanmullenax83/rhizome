@@ -39,6 +39,14 @@ namespace rhizome {
             virtual bool has_interface(string const &name) override;
             virtual Thing * invoke( string const &method, Thing *arg ) override;
 
+            // list processing
+            // Remove the first element, modifying the tuple in the process.
+            Thing * extract_first();
+
+            // bridge methods
+            vector<string> get_vector_of_native_strings();
+
+
         };
     }
 }

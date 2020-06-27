@@ -15,32 +15,10 @@ namespace rhizome {
             return out;
         }
 
-        // rp::Pattern *
-        // String::make_pattern() const {
-        //     return make_concise_pattern();
-        // }
-
-        // rp::Pattern *
-        // String::make_concise_pattern() const {
-        //     rp::Cat *p = new rp::Cat();
-        //     p->append( new rp::Literal("\"") );
-            
-        //     p->append( new rp::Literal("\"") );
-        //     return p;
-        // }
-
         void
         String::serialize_to( ostream &out ) const {
             out << value;
         }
-
-        // void
-        // String::deserialize_from( istream &in, IParser *parser ) {
-        //     parser->match_literal( in, "string");
-        //     parser->match_literal( in, "(");
-        //     value = parser->match_qstring(in);
-        //     parser->match_literal( in, ")");
-        // }
 
         Thing *
         String::clone() const {
@@ -66,8 +44,22 @@ namespace rhizome {
 
         Thing *
         String::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+            if( arg==NULL ) {
+                if( method=="clone") {
+                    return clone();
+                } else if( method=="append") {
+                    stringstream ss; arg->serialize_to(ss);
+                    append(ss.str());
+                    return this;
+                }
+            }
+            (void)method;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        string
+        String::native_string() const {
+            return value;
         }
     }
 }

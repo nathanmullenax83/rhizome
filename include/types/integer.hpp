@@ -31,6 +31,8 @@ namespace rhizome {
 
             bool is_prime();
 
+            long int native_int() const;
+
             friend ostream & operator << ( ostream &out, Integer const &j );
             /*
             virtual rp::Pattern * make_pattern() const override;

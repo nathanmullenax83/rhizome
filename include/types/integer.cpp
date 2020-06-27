@@ -18,6 +18,14 @@ namespace rhizome {
 
         }
 
+        long int Integer::native_int() const {
+            if( value.fits_slong_p() ) {
+                return value.get_si();
+            } else {
+                throw runtime_error("Integer value does not fit signed long.");
+            }
+        }
+
         bool
         Integer::is_prime() {
             if( value < 4e9 ) {

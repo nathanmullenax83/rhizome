@@ -16,5 +16,6 @@
 #include "bool.hpp"
 #include "enumeration.hpp"
 #include "dir.hpp"
+#include "operator.hpp"
 
 #endif

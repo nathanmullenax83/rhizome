@@ -49,5 +49,10 @@ namespace rhizome {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
         }
+
+        long double
+        Float::get_value() const {
+            return value;
+        }
     }
 }

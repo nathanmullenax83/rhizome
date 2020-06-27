@@ -32,13 +32,15 @@ namespace rhizome {
             virtual void serialize_to( ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;
 
-            virtual Thing * clone() const;
+            virtual Thing * clone() const override;
             virtual string rhizome_type() const override;
 
             void append( string const &w );
             
             virtual bool has_interface(string const &name) override;
             virtual Thing * invoke( string const &method, Thing *arg ) override;
+
+            string native_string() const;
         };
     }
 }

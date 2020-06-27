@@ -13,15 +13,16 @@ namespace rhizome {
             }
         }
 
-        // Pattern *
-        // Tuple::make_concise_pattern() const {
-
-        // }
-
-        // Pattern *
-        // Tuple::make_pattern() const {
-
-        // }
+        vector<string>
+        Tuple::get_vector_of_native_strings() {
+            vector<string> vs;
+            for(size_t i=0; i<items.size(); ++i) {
+                stringstream e;
+                items[i]->serialize_to(e);
+                vs.push_back(e.str());
+            }
+            return vs;
+        }
 
         Thing *
         Tuple::clone() const {
@@ -43,11 +44,6 @@ namespace rhizome {
             }
             out << ")";
         }
-
-        // void
-        // Tuple::deserialize_from( istream &in, IParser *parser ) {
-        //     parser->parse_thing(in, "<Tuple>");
-        // }
 
         string
         Tuple::rhizome_type() const {
@@ -81,11 +77,26 @@ namespace rhizome {
 
         Thing *
         Tuple::invoke( string const &method, Thing *arg ) {
+            if( arg != NULL ) {
+                if( method=="append" ) {
+                    append( arg );
+                } else if( method=="prepend") {
+                    prepend(arg);
+                }
+            }
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
         }
 
         size_t Tuple::size() const { return items.size(); }
+
+        Thing *
+        Tuple::extract_first() {
+            assert( items.size() > 0);
+            Thing *f = items.front();
+            items.pop_front();
+            return f;
+        }
 
     }
 }
