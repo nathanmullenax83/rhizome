@@ -40,8 +40,10 @@ namespace rhizome {
             virtual Thing * invoke( string const &method, Thing *arg ) override;
 
             // list processing
-            // Remove the first element, modifying the tuple in the process.
+            /// Remove the first element, modifying the tuple in the process.
             Thing * extract_first();
+            /// Remove the last element, modifying the list in the process.
+            Thing * extract_last();
 
             // bridge methods
             vector<string> get_vector_of_native_strings();

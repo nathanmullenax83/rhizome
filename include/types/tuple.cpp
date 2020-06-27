@@ -98,5 +98,13 @@ namespace rhizome {
             return f;
         }
 
+        Thing *
+        Tuple::extract_last() {
+            assert( items.size() > 0);
+            Thing *f = items.back();
+            items.pop_back();
+            return f;
+        }
+
     }
 }

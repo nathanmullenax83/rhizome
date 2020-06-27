@@ -74,5 +74,12 @@ namespace rhizome {
             (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
         }
+
+        long double
+        Fraction::decimal() const {
+            long double n = numerator.native_int();
+            long double d = denomenator.native_int();
+            return n/d;// customize
+        }
     }
 }

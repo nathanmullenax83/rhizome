@@ -14,9 +14,8 @@ using rhizome::core::Thing;
 namespace rhizome {
     namespace types {
         class Float: public Thing {
-        private:
-            long double value;
         public:
+            long double value;
             Float();
             Float( long double value );
             Float( string const &v );

@@ -20,10 +20,10 @@ using std::stringstream;
 namespace rhizome {
     namespace types {
         class Integer: public Thing {
-        private:
+        public:
             mpz_class value;
 
-        public:
+        
             Integer();
             Integer( int value );
             Integer( string const &value );

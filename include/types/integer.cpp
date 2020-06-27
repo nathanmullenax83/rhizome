@@ -102,7 +102,7 @@ namespace rhizome {
 
         string
         Integer::rhizome_type() const {
-            return "Integer";
+            return "Int";
         }
 
         bool
