@@ -425,12 +425,15 @@ build/plank.o: demos/plank.cpp demos/plank.hpp
 build/int-ops.o: demos/int_ops.cpp demos/int_ops.hpp
 	$(CC) -c demos/int_ops.cpp -o build/int-ops.o
 
+build/dungeon.o: demos/dungeon.cpp demos/dungeon.hpp
+	$(CC) -c demos/dungeon.cpp -o build/dungeon.o
+
 build/meta.o: $(SRC)/rhizome.cpp $(SRC)/rhizome.hpp
 	$(CC) -c $(SRC)/rhizome.cpp -o build/meta.o
 META_OBJECTS = build/meta.o
 
 # build archive of demos
-DEMOS = build/patterns-demo.o build/html-demo.o build/http-demo.o build/console-demo.o build/color-demo.o build/types-demo.o build/lex-demo.o build/parse-demo.o build/genesis-demo.o build/sdt-demo.o build/store-demo.o build/machine-demo.o build/repl-demo.o build/alphabet-demo.o build/plank.o build/int-ops.o
+DEMOS = build/patterns-demo.o build/html-demo.o build/http-demo.o build/console-demo.o build/color-demo.o build/types-demo.o build/lex-demo.o build/parse-demo.o build/genesis-demo.o build/sdt-demo.o build/store-demo.o build/machine-demo.o build/repl-demo.o build/alphabet-demo.o build/plank.o build/int-ops.o build/dungeon.o
 build/librhizome-demos.a: $(DEMOS)
 	ar scr build/librhizome-demos.a $(DEMOS)
 

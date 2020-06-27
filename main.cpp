@@ -27,6 +27,7 @@
 #include "demos/alphabet_demo.hpp"
 #include "demos/plank.hpp"
 #include "demos/int_ops.hpp"
+#include "demos/dungeon.hpp"
 
 using std::string;
 #pragma GCC diagnostic push
@@ -50,7 +51,7 @@ int main(int argc, char **argv) {
 // //    menu.add_item( "IPC Demo", rhizome::ipc::demo );
 //     menu.add_item( "\033[1;32mGenesis Demo\033[0m", rhizome::demo::genesis_demo );
      menu.add_item( "Alphabet Demo", rhizome::demo::alphabet_demo );
-//     menu.add_item( "Types Demo", rhizome::demo::types_demo);
+     menu.add_item( "Types Demo", rhizome::demo::types_demo);
      menu.add_item( "Pattern Tests", rhizome::demo::patterns_demo );
 
 //     menu.add_item( "Color Demo", rhizome::demo::color_demo );
@@ -63,7 +64,8 @@ int main(int argc, char **argv) {
 //     menu.add_item( "Machine Demo", rhizome::demo::machine_demo );
      menu.add_item( "Dynamic Integer Operators", rhizome::demo::int_ops );
      menu.add_item( "REPL Demo", rhizome::demo::repl_demo );
-     menu.add_item( "Pirates Knitting", rhizome::demos::plank );
+//     menu.add_item( "Pirates Knitting", rhizome::demos::plank );
+    menu.add_item("Dungeon", rhizome::demo::dungeon);
 
      bool quit = false;
      menu.add_item( "Quit", [&quit](){ quit=true; });
