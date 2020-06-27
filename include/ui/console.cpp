@@ -3,7 +3,10 @@
 namespace rhizome {
     namespace ui {
         Console::Console(std::ostream &console): console(console) {
-
+            struct termios current;
+            tcgetattr(0,&current);
+            termios_configs.push(current);
+            tcsetattr(0,TCSANOW,&termios_configs.top());
         }
 
         void
@@ -90,6 +93,45 @@ namespace rhizome {
         Console::operator<< (int n) {
             console << n;
             return *this;
+        }
+
+        void Console::push_termios(function< void(struct termios &) > create_top) {
+            struct termios current;
+            tcgetattr(0, &current);
+            // allocate it on the state.
+            termios_configs.push(current);
+            // run the custom function
+            create_top( termios_configs.top());
+            tcsetattr(0,TCSANOW, &termios_configs.top());
+        }
+
+        void Console::pop_termios() {
+            if( termios_configs.size() > 1 ) {
+                termios_configs.pop();
+                tcsetattr( 0, TCSANOW, &termios_configs.top());
+            } else {
+                throw runtime_error("Must be one termios state at bottom.");
+            }
+        }
+
+        unsigned long long Console::termios_getch(bool echo) {
+            push_termios( [&echo]( termios &t ){
+                t.c_lflag &= ~ICANON;
+                if(echo) {
+                    t.c_lflag |= ECHO;
+                } else {
+                    t.c_lflag &= ~ECHO;
+                }
+            });
+            unsigned long long int c = getchar();
+            pop_termios();
+            return c;
+        }
+
+        string console_true_color( unsigned char r, unsigned char g, unsigned char b) {
+            stringstream c;
+            c << "\x1b[38" <<";" <<r << ";"<<g <<";" << b << "m";
+            return c.str();
         }
     }
 }

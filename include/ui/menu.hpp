@@ -46,9 +46,10 @@ namespace rhizome {
         /// Menu represents a list of items and corresponding runners.
         class Menu {
         private:
+            string menuprefix;
             vector< pair< string, function< void(void) > > > items;
         public:
-            Menu() {
+            Menu() : menuprefix(" \033[1;32m🌱\033[0m rhizome—") {
 
             }
 

@@ -5,6 +5,10 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <stack>
+#include <stdexcept>
+#include <functional>
+
 #include <termios.h>
 #include <termcap.h>
 
@@ -13,8 +17,9 @@
 using std::ostream;
 using std::string;
 using std::stringstream;
-
-
+using std::stack;
+using std::function;
+using std::runtime_error;
 
 namespace rhizome {
     namespace ui {
@@ -76,12 +81,21 @@ namespace rhizome {
             "\u2685"
         };
 
+        string console_true_color( unsigned char r, unsigned char g, unsigned char b );
+        static const string TRUE_COLOR_OFF("\x1b[0m");
+
         class Console {
         private:
             size_t x;
             size_t y;
 
             std::ostream &console;
+            // To implement 'getch' style input we need:
+            stack< struct termios > termios_configs;
+            /// Push current termios state.
+            void push_termios(function< void(struct termios &) > create_top );
+            /// pop and enable termios state
+            void pop_termios();
         public:
             Console(std::ostream &console);
 
@@ -96,6 +110,7 @@ namespace rhizome {
             void erase_line();
             void shift_out(); // alternate character set?
             void shift_in();  // back to normal, either way.
+            unsigned long long termios_getch(bool echo); 
             
             void fill_region( ScreenRegion const &rect, string const &fill );
 
