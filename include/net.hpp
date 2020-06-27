@@ -5,5 +5,6 @@
 #include "net/http_server.hpp"
 #include "net/http_request.hpp"
 #include "net/http_response.hpp"
+#include "net/public_server.hpp"
 
 #endif

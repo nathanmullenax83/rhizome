@@ -22,5 +22,6 @@
 #include "pattern/negated.hpp"
 #include "pattern/chars.hpp"
 #include "pattern/transform.hpp"
+#include "pattern/maybe.hpp"
 
 #endif

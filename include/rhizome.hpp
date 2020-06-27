@@ -9,6 +9,8 @@
 #include "core/i_store.hpp"
 #include "core/system.hpp"
 #include "core/universe.hpp"
+#include "alphabet.hpp"
+#include "words.hpp"
 #include "lex.hpp"
 #include "pattern.hpp"
 #include "parse.hpp"
