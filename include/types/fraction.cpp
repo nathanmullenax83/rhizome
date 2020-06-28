@@ -61,7 +61,7 @@ namespace rhizome {
         }
 
         string Fraction::rhizome_type() const {
-            return "Rational";
+            return "Frac";
         }
 
         bool

@@ -112,7 +112,11 @@ namespace rhizome {
 
         Thing *
         Integer::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+
+            if( method=="ϵℙ" || method=="prime") {
+                assert(arg==NULL );
+                return new Bool(is_prime());
+            } 
             throw runtime_error("Nothing to invoke.");
         }
     }

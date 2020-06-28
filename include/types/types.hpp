@@ -17,5 +17,8 @@
 #include "enumeration.hpp"
 #include "dir.hpp"
 #include "operator.hpp"
+#include "vtable.hpp"
+#include "type_is.hpp"
+#include "has_interface.hpp"
 
 #endif

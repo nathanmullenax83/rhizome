@@ -7,10 +7,13 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
 #include "core/thing.hpp"
+#include "types/bool.hpp"
 
 using rhizome::core::Thing;
+using rhizome::types::Bool;
 
 using std::string;
 using std::runtime_error;
