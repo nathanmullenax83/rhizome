@@ -66,30 +66,36 @@ namespace rhizome {
         void types_demo() {
             Console console(std::cout);
             bool_test(console);
-
-            cout << "Creating an integer: " << endl;
+            step(console,"Creating an integer.");            
             Integer j("2347");
-            cout << j << endl;
-            cout << "Prime? " << j.is_prime() << endl;
+            outvar( console, "j",&j);
+            substep(console, "Check if integer is prime.");
 
-            cout << "Creating a string: " << endl;
+            Thing *result = j.invoke("ϵℙ",NULL);
+            bool n_result = rhizome::system_bool(result);
+            delete result;
+
+            cout << (n_result?"     j is prime":"    j is not prime") << endl;
+
+            step(console, "Creating a string: ");
             String s("Hello world!");
-            cout << s << endl;
+            outvar(console,"s",&s);
+            
 
             cout << "Creating a float: " << Float(0.4) << endl;
-
-            cout << "Creating some fractions: " << endl;
+            step(console,"Creating and reducing some fractions.");
+            
             Fraction q1(64,12);
             Fraction q2(164,12);
             Fraction q3(87,10);
             Fraction q4(64,2);
             Fraction q5(123,5);
 
-            cout << q1 << endl;
-            cout << q2 << endl;
-            cout << q3 << endl;
-            cout << q4 << endl;
-            cout << q5 << endl;
+            outvar(console,"q1",&q1);
+            outvar(console,"q2",&q2);
+            outvar(console,"q3",&q3);
+            outvar(console,"q4",&q4);
+            outvar(console,"q5",&q5);
             
             console.termios_getch(false);
             console.termios_getch(false);

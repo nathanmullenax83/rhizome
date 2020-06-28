@@ -116,6 +116,17 @@ namespace rhizome {
             return parser;
         }
 
+        void choose_character_class( Console &console, Store *game ) {
+            rhizome::ui::Menu menu;
+            menu.add_item("Mucaro",[game](){
+                game->set("cclass", new rhizome::types::String("Mucaro"));
+            });
+            menu.add_item("Spider", [game](){
+                game->set("cclass", new rhizome::types::String("Spider"));
+            });
+            menu.choose(console,true);
+        }
+
         void dungeon() {
             Console console(std::cout);
             
@@ -126,6 +137,7 @@ namespace rhizome {
             Parser *parser = create_dungeon_parser(game_context);
             
             welcome_screen(console);
+            choose_character_class(console, game_context);
             cellar(console,4);
             console.termios_getch(false);
 
