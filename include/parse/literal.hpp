@@ -24,6 +24,8 @@ namespace rhizome {
             virtual Thing * invoke( string const &method, Thing *arg ) override;
             virtual bool accepts(GrammarFn lookup) const override;
         };
+
+        Literal * literal( string const &v );
     }
 }
 

@@ -33,7 +33,7 @@ namespace rhizome {
             copy->clear();
             //log.info("Captured tokens (putback buffer)");
             //log.info(captured.str());
-            while( copy->can_match(lexer,lookup)) {
+            while( lexer->has_next_thing() && inner->can_match(lexer,lookup)) {
                 copy->match( lexer, lookup,captured );
                 //log.info("Matched another repetition.");
                 append_all(copy->clone_matched_tokens());

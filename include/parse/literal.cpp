@@ -96,5 +96,9 @@ namespace rhizome {
             throw runtime_error("Nothing to invoke.");
         }
 
+        Literal * literal( string const &v ) {
+            return new Literal(v);
+        }
+
     }
 }

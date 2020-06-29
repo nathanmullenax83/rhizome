@@ -2,92 +2,102 @@
 
 namespace rhizome {
     namespace parse {
-        Group *
+        Pattern *
         decimal_pattern() {
             pat::Cat *c = new pat::Cat();
             c->append( new pat::Plus( new pat::Digit() ));
             c->append( new pat::Literal("."));
             c->append( new pat::Plus( new pat::Digit() ));
-            return new pat::Group(c);
+            return c;
         }
 
-        Group *
-        integer_pattern() {
-            pat::Plus *p = new pat::Plus( new pat::Digit() );
-            return new pat::Group(p);
+        Pattern *
+        integer_pattern() { 
+            pat::Plus *p = pat::plus( new pat::Digit() );
+
+            return pat::cat({
+                pat::maybe(pat::literal("-")),
+                p
+            });
         }
 
-        Group *
+        Pattern *
         string_pattern() {
             pat::Cat *c = new pat::Cat();
             c->append(new pat::Literal("\""));
             c->append( new pat::Negated(new pat::Chars("\"")));
             c->append( new pat::Literal("\""));
-            return new pat::Group(c);
+            return c;
+        }
+
+        Parser::Parser(Lexer *lexer): lexer(lexer) {
+            
+        }
+
+        Parser::~Parser() {
+            delete lexer;
         }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         Parser::Parser() {
+            lexer = new Lexer();
             
-            lexer.define_token_type( "Newline", new pat::Transform( new pat::Literal("\n"),[](Thing *t){
+            lexer->define_token_type( "Newline", new pat::Transform( new pat::Literal("\n"),[](Thing *t){
                 return t;
             }));
-            lexer.define_token_type( "Whitespace", new pat::Transform( new pat::Plus(new pat::Or(new pat::Literal(" "),new pat::Literal("\t"))),
+            lexer->define_token_type( "Whitespace", new pat::Transform( new pat::Plus(new pat::Or(new pat::Literal(" "),new pat::Literal("\t"))),
                 []( Thing *t ){
                     delete t;
                     return (Thing*)NULL;
                 }));
             
-            lexer.define_token_type( "Float", new pat::Transform( decimal_pattern(),
+            lexer->define_token_type( "Float", new pat::Transform( decimal_pattern(),
                 []( Thing *t ) {
                     string v = ((String*)t)->native_string();
                     delete t;
                     return new rhizome::types::Float(v);
                 }));
-            lexer.define_token_type( "Integer", new pat::Transform( integer_pattern(),
+            lexer->define_token_type( "Integer", new pat::Transform( integer_pattern(),
                 []( Thing *t ) {
                     string v = ((String*)t)->native_string();
                     delete t;
                     return new rhizome::types::Integer(v);
                 }));
-            lexer.define_token_type( "String", new pat::Transform( string_pattern(),
+            lexer->define_token_type( "String", new pat::Transform( string_pattern(),
                 []( Thing *t )     {
                     return t;
                 }));
             
-            lexer.define_token_type( "OParen", "(");
-            lexer.define_token_type( "CParen", ")");
-            lexer.define_token_type( "OBrack", "{");
-            lexer.define_token_type( "CBrack", "}");
-            lexer.define_token_type( "Comma", ",");
-            lexer.define_token_type( "Colon", ":");
-            lexer.define_token_type( "Semicolon", ";");
-            lexer.define_token_type( "Plus", "+");
-            lexer.define_token_type( "Minus", "-");
-            lexer.define_token_type( "Times", "*");
-            lexer.define_token_type( "Div", "/");
-            lexer.define_token_type( "Dot", ".");
-            lexer.define_token_type( "Equals","=");
-            lexer.define_token_type( "LT", "<");
-            lexer.define_token_type( "GT", ">");
-            lexer.define_token_type( "Bareword", 
-                new pat::Transform(
+            lexer->define_token_type( "OParen", "(");
+            lexer->define_token_type( "CParen", ")");
+            lexer->define_token_type( "OBrack", "{");
+            lexer->define_token_type( "CBrack", "}");
+            lexer->define_token_type( "Comma", ",");
+            lexer->define_token_type( "Colon", ":");
+            lexer->define_token_type( "Semicolon", ";");
+            lexer->define_token_type( "Plus", "+");
+            lexer->define_token_type( "Minus", "-");
+            lexer->define_token_type( "Times", "*");
+            lexer->define_token_type( "Div", "/");
+            lexer->define_token_type( "Dot", ".");
+            lexer->define_token_type( "Equals","=");
+            lexer->define_token_type( "LT", "<");
+            lexer->define_token_type( "GT", ">");
+            lexer->define_token_type( "Bareword",
                     new pat::Cat(
                         new pat::Plus( new pat::Alpha() ),
                         new pat::Star( new pat::Or( new pat::Alpha(), new pat::Digit() ))
                     )
-                ,[](Thing *t) {
-                    return t;
-                }));
+                );
         }
 #pragma GCC diagnostic pop
         ILexer * Parser::get_lexer() {
-            return &lexer;
+            return lexer;
         }
 
         void Parser::clear() {
-            lexer.clear();
+            lexer->clear();
         }
 
         void
@@ -112,7 +122,7 @@ namespace rhizome {
             
             GrammarFn static_lookup = [this]( string const &name ) { return this->lookup(name);};
             stringstream captured;
-            start->match( &lexer, static_lookup, captured );
+            start->match( lexer, static_lookup, captured );
 
             auto ts = start->clone_matched_tokens();
             if( ts.size() > 1 ) {
@@ -140,7 +150,7 @@ namespace rhizome {
 
         void
         Parser::q_stream( istream &in ) {
-            lexer.q(in);
+            lexer->q(in);
         }
 
         void
@@ -177,8 +187,6 @@ namespace rhizome {
             out << "\n";
             rules.dump(out);
         }
-
-
 
         Gramex * lit(string const &w) {
             return new Literal(w);

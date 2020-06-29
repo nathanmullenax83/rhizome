@@ -9,7 +9,7 @@ namespace rhizome {
         }
 
         bool Transform::can_match( ILexer *lexer, GrammarFn lookup ) const {
-            return inner->can_match( lexer, lookup );
+            return lexer->has_next_thing() && inner->can_match( lexer, lookup );
         }
 
         void Transform::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {

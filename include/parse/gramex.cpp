@@ -30,7 +30,7 @@ namespace rhizome {
         void
         Gramex::clear() {
             // delete matches
-            static rhizome::log::Log log("gramex_clear");
+            //static rhizome::log::Log log("gramex_clear");
             //log.info("Clearing gramex.");
             for(size_t i=0; i<matched_tokens.size(); ++i) {
                 if( matched_tokens[i]!=NULL ) {
@@ -42,7 +42,6 @@ namespace rhizome {
                 }
             }
             matched_tokens.clear();
-            //log.info("Gramex cleared.");
         }
 
         deque<Thing*>

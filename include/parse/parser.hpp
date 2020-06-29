@@ -46,34 +46,36 @@ namespace rhizome {
         class Parser: public Thing, public IParser, public IDebuggable {
         private:
             Ruleset rules;
-            Lexer lexer;
-        public:
-            
+            Lexer *lexer;
 
+        public:
+            /// Create a parser with default system lexer.
             Parser();
+            /// Create a parser with a specific lexer (Parser owns pointer).
+            Parser(Lexer *lexer);
+
+            ~Parser();
+
             void clear();
+
             void rule( string const &w, Gramex *expr);
 
-            // token-level matchers
-            // virtual string match_literal( istream &in, string const &token ) override;
-            // virtual string match_float( istream &in ) override;
-            // virtual string match_integer( istream &in ) override;
-            // virtual string match_qstring( istream &in ) override;
-            // virtual string match_pattern( istream &in, Pattern *p ) override;
-
             virtual IGramex * lookup( string const &name ) const override;
-            // virtual Thing * parse_thing( istream &in, string const &start_rule,
-            //     IGrammar *grammar, ParseFn f ) override;
             
             virtual Thing * parse_thing( string const &start_rule ) override;
+
             virtual Thing * parse_thing( string const &start_rule, string const &thing ) override;
 
             virtual void q_stream( istream &in ) override;
 
             virtual string rhizome_type() const override;
+            
             virtual void serialize_to( std::ostream &out ) const override;
+
             virtual bool has_interface( string const &name ) override;
+
             virtual Thing * invoke( string const &method, Thing *arg ) override;
+
             virtual Thing * clone() const override;
 
             virtual void dump(std::ostream &out) const override;

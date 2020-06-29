@@ -27,25 +27,31 @@ namespace rhizome {
             (void)lookup;
             string putback;
             IPattern *pattern = lexer->clone_pattern(name);
-            if( lexer->has_next_thing()) {
-                Thing *nt = (lexer->peek_next_thing(1,false))[0];
+            if( lexer->has_next_thing(name)) {
+                
+                Thing *nt = lexer->next_thing(name,putback);
                 // make sure the pattern matches
+                string tok;
                 if( nt->rhizome_type() != "String") {
-                    std::cout << "Token is not a string! " << nt->rhizome_type() << "\n";
-                    nt->serialize_to(std::cout);
-                    
-                    throw runtime_error("Could not match rule.");
+                    stringstream v;
+                    nt->serialize_to(v);
+                    tok = v.str();
+                } else {
+                    tok = ((String*)nt)->native_string();
                 }
-                string tok = ((String*)nt)->native_string();
-                if( !pattern->accepts( tok ) ) {
+                if( !pattern->accepts( tok ) ) { 
                     stringstream err;
-                    err << "Error matching lexical rule. Token Pattern '" << name << "' cannot produce '" << tok << "'";
+                    err << "Error matching lexical rule. Token Pattern '" << name << "' cannot produce '" << tok << "'\n";
+                    err << "    " << name << " → ";
+                    ((Pattern*)pattern)->serialize_to(err);
+                    err << "Lexer:\n";
+                    ((Lexer*)lexer)->dump(err);
                     throw runtime_error(err.str());
                 }
                 // everything worked, free up token, pattern, and leave.
                 append_all({nt}); // passing nt, which is a copy of an as-yet-to-be-removed token
                 
-                delete lexer->next_thing(putback); // this looks bad, but the token has already been copied.
+                // delete lexer->next_thing(putback); // this looks bad, but the token has already been copied.
                 captured << putback;
             } else {
                 // pattern might accept without matching anything (*, for instance)

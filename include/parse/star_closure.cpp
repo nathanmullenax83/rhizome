@@ -20,7 +20,7 @@ namespace rhizome {
 
         void
         StarClosure::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
-            //static rhizome::log::Log log("sc_match");
+            static rhizome::log::Log log("cfg_STAR");
             
             //log.info("Match called.");
 
@@ -29,11 +29,12 @@ namespace rhizome {
             //log.info("Copied gramex.");
 
             while( copy->can_match(lexer,lookup)) {
-                //log.info("Match available.");
+                
+                log.info("Match available.");
                 copy->match(lexer,lookup,captured);
-                //log.info("Match complete.");
+                log.info("Match complete.");
                 append_all(copy->clone_matched_tokens());
-                //log.info("Match extracted.");
+                log.info("Match extracted.");
                 copy->clear();
                 //log.info("Copy of gramex cleared.");
             }
