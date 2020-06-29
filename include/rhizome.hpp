@@ -22,10 +22,10 @@
 
 namespace rhizome {
     IParser *create_lexer_grammar();
-
     IParser *create_rhizome_parser();
 
     ILexer *load_lexer( string const &filename );
+
     // system check
     bool verify();
 
@@ -43,6 +43,15 @@ namespace rhizome {
 
     /// Widen a string, apply mapping, then convert back to UTF8
     /// This is good for console effects, like alternative fonts.
+    string apply_mapping( string s, rhizome::alphabet::Mapping &m);
+
+    /// extract the left-most element of a tuple, modifying the tuple in the process x::xs
+    Thing * left_cdr( Tuple *t );
+
+    /// extract the right-most element of a tuple, modifying the tuple in the process xs++x
+    Thing * right_cdr( Tuple *t );
+
+    /// Widen a string, apply mapping, then convert back to UTF8
     string apply_mapping( string s, rhizome::alphabet::Mapping &m);
 }
 

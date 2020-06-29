@@ -14,18 +14,13 @@ namespace rhizome{
         IPattern *word = new pat::Plus(new pat::Alpha());
         pat::Cat *hyphened_word = new pat::Cat(word, new pat::Literal("-"));
         hyphened_word->append((Pattern*)word->clone_pattern(false));
-
-        l->define_token_type( name, new pat::Transform( hyphened_word, [](Thing *t){
-            return t;
-        } ));
+        l->define_token_type( name, hyphened_word );
     }
 
     /// Define a name token without hyphens
     void tt_word( string const &name, ILexer *l ) {
         IPattern *word = new pat::Plus(new pat::Alpha());
-        l->define_token_type( name, new pat::Transform( word, [](Thing *t){
-            return t;
-        }));
+        l->define_token_type( name, word );
     }
 
     /// Define a token type for a particular literal operator
@@ -231,7 +226,7 @@ namespace rhizome{
         }
     }
 
-    /// Widen a string, apply mapping, then convert back to UTF8
+    
     string apply_mapping( string s, rhizome::alphabet::Mapping &m) {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;   
         wstring w = converter.from_bytes(s);
