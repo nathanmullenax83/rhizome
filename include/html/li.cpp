@@ -18,7 +18,7 @@ namespace rhizome {
         LI::write_to( ostream &out ) {
             out << "<li>";
             out << cdata;
-            out << "</li>";
+            out << "</li>\n";
         }
 
         void

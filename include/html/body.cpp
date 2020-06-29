@@ -12,9 +12,9 @@ namespace rhizome {
 
         void
         Body::write_to( ostream &out ) {
-            out << "<body>";
+            out << "\t<body>\n";
             write_children(out);
-            out << "</body>";
+            out << "\t</body>\n";
         }
 
         void

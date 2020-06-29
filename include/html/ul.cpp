@@ -13,11 +13,11 @@ namespace rhizome {
 
         void 
         UL::write_to( ostream &out ) {
-            out << "<ul>";
+            out << "<ul>\n";
             for(size_t i=0; i<items.size(); ++i) {
                 items[i].write_to(out);
             }
-            out << "</ul>";
+            out << "</ul>\n";
         }
 
         void

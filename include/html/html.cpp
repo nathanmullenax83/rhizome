@@ -17,16 +17,12 @@ namespace rhizome {
 
         void
         HTML::write_to( ostream &out ) {
-            //static rhizome::log::Log logger("debugging");
 
-            out << "<!DOCTYPE html>" << std::endl;
-            //logger.info("Wrote header.");
-            out << "<html>";
-            //logger.info("Wrote <html>");
+            out << "<!DOCTYPE html>\n";
+            out << "<html>\n";
             head.write_to(out);
-            //logger.info("Wrote <head></head>");
             body.write_to(out);
-            out << "</html>";
+            out << "</html>\n";
         }
 
         void

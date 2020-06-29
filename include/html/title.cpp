@@ -16,9 +16,9 @@ namespace rhizome {
 
         void
         Title::write_to( ostream &out ) {
-            out << "<title>";
+            out << "\t\t<title>";
             out << cdata;
-            out << "</title>";
+            out << "</title>\n";
         }
 
         void

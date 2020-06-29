@@ -12,9 +12,9 @@ namespace rhizome {
 
         void
         Head::write_to( ostream &out ) {
-            out << "<head>";
+            out << "\t<head>\n";
             write_children(out);
-            out << "</head>";
+            out << "\t</head>\n";
         }
 
         Title &
