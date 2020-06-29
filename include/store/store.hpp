@@ -10,7 +10,9 @@
 #include "pattern.hpp"
 #include "log.hpp"
 #include "core/i_store.hpp"
+#include "core/i_parser.hpp"
 #include "types/dir.hpp"
+#include "parse/parser.hpp"
 
 using std::map;
 using std::ostream;
@@ -22,6 +24,8 @@ using rhizome::core::Thing;
 using rhizome::log::Log;
 using rhizome::core::IStore;
 using rhizome::types::Dir;
+using rhizome::core::IParser;
+using rhizome::parse::Parser;
 
 namespace types = rhizome::types;
 
@@ -34,12 +38,16 @@ namespace rhizome {
         class Store: public IStore, public Thing {
         
         private:
+            IParser *parser;
             // l1
             Dir root;
             // l0
             map<string,Thing *> data;
+
+            // when something is stored on disc, it is loaded with this function
+            Thing * lazy_load( string const &name );
         public:
-            Store(string const &path);
+            Store(string const &path, IParser *p);
             virtual ~Store();
 
             virtual void serialize_to( ostream &out ) const override;
@@ -53,6 +61,8 @@ namespace rhizome {
             virtual Thing * get_clone( string const &name ) const override;
             virtual bool exists( string const &name ) const override;
             virtual void remove( string const &name ) override;
+
+            virtual Thing * invoke( string const &method, Thing *arg ) override;
         };
     }
 }

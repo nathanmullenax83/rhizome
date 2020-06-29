@@ -22,9 +22,9 @@ namespace rhizome {
         private:
             /// string: count*position
             map< string, pair<size_t,size_t> > counts;
-            
+            size_t current_id;
             /// Update the table 
-            void update_table();
+            
             
             /// compute number of bits needed to specify a 
             /// member of this dictionary
@@ -32,7 +32,7 @@ namespace rhizome {
         public:
             Dictionary();
             ~Dictionary();
-
+            void update_table();
             Integer id( string const &s );
 
             size_t bits() const;

@@ -34,7 +34,10 @@ namespace rhizome{
         l->define_token_type( name, opp );
     }
 
-    
+    IParser * create_rhizome_parser() {
+        Parser *parser = new Parser();
+        return parser;
+    }    
 
     /// Define a token-type that is an ALLCAPS
 
@@ -151,4 +154,93 @@ namespace rhizome{
         }
         return checked;
     }
+
+    bool system_bool( Thing *t ) {
+        if( t!=NULL && t->rhizome_type()=="Bool") {
+            Bool *b = (Bool*)t;
+            return b->value;
+        } else {
+            throw runtime_error("Expected Bool value e.g., true, false, undetermined ;)");
+        }
+    }
+
+    string to_system_string( Thing * t ) {
+        if( t!=NULL ) {
+            if( t->rhizome_type()=="String") {
+                String *str = (String*)t;
+                return str->native_string();
+            } else {
+                stringstream s;
+                t->serialize_to(s);
+                return s.str();
+            }
+        } else {
+            return "";
+        }
+    }
+
+    string t_not_expected( Thing *t, string const &expectation ) {
+        stringstream s;
+        s << expectation;
+        t->serialize_to(s);
+        return s.str();
+    }
+
+    mpz_class system_mpz( Thing *t ) {
+        if( t!=NULL ) {
+            if( t->rhizome_type()=="Int" ) {
+                return ((Integer*)t)->value;
+            } else {
+                throw runtime_error(t_not_expected(t,"Expected Int, but got: "));
+            }
+        } else {
+            throw runtime_error(t_not_expected(NULL, "Null might be said to correspond to zero. Not here, tho."));
+        }
+    }
+
+    Thing * left_cdr( Tuple *t ) {
+        if( t!=NULL && (t->size() > 0) ) {
+            Thing * first = t->extract_first();
+            return first;
+        } else {
+            throw runtime_error("Cannot extract first element of // customizean empty list.");
+        }
+    }
+
+    Thing * right_cdr( Tuple *t ) {
+        if( t!=NULL && (t->size() > 0)) {
+            Thing *last = t->extract_last();
+            return last;
+        } else {
+            throw runtime_error("Cannot extract last element of an empty list.");
+        }
+    }
+
+    long double system_float( Thing *t ) {
+        if( t!=NULL ) {
+            if( t->rhizome_type()=="Float") {
+                return ((tps::Float*)t)->value;
+            } else if( t->rhizome_type()=="Fraction") {
+                return ((tps::Fraction*)t)->decimal();
+            } else if( t->rhizome_type()=="Integer") {
+                return ((tps::Integer*)t)->native_int();
+            }
+            throw runtime_error(t_not_expected(t,"Expected a numeric value but got "));
+        } else {
+            throw runtime_error(t_not_expected(NULL, "Cannot extract float value from a NULL pointer."));
+        }
+    }
+
+    /// Widen a string, apply mapping, then convert back to UTF8
+    string apply_mapping( string s, rhizome::alphabet::Mapping &m) {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;   
+        wstring w = converter.from_bytes(s);
+        for(size_t i=0; i<w.length();++i) {
+            wchar_t c = w.at(i);
+            w[i] = m.lookup(c);
+        }
+        return converter.to_bytes(w);
+    }
+
+
 }

@@ -50,5 +50,13 @@ namespace rhizome {
             }
             throw runtime_error("Reflection method not implemented!");
         }
+
+        wchar_t Mapping::lookup( wchar_t c ) {
+            if( mapping.count(c) > 0 ) {
+                return mapping[c];
+            } else {
+                return c;
+            }
+        }
     }
 }

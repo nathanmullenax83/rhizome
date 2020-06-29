@@ -8,7 +8,8 @@ using std::vector;
 
 namespace rhizome {
     namespace words {
-        Dictionary::Dictionary() {
+        Dictionary::Dictionary() 
+        :current_id(0) {
 
         }
 
@@ -31,10 +32,10 @@ namespace rhizome {
         Dictionary::id( string const &n ) {
             if( counts.count(n) > 0 ) {
                 counts[n].first += 1;
-                counts[n].second += n.size();
+                
             } else {
                 counts[n].first = 1;
-                counts[n].second = n.size();
+                counts[n].second = current_id++;
             }
             return counts[n].second;
         }
@@ -70,15 +71,15 @@ namespace rhizome {
             []( const auto & a, const auto & b) {
                     return a.second > b.second;
                 } );
-
+            size_t new_id = 0;
             for( auto i=n.begin(); i!=n.end(); i++) {
-                counts[i->first].second = i->second;
+                counts[i->first].second = new_id++;
             }
         }
 
         string
         Dictionary::rhizome_type() const {
-            return "words::Dictionary";
+            return "Dict";
         }
 
         void
@@ -87,11 +88,11 @@ namespace rhizome {
             out << "{\n";
             for( auto i=counts.begin(); i!=counts.end(); i++) {
                 out << "\t";
-                out << i->first << ":" << i->second.first << "," << i->second.second;
-                if( i!=counts.end() ) {
-                    out << ",\n";
-                } else {
+                out << i->first << ":" << i->second.second;
+                if( i==counts.end() ) {
                     out << "\n";
+                } else {
+                    out << ";\n";
                 }
             }
             out << "}";
