@@ -3,7 +3,7 @@ all: rhizome
 INCL = -Iinclude
 LIBD = -Llib
 SRC  = include
-STD  = -std=c++1z
+STD  = -std=c++17
 WARN = -Werror -Wall -Wextra -pedantic
 OPTIMIZE = 
 CC   = c++ $(WARN) $(STD) $(LIBD) $(INCL) $(OPTIMIZE) -ggdb
@@ -137,7 +137,13 @@ build/types-dir.o: $(SRC)/types/dir.cpp $(SRC)/types/dir.hpp
 build/types-operator.o: $(SRC)/types/operator.cpp $(SRC)/types/operator.hpp
 	$(CC) -c $(SRC)/types/operator.cpp -o build/types-operator.o
 
-TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o build/types-operator.o
+build/types-type-is.o: $(SRC)/types/type_is.cpp $(SRC)/types/type_is.hpp
+	$(CC) -c $(SRC)/types/type_is.cpp -o build/types-type-is.o
+
+build/types-has-interface.o: $(SRC)/types/has_interface.cpp $(SRC)/types/has_interface.hpp
+	$(CC) -c $(SRC)/types/has_interface.cpp -o build/types-has-interface.o
+
+TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o build/types-operator.o build/types-type-is.o build/types-has-interface.o
 
 lib/libtypes.a: $(TYPES_OBJECTS)
 	ar scr lib/libtypes.a $(TYPES_OBJECTS)

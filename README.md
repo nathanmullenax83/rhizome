@@ -5,7 +5,7 @@ social networking platform where everyone has their own server, fine grained con
 content sharing, and if need be, easy implementation of custom language tools. 
 
 Rhizome is experimental. In addition to producing a library which can be linked and used in other programs, it produces an executable which attempts to showcase functionality which is more or less
-complete. In this sense, it is also a 'disc magazine.' That is, it is a piece of software in the tradition of amateur computer enthusiests. 
+complete. In this sense, it is also a 'disc magazine.' That is, it is a piece of software in the tradition of amateur computer enthusiasts. 
 
 ## What else can you do with this library?
 Though still a work in progress, repl_demo.cpp shows how an interpreter for a context free language can be constructed with the rhizome::lexer and rhizome::parser sub-libraries. These will probably be split into a separate, more tightly focused project.
