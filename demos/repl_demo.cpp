@@ -49,13 +49,13 @@ namespace rhizome {
 
         /// Numeric expression interpreters
         void numeric_interpreter( string const &name,Parser *p, map<string,Thing*> &vars ) {
-            Gramex * term_op = options({lit("+"),lit("-")});
-            Gramex * factor_op = options({lit("*"),lit("/")});
-            Gramex * summation = seq( non_term("Term"), star( seq(term_op, non_term("Term"))));
-            Gramex * product = seq( non_term("Factor"), star( seq(factor_op, non_term("Factor"))));
-            Gramex * factor = options({
-                match_type("Integer"),
-                apply(match_lexer_rule("Bareword"),[&vars]( deque<Thing*>ts ){
+            Gramex * term_op = gx_options({gx_literal("+"),gx_literal("-")});
+            Gramex * factor_op = gx_options({gx_literal("*"),gx_literal("/")});
+            Gramex * summation = gx_sequence({ gx_non_terminal("Term"), gx_star_closure( gx_sequence({term_op, gx_non_terminal("Term")}))});
+            Gramex * product = gx_sequence( {gx_non_terminal("Factor"), gx_star_closure( gx_sequence({factor_op, gx_non_terminal("Factor")}))});
+            Gramex * factor = gx_options({
+                gx_match_type("Integer"),
+                gx_apply(gx_match_lexer_rule("Bareword"),[&vars]( deque<Thing*>ts ){
                     assert(ts.size()==1);
                     String *name = (String*)ts[0];
                     if( vars.count(name->native_string())==0){
@@ -67,13 +67,13 @@ namespace rhizome {
                 })
             });
 
-            p->rule("Factor",apply(factor,[](deque<Thing*> ts){
+            p->rule("Factor",gx_apply(factor,[](deque<Thing*> ts){
                 //std::cout << "Parsing factor: ";
                 //dump("Factor (ts) = ",ts);
                 assert( ts.size()==1 && ts[0]!=NULL );
                 return ts[0];
             }));
-            p->rule("Term", apply(product,
+            p->rule("Term", gx_apply(product,
                     [](deque<Thing*> ts){
 
                         //std::cout << "Parsing term\n";
@@ -97,7 +97,7 @@ namespace rhizome {
                     }) );
 
             p->rule(name, 
-                apply(
+                gx_apply(
                     summation,
                     [](deque<Thing*> ts){
                         //std::cout << "Parsing expression\n";
@@ -133,65 +133,99 @@ namespace rhizome {
             
             numeric_interpreter("NumericExpression",p, vars);
 
-            p->rule("Repl", seq(non_term("Expr"), star(seq(lit(":"), non_term("Expr")))));
+            p->rule("Repl", 
+                gx_sequence({
+                    gx_non_terminal("Expr"), 
+                    gx_star_closure(gx_sequence({gx_literal(":"), gx_non_terminal("Expr")}))
+                })
+            );
 
-            p->rule("Expr", options({
-                apply(seq(lit("PRINT"), 
-                    non_term("NumericExpression")
-                ),[](deque<Thing*> ts){
+            p->rule("Expr", gx_options({
+                gx_apply(gx_sequence({
+                    gx_literal("PRINT"), 
+                    gx_non_terminal("NumericExpression")
+                }),[](deque<Thing*> ts){
                     ts[1]->serialize_to(std::cout);
                     return (Thing*)(new Tuple());
                 }),
-                apply(seq(lit("CREATE"), non_term("ThingSpec")),[&ctors](deque<Thing*> ts){
-                    return ts[1];
-                }),
-                apply(options({lit("END"),lit("QUIT")}), [&quit](deque<Thing*> ts) {
+                gx_apply(
+                    gx_sequence({
+                        gx_literal("CREATE"), 
+                        gx_non_terminal("ThingSpec")
+                    }),
+                    [&ctors](deque<Thing*> ts){
+                        return ts[1];
+                    }
+                ),
+                gx_apply(gx_options({gx_literal("END"),gx_literal("QUIT")}), [&quit](deque<Thing*> ts) {
                     (void)ts;
                     quit = true;
                     return (Thing*)(new Tuple());
                 }),
-                apply(lit("CLS"),[&console](deque<Thing*> ts){
+                gx_apply(gx_literal("CLS"),[&console](deque<Thing*> ts){
                     (void)ts;
                     console.clear();
                     return (Thing*)(new Tuple());
                 }),
                 
-                apply(
-                    seq(
-                        lit("LOCATE"),
-                        non_term("NumericExpression"),
-                        lit(","),
-                        non_term("NumericExpression")),
-                        [&console](deque<Thing*>ts){
-                            Integer *row = (Integer*)ts[1];
-                            Integer *col = (Integer*)ts[3];
-                            console.locate(col->native_int(),row->native_int());
-                            return new Tuple();
-                        }),
-                apply(seq(match_type("String"),lit("="),non_term("NumericExpression")),[&vars](deque<Thing*> ts){
-                    String *vname = (String*)ts[0];
-                    vars[vname->native_string()] = ts[2];
-                    for(size_t i=0; i<ts.size()-1; ++i) {
-                        if( ts[i]!=NULL) { delete ts[i]; }
-                    }
-                    return (Thing*)(new Tuple());
-                })
+                gx_apply(
+                    gx_sequence({
+                        gx_literal("LOCATE"),
+                        gx_non_terminal("NumericExpression"),
+                        gx_literal(","),
+                        gx_non_terminal("NumericExpression")
+                    }),
+                    [&console](deque<Thing*>ts){
+                        Integer *row = (Integer*)ts[1];
+                        Integer *col = (Integer*)ts[3];
+                        console.locate(col->native_int(),row->native_int());
+                        return new Tuple();
+                    }),
+                gx_apply(
+                    gx_sequence({
+                        gx_match_type("String"),
+                        gx_literal("="),
+                        gx_non_terminal("NumericExpression")
+                    }),
+                    [&vars](deque<Thing*> ts){
+                        String *vname = (String*)ts[0];
+                        vars[vname->native_string()] = ts[2];
+                        for(size_t i=0; i<ts.size()-1; ++i) {
+                            if( ts[i]!=NULL) { delete ts[i]; }
+                        }
+                        return (Thing*)(new Tuple());
+                    })
             }));
 
             
 
-            p->rule("ThingSpec", apply(seq(match_type("Bareword"), non_term("Tuple")),
-            [&ctors](deque<Thing*> ts){
-                std::cout << "Matched rule ThingSpec.\n";
-                auto stringify = []( Thing *t ) { stringstream ss; t->serialize_to(ss); return ss.str(); };
-                string name = stringify( ts[0] );
-                return (Thing*)ctors[name](ts[1]);
-            }));
+            p->rule("ThingSpec", 
+                gx_apply(
+                    gx_sequence({
+                        gx_match_type("Bareword"), 
+                        gx_non_terminal("Tuple")
+                    }),
+                    [&ctors](deque<Thing*> ts){
+                        std::cout << "Matched rule ThingSpec.\n";
+                        auto stringify = []( Thing *t ) { stringstream ss; t->serialize_to(ss); return ss.str(); };
+                        string name = stringify( ts[0] );
+                        return (Thing*)ctors[name](ts[1]);
+                    }
+                )
+            ); // end rule
 
-            p->rule("Tuple", apply(seq(match_type("OParen"),match_type("CParen")), [](deque<Thing*> ts) {
-                (void)ts;
-                return new Tuple();
-            }));
+            p->rule("Tuple", 
+                gx_apply(
+                    gx_sequence({
+                        gx_match_type("OParen"),
+                        gx_match_type("CParen")
+                    }), 
+                    [](deque<Thing*> ts) {
+                        (void)ts;
+                        return new Tuple();
+                    }
+                )
+            ); // end rule
             
             return p;
         }

@@ -16,6 +16,7 @@ namespace rhizome {
             table->set( "pw", new rhizome::types::String("password"));
             dict->id("Hello");
             dict->id("world");
+            dict->update_table();
             
             // relinquishing ownership of pointer here.
             s.set( "user", table );

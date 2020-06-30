@@ -3,18 +3,17 @@
 namespace rhizome {
     namespace demo {
         void fraction_test(ru::Console &console) {
-            static rhizome::log::Log log( "demos", false);
+            
             auto stringify = []( Thing const &t ) {
                 stringstream ss;
                 t.serialize_to(ss);
                 return ss.str();
             };
-            log.info("Genesis' demo started.");
             Fraction f1( rt::Integer(-4),rt::Integer(2));
             Fraction f2(rt::Integer(6),rt::Integer(-2));
             Fraction f3(rt::Integer(-16),rt::Integer(-8));
-            console << "Creating test fractions: \n";
-            console << "======================== \n";
+            console.h1("Creating Test Fractions");
+            
             console << "f1 (-4/2)   = " << stringify(f1) << "\n";
             console << "f2 (6/-2)   = " << stringify(f2) << "\n";
             console << "f3 (-16/-8) = " << stringify(f3) << "\n";
@@ -35,7 +34,7 @@ namespace rhizome {
 
             Fraction h = f + g;
             console << "The sum: " << stringify(h) << "\n\n";
-            log.info("Genesis' demo ended normally.");
+            
 
         }
 

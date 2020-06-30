@@ -51,14 +51,23 @@ namespace rhizome {
                     delete t;
                     return (Thing*)NULL;
                 }));
+
+            lexer->define_token_type( "Bool", new pat::Transform(
+                new pat::Or( new pat::Literal("true"), new pat::Literal("false")),
+                [] (Thing *t){
+                    string v = ((String*)t)->native_string();
+                    rhizome::types::Bool *b = new rhizome::types::Bool(v=="true");
+                    return b;
+                }
+            ));
             
-            lexer->define_token_type( "Float", new pat::Transform( decimal_pattern(),
+            lexer->define_token_type( "Decimal", new pat::Transform( decimal_pattern(),
                 []( Thing *t ) {
                     string v = ((String*)t)->native_string();
                     delete t;
                     return new rhizome::types::Float(v);
                 }));
-            lexer->define_token_type( "Integer", new pat::Transform( integer_pattern(),
+            lexer->define_token_type( "Int", new pat::Transform( integer_pattern(),
                 []( Thing *t ) {
                     string v = ((String*)t)->native_string();
                     delete t;
@@ -188,34 +197,11 @@ namespace rhizome {
             rules.dump(out);
         }
 
-        Gramex * lit(string const &w) {
+        Gramex * gx_literal(string const &w) {
             return new Literal(w);
         }
 
-        Gramex * seq(Gramex *a, Gramex *b) {
-            And *p = new And();
-            p->append(a);
-            p->append(b);
-            return p;
-        }
-
-        Gramex * seq(Gramex *a, Gramex *b, Gramex *c) {
-            And *p = new And();
-            p->append(a);
-            p->append(b);
-            p->append(c);
-            return p;
-        }
-        Gramex * seq(Gramex *a, Gramex *b, Gramex *c, Gramex *d) {
-            And *p = new And();
-            p->append(a);
-            p->append(b);
-            p->append(c);
-            p->append(d);
-            return p;
-        }
-
-        Gramex * seq( vector<Gramex*> ps ) {
+        Gramex * gx_sequence( vector<Gramex*> ps ) {
             And *p = new And();
             for( auto i = ps.begin(); i!=ps.end(); i++ ) {
                 p->append(*i);
@@ -223,7 +209,7 @@ namespace rhizome {
             return p;
         }
 
-        Gramex * options( std::vector<Gramex *> cs ) {
+        Gramex * gx_options( std::vector<Gramex *> cs ) {
             Or *p = new Or();
             for( auto i=cs.begin(); i!=cs.end(); ++i) {
                 p->add_clause( *i );
@@ -231,53 +217,55 @@ namespace rhizome {
             return p;
         }
 
-        Gramex * non_term(string const &name) {
+        Gramex * gx_non_terminal(string const &name) {
             return new NonTerminal(name);
         }
 
-        Gramex * match_type( string const &tname ) {
+        Gramex * gx_match_type( string const &tname ) {
             return new MatchType(tname);
         }
 
-        Gramex * match_lexer_rule( string const &name ) {
+        Gramex * gx_match_lexer_rule( string const &name ) {
             return new MatchRule(name);
         }
 
-        Gramex * plus( Gramex *inner ) {
+        Gramex * gx_plus_closure( Gramex *inner ) {
             return new PlusClosure(inner);
         }
 
-        Gramex * star( Gramex *inner ) {
+        Gramex * gx_star_closure( Gramex *inner ) {
             return new StarClosure(inner);
         }
 
-        Gramex * parens( Gramex *inner ) {
-            And *n = new And();
-            n->append( lit("("));
-            n->append(inner);
-            n->append( lit(")"));
-            return n;
-        }
+        
 
-        Gramex * comma_list( std::vector<Gramex*> elems, string sep ) {
-            And *n = new And();
-            for(size_t i=0; i<elems.size(); ++i) {
-                n->append( elems[i]);
-                if( i < elems.size()-1 ) {
-                    n->append(lit(sep));
-                }
-            }
-            return n;
-        }
-
-        Gramex * apply( Gramex *inner, TransformFn f ) {
+        Gramex * gx_apply( Gramex *inner, TransformFn f ) {
             Transform *t = new Transform( inner, f );
             return t;
         }
 
-        Gramex * maybe( Gramex *inner ) {
+        Gramex * gx_maybe( Gramex *inner ) {
             MaybeClosure *mb = new MaybeClosure(inner);
             return mb;
+        }
+
+        Gramex * gx_parens( Gramex *inner ) {
+            And *n = new And();
+            n->append( gx_literal("("));
+            n->append(inner);
+            n->append( gx_literal(")"));
+            return n;
+        }
+
+        Gramex * gx_comma_list( std::vector<Gramex*> elems, string sep ) {
+            And *n = new And();
+            for(size_t i=0; i<elems.size(); ++i) {
+                n->append( elems[i]);
+                if( i < elems.size()-1 ) {
+                    n->append(gx_literal(sep));
+                }
+            }
+            return n;
         }
     }
 }

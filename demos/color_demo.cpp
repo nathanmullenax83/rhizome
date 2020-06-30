@@ -22,7 +22,8 @@ namespace rhizome {
                         return c - 'a';
                     };
                     auto hv = [hd]( char a, char b) {
-                        return (hd(a)*16 + hd(b))/256.0;
+                        double channel = (16*((double)hd(a))) + hd(b);
+                        return channel/256.0;
                     };
                     c->r =  hv( s[1], s[2]) ;
                     c->g =  hv( s[3], s[4]) ;
@@ -33,55 +34,62 @@ namespace rhizome {
         }
         
 
-        IParser * create_parser() {
+        IParser * create_parser(IStore *store) {
             rhizome::parse::Parser *parser = new rhizome::parse::Parser();
             tt_rgb_triple(parser);
             
             parser->rule( "RGBColor", 
-                apply(seq(
-                    lit("RGB"),
-                    match_type("Decimal"),
-                    match_type("Decimal"),
-                    match_type("Decimal")
-                ), []( deque<Thing*> ts ) {
+                gx_apply(gx_sequence({
+                    gx_literal("RGB"),
+                    gx_match_type("Decimal"),
+                    gx_match_type("Decimal"),
+                    gx_match_type("Decimal")
+                }), [store]( deque<Thing*> ts ) {
                     rhizome::types::Float *red = (Float*)ts[1];
                     rhizome::types::Float *green = (Float*)ts[2];
                     rhizome::types::Float *blue = (Float*)ts[3];
-                    return (Thing*) (new rhizome::types::Color(red->get_value(),green->get_value(),blue->get_value(),1.0));;
+                    rhizome::types::Color *color = (new rhizome::types::Color(red->get_value(),green->get_value(),blue->get_value(),1.0));
+                    store->set("custom_color",color);
+                    return (Thing*) color->clone();
                 })
             );
 
             parser->rule( "RGBHexTriple",
-                apply( match_type("Color"), [](deque<Thing*> ts) {
-                    return ts[0];
-                })
+                gx_apply( gx_match_type("Color"), 
+                    [store](deque<Thing*> ts) {
+                        store->set("custom_color",ts[0]);
+                        return (Thing*) ts[0]->clone();
+                    }
+                )
             );
 
             parser->rule( "Start", 
-                options({non_term("RGBHexTriple"),non_term("RGBColor")})
+                gx_options({
+                    gx_non_terminal("RGBHexTriple"),
+                    gx_non_terminal("RGBColor")
+                })
             );
 
             return parser;
         }
 
         void color_demo() {
-            IParser *parser = create_parser();
-            IStore *store = new rhizome::store::Store(".colors",parser);
-            rhizome::core::System * csystem = rhizome::core::create_system( parser, store );
+            rhizome::core::System * csystem = rhizome::plant(".color");
             
             
-            std::cout << "==============\n";
-            std::cout << "| Color Demo |\n";
-            std::cout << "==============\n";
+            rhizome::ui::Console console(std::cout);
+            console.termios_getch(false);
+
+            console.h1("Color Demo");
             
-            std::cout << "Enter a color \"RGB n n n\":\n";
+            std::cout << "Enter a web color #xxxxxx:\n";
             stringstream co;
             string line;
-            std::getline( std::cin, line );
+            
             std::getline( std::cin, line );
             co << line;
-            parser->q_stream(co);
-            Thing * color = parser->parse_thing("Start");
+            csystem->get_parser()->q_stream(co);
+            Thing * color = csystem->get_parser()->parse_thing("Start");
             delete csystem;
             color->serialize_to(std::cout);
 
@@ -96,7 +104,7 @@ namespace rhizome {
                     "\t\t" << c.hue() << "\t\t" << std::endl;
             }
             
-
+            console.termios_getch(false);
         }
     }
 }

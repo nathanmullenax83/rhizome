@@ -20,9 +20,13 @@
 #include "net.hpp"
 #include "sdt.hpp"
 
+
+
 namespace rhizome {
     IParser *create_lexer_grammar();
     IParser *create_rhizome_parser();
+
+    rhizome::core::System * plant(string const &root);    
 
     ILexer *load_lexer( string const &filename );
 

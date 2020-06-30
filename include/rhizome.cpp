@@ -8,6 +8,12 @@ using rhizome::parse::Parser;
 using namespace rhizome::parse;
 namespace pat = rhizome::pattern;
 namespace tps = rhizome::types;
+
+namespace Core = rhizome::core;
+namespace Store = rhizome::store;
+
+
+
 namespace rhizome{
     /// Define a token-type that matches hyphenated words and returns it as a String.
     void tt_hyphened_word( string const &name, ILexer *l) {
@@ -35,7 +41,11 @@ namespace rhizome{
     }    
 
     /// Define a token-type that is an ALLCAPS
-
+    /// OK, so this is an implicit grammar built around something
+    /// in the HTTP header documentation describing the tokens used to 
+    /// define HTTP headers within the document. The idea is, I can build a special
+    /// purpose parser for other parts of the same document to semi-automate
+    /// the process of writing a general HTTP parser.
     IParser *create_lexer_grammar() {
         Parser *p = new Parser();
         
@@ -55,72 +65,139 @@ namespace rhizome{
                 }));
         p->get_lexer()->define_token_type("A_USASCII", new pat::Transform( new rhizome::pattern::Literal("US-ASCII"),[](Thing *t){
             return t;
-        }));
+        })); // end lexer rule.
+
         p->get_lexer()->define_token_type("A_8BIT", new pat::Transform( new rhizome::pattern::Literal("8-bit"),[]( Thing *t) {
             return t;
-        }));
+        })); // end lexer rule.
+
         p->rule("LexerDefinition", 
-            apply(plus(seq(non_term("Rule"),match_lexer_rule("Newline"))), []( deque<Thing*> ts ) {
-                Lexer *l = new Lexer();
-                for( size_t i=0; i<ts.size(); i+=2) {
-                    tps::Tuple *rule = (tps::Tuple*)ts[i];
-                    tps::String *name = (tps::String*)rule->at(0);
-                    Pattern *pat = (Pattern*)rule->at(1);
-                    l->define_token_type( name->native_string(), new pat::Transform( pat, []( Thing *t ){
-                        return t;
-                    }));
-                    delete name;
+            gx_apply(
+                gx_plus_closure(
+                    gx_sequence({
+                        gx_non_terminal("Rule"),
+                        gx_match_lexer_rule("Newline")
+                    })
+                ), 
+                []( deque<Thing*> ts ) {
+                    Lexer *l = new Lexer();
+                    for( size_t i=0; i<ts.size(); i+=2) {
+                        tps::Tuple *rule = (tps::Tuple*)ts[i];
+                        tps::String *name = (tps::String*)rule->at(0);
+                        Pattern *pat = (Pattern*)rule->at(1);
+                        l->define_token_type( name->native_string(), new pat::Transform( pat, []( Thing *t ){
+                            return t;
+                        }));
+                        delete name;
+                    }
+                    return (Thing*)l;
                 }
-                return (Thing*)l;
+            )
+        ); // end rule
+
+        p->rule( "Rule", 
+            gx_apply(
+                gx_sequence({
+                    gx_match_lexer_rule("A_YELLED"),
+                    gx_literal("="), 
+                    gx_literal("<"), 
+                    gx_non_terminal("Definition"), 
+                    gx_literal(">")
+                }), 
+                []( deque<Thing*> ts){
+                    std::cout << "Rule: ";
+                    ts[0]->serialize_to(std::cout);
+                    tps::Tuple *vs = new tps::Tuple();
+                    vs->append( ts[0]); // name of token type
+                    vs->append( ts[3]); // non-term "Definition"
+                    vs->serialize_to(std::cout);
+                    return vs;
+                } // end parse-time application
+            ) // end apply
+        ); // end rule
+
+        p->rule("Definition", gx_options({
+            gx_sequence({gx_literal("any"), gx_non_terminal("DefinitionAny")}),
+            gx_sequence({gx_literal("US-ASCII"), gx_non_terminal("DefinitionASCII")})
+        }));
+        p->rule("DefinitionAny", gx_options({
+            gx_sequence({gx_literal("8-bit"), gx_non_terminal("SequenceOfData")}),
+            gx_sequence({gx_literal("US-ASCII"), gx_non_terminal("ASCIISubset")})
+        }));
+
+        p->rule("SequenceOfData", 
+            gx_sequence({
+                gx_literal("sequence"),
+                gx_literal("of"), 
+                gx_literal("data")
             })
-        );
-        p->rule( "Rule", apply(seq({
-            match_lexer_rule("A_YELLED"),
-            lit("="), lit("<"), non_term("Definition"), lit(">")
-        }), []( deque<Thing*> ts){
-            std::cout << "Rule: ";
-            ts[0]->serialize_to(std::cout);
-            tps::Tuple *vs = new tps::Tuple();
-            vs->append( ts[0]); // name of token type
-            vs->append( ts[3]); // non-term "Definition"
-            vs->serialize_to(std::cout);
-            return vs;
-        } ));
-        p->rule("Definition", options({
-            seq(lit("any"), non_term("DefinitionAny")),
-            seq(lit("US-ASCII"), non_term("DefinitionASCII"))
+        ); // end rule
+
+        p->rule("DefinitionASCII", 
+            gx_options({
+                gx_sequence({
+                    gx_match_lexer_rule("A_YELLED"), 
+                    gx_literal(","), 
+                    gx_non_terminal("EntityNameAndDefinition")
+                }
+            ),
+            gx_non_terminal("EntityNameAndDefinition")
         }));
-        p->rule("DefinitionAny", options({
-            seq(lit("8-bit"), non_term("SequenceOfData")),
-            seq(lit("US-ASCII"), non_term("ASCIISubset"))
-        }));
-        p->rule("SequenceOfData", seq(lit("sequence"),lit("of"), lit("data")));
-        p->rule("DefinitionASCII", options({
-            seq(match_lexer_rule("A_YELLED"), lit(","), non_term("EntityNameAndDefinition")),
-            non_term("EntityNameAndDefinition")
-        }));
+
         p->rule("EntityNameAndDefinition", 
-            seq(
-                non_term("EntityName"),
-                non_term("EntityDefinition"))
-            );
-        p->rule("EntityName",
-            plus( options({ match_lexer_rule("A_WORD"), match_lexer_rule("A_HYPHENED_WORD")}))
-        );
-        p->rule("EntityDefinition",
-            seq( lit("("), match_type("Integer"), lit(")"))
-        );
-        p->rule("ASCIISubset", 
-            seq(non_term("EntityName"), non_term("CharacterRange"))
-        );
-        p->rule("CharacterRange",
-            options({
-                seq(lit("("), maybe(lit("octets")), non_term("HyphenRange"), lit(")")),
-                seq(match_lexer_rule("String"), lit(".."), match_lexer_rule("String"))
+            gx_sequence({
+                gx_non_terminal("EntityName"),
+                gx_non_terminal("EntityDefinition")
             })
-        );
+        ); // end of bridge rule
+
+        p->rule("EntityName",
+            gx_plus_closure( 
+                gx_options({ 
+                    gx_match_lexer_rule("A_WORD"), 
+                    gx_match_lexer_rule("A_HYPHENED_WORD")
+                })
+            )
+        ); // end entity-name rule.
+
+        // entity definition
+        p->rule("EntityDefinition",
+            gx_sequence({
+                gx_literal("("), 
+                gx_match_type("Integer"), 
+                gx_literal(")")
+            })
+        ); // entity is a specific character, represented by /Integer/ in ASCII
+
+        p->rule("ASCIISubset", 
+            gx_sequence({
+                gx_non_terminal("EntityName"), 
+                gx_non_terminal("CharacterRange")
+            })
+        ); // entityName refers to a subset of ASCII characters (a range).
+
+        p->rule("CharacterRange",
+            gx_options({
+                gx_sequence({
+                    gx_literal("("), 
+                    gx_maybe(gx_literal("octets")), 
+                    gx_non_terminal("HyphenRange"), 
+                    gx_literal(")")
+                }), // range specified using a hyphen '-'
+                gx_sequence({
+                    gx_match_lexer_rule("String"), 
+                    gx_literal(".."), 
+                    gx_match_lexer_rule("String")
+                }) // range specified using a Pascal-style range '..'
+            })
+        ); // end of character range rule.
+
         p->rule("HyphenRange",
-            seq(match_type("Integer"), lit("-"), match_type("Integer"))
+            gx_sequence({
+                gx_match_type("Int"), 
+                gx_literal("-"), 
+                gx_match_type("Int")
+            })
         );
         return p;
     }
@@ -235,6 +312,43 @@ namespace rhizome{
             w[i] = m.lookup(c);
         }
         return converter.to_bytes(w);
+    }
+
+
+
+    Core::System *
+    plant(string const &docroot) {
+        Parser *parser = new Parser();
+        Core::System *s = new Core::System(parser, new Store::Store(docroot, parser));
+        
+        s->register_type("Bool",[s](Thing *t){
+            return t;
+        },[](IParser *p){
+            Parser *parser = (Parser*)p;
+            parser->rule("BoolLiteral",gx_match_lexer_rule("Bool"));
+        });
+
+        s->register_type("Int",[s](Thing *t){
+            return t;   
+        },[](IParser *p) {
+            Parser *parser = (Parser*)p;
+            parser->rule("IntLiteral",gx_match_lexer_rule("Int"));
+        });
+
+        s->register_type("String",[s](Thing *t){
+            return t;
+        },[](IParser *p){
+            Parser *parser = (Parser*)p;
+            parser->rule("StringLiteral",gx_match_lexer_rule("String"));
+        });
+
+        s->register_type("Decimal",[s](Thing *t){
+            return t; 
+        },[](IParser *p){
+            Parser *parser = (Parser*)p;
+            parser->rule("DecimalLiteral",gx_match_lexer_rule("Decimal"));
+        });
+        return s;
     }
 
 

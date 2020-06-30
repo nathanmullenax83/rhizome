@@ -75,14 +75,15 @@ namespace rhizome {
             bool n_result = rhizome::system_bool(result);
             delete result;
 
-            cout << (n_result?"     j is prime":"    j is not prime") << endl;
+            cout << (n_result?"    j is prime":"    j is not prime") << endl;
 
             step(console, "Creating a string: ");
             String s("Hello world!");
             outvar(console,"s",&s);
             
-
-            cout << "Creating a float: " << Float(0.4) << endl;
+            step(console, "Creating a float: ");
+            Float f(0.4);
+            outvar(console,"f",&f);
             step(console,"Creating and reducing some fractions.");
             
             Fraction q1(64,12);

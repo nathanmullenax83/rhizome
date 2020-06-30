@@ -84,36 +84,34 @@ namespace rhizome {
 
         };
 
-        Gramex * lit(string const &w);
-        Gramex * seq(Gramex *a, Gramex *b);
-        Gramex * seq(Gramex *a, Gramex *b, Gramex *c);
-        Gramex * seq(Gramex *a, Gramex *b, Gramex *c, Gramex *d);
-        Gramex * seq(vector<Gramex*> es);
+        Gramex * gx_literal(string const &w);
+        
+        Gramex * gx_sequence(vector<Gramex*> es);
         
 
-        Gramex * options( std::vector<Gramex *> cs );
+        Gramex * gx_options( std::vector<Gramex *> cs );
 
-        Gramex * non_term(string const &name);
-        Gramex * match_type( string const &tname);
-        Gramex * match_lexer_rule( string const &rule_name );
+        Gramex * gx_non_terminal(string const &name);
+        Gramex * gx_match_type( string const &tname);
+        Gramex * gx_match_lexer_rule( string const &rule_name );
 
         // match '(' inner ')'
-        Gramex * parens( Gramex *inner );
+        Gramex * gx_parens( Gramex *inner );
 
         // match a, b, c
-        Gramex * comma_list( std::vector<Gramex*> elems, string sep="," );
+        Gramex * gx_comma_list( std::vector<Gramex*> elems, string sep="," );
 
         /// Match one or more of a sentence.
-        Gramex * plus( Gramex * inner );
+        Gramex * gx_plus_closure( Gramex * inner );
 
         /// Match any number of a sentence
-        Gramex * star( Gramex * inner );
+        Gramex * gx_star_closure( Gramex * inner );
         
         /// Match zero or one of a sentence.
-        Gramex * maybe( Gramex * inner );
+        Gramex * gx_maybe( Gramex * inner );
 
         /// Apply a function to a match sequence
-        Gramex * apply( Gramex * inner, TransformFn f );
+        Gramex * gx_apply( Gramex * inner, TransformFn f );
 
         
     }

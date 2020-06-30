@@ -118,11 +118,15 @@ namespace rhizome {
 
         void choose_character_class( Console &console, Store *game ) {
             rhizome::ui::Menu menu;
+            
             menu.add_item("Mucaro",[game](){
                 game->set("cclass", new rhizome::types::String("Mucaro"));
             });
             menu.add_item("Spider", [game](){
                 game->set("cclass", new rhizome::types::String("Spider"));
+            });
+            menu.add_item("Programmer",[game](){
+                game->set("cclass", new rhizome::types::String("Programmer"));
             });
             menu.choose(console,true);
         }
