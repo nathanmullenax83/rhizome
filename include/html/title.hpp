@@ -21,7 +21,7 @@ namespace rhizome {
             Title(string const &cdata);
             ~Title();
 
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out, size_t indent );
             
             virtual void serialize_to( ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;

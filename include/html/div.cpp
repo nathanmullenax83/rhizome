@@ -11,10 +11,11 @@ namespace rhizome {
         }
 
         void
-        Div::write_to( ostream &out ) {
-            out << "<div>";
-            write_children(out);
-            out << "</div>";
+        Div::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << open_tag("div");
+            write_children(out,indent+1);
+            out << spacer << "</div>\n";
         }
 
         string

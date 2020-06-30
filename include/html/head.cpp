@@ -11,10 +11,11 @@ namespace rhizome {
         }
 
         void
-        Head::write_to( ostream &out ) {
-            out << "\t<head>\n";
-            write_children(out);
-            out << "\t</head>\n";
+        Head::write_to( ostream &out, size_t indent ) {
+            string spacer( indent*4,' ' );
+            out << spacer << "<head>\n";
+            write_children(out, indent+1);
+            out << spacer << "</head>\n";
         }
 
         Title &

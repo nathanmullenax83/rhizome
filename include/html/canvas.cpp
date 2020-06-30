@@ -11,9 +11,10 @@ namespace rhizome {
         }
 
         void
-        Canvas::write_to( ostream &out ) {
-            out << "<canvas>";
-            out << "</canvas>";
+        Canvas::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << open_tag("canvas") << "\n";
+            out << spacer << "</canvas>\n";
         }
 
         string

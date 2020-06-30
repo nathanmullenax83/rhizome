@@ -30,7 +30,7 @@ namespace rhizome {
             HTML( string const &title );
             virtual ~HTML();
             
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out , size_t indent=0 );
             
             // virtual rp::Pattern * make_pattern() const override;
             // virtual rp::Pattern * make_concise_pattern() const override;

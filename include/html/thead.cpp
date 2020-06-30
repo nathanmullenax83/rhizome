@@ -11,9 +11,11 @@ namespace rhizome {
         }
 
         void
-        THead::write_to( ostream &out ) {
-            out << "<thead>";
-            out << "</thead>";
+        THead::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<thead>";
+            row.write_to(out,indent+1);
+            out << spacer << "</thead>";
         }
 
         void

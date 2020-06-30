@@ -14,7 +14,7 @@ namespace rhizome {
             Article();
             ~Article();
 
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out, size_t indent );
             virtual bool has_interface( string const &name ) override;
         };
     }

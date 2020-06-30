@@ -12,11 +12,12 @@ namespace rhizome {
 
 
         void 
-        Table::write_to( ostream &out ) {
-            out << "<table>";
-            thead.write_to(out);
-            tbody.write_to(out);
-            out << "</table>";
+        Table::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<table>\n";
+            thead.write_to(out, indent+1);
+            tbody.write_to(out, indent+1);
+            out << spacer << "</table>\n";
         }
 
         void

@@ -11,12 +11,13 @@ namespace rhizome {
         }
 
         void
-        TBody::write_to( ostream &out ) {
-            out << "<tbody>";
+        TBody::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<tbody>\n";
             for(size_t i=0; i<rows.size(); ++i) {
-                rows[i].write_to(out);
+                rows[i].write_to(out,indent+1);
             }
-            out << "</tbody>";
+            out << spacer << "</tbody>\n";
         }
 
         void

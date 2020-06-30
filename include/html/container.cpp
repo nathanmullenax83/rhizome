@@ -33,9 +33,9 @@ namespace rhizome {
         }
 
         void
-        Container::write_children( ostream &out ) {
+        Container::write_children( ostream &out, size_t indent ) {
             for(size_t i=0; i<children.size();++i) {
-                children[i]->write_to(out);
+                children[i]->write_to(out,indent+1);
             }
         }
 

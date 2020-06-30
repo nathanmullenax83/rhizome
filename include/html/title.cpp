@@ -15,10 +15,9 @@ namespace rhizome {
         }
 
         void
-        Title::write_to( ostream &out ) {
-            out << "\t\t<title>";
-            out << cdata;
-            out << "</title>\n";
+        Title::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<title>" << cdata << "</title>\n";
         }
 
         void

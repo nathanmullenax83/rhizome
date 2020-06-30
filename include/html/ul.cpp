@@ -12,12 +12,13 @@ namespace rhizome {
         }
 
         void 
-        UL::write_to( ostream &out ) {
-            out << "<ul>\n";
+        UL::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<ul>\n";
             for(size_t i=0; i<items.size(); ++i) {
-                items[i].write_to(out);
+                items[i].write_to(out,indent+1);
             }
-            out << "</ul>\n";
+            out << spacer << "</ul>\n";
         }
 
         void

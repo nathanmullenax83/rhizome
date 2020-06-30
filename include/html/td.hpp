@@ -14,7 +14,7 @@ namespace rhizome {
             Td();
             ~Td();
 
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out, size_t indent );
         };
     }
 }

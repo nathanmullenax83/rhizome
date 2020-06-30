@@ -15,10 +15,9 @@ namespace rhizome {
         }
 
         void
-        H1::write_to( ostream &out ) {
-            out << "<h1>";
-            out << title;
-            out << "</h1>";
+        H1::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<h1>" << title << "</h1>\n";
         }
 
         void

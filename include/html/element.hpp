@@ -19,17 +19,22 @@ namespace rhizome {
         class Element: public Thing {
         protected:
             map<string,string> attributes;
+
+
         public:
             virtual ~Element();
             /// accessor for attributes.
             string & operator[] ( string const &attr_name );
 
-            
+            /// generate <element attr1=val1...> 
+            string open_tag( string const &tagname );
 
-            virtual void write_to( ostream &out )=0;
+            virtual void write_to( ostream &out, size_t indent )=0;
             
 
             virtual bool has_interface( string const &name ) override;
+
+    
         };
     }
 }

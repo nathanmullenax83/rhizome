@@ -11,9 +11,9 @@ namespace rhizome {
         }
 
         void
-        Article::write_to( ostream &out ) {
+        Article::write_to( ostream &out, size_t indent ) {
             out << "<article>";
-            write_children(out);
+            write_children(out, indent+1);
             out << "</article>";
         }
     }

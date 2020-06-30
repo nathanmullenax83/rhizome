@@ -11,10 +11,11 @@ namespace rhizome {
         }
 
         void
-        Body::write_to( ostream &out ) {
-            out << "\t<body>\n";
-            write_children(out);
-            out << "\t</body>\n";
+        Body::write_to( ostream &out, size_t indent ) {
+            string spacer( indent*4, ' ');
+            out << spacer << "<body>\n";
+            write_children(out,indent+1);
+            out << spacer << "</body>\n";
         }
 
         void

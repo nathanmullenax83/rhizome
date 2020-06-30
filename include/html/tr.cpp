@@ -11,12 +11,13 @@ namespace rhizome {
         }
 
         void
-        Tr::write_to( ostream &out ) {
-            out << "<tr>";
+        Tr::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<tr>\n";
             for(size_t i=0; i<cells.size(); ++i) {
-                cells[i].write_to(out);
+                cells[i].write_to(out,indent+1);
             }
-            out << "</tr>";
+            out << spacer << "</tr>\n";
         }
 
         void

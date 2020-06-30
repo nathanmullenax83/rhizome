@@ -15,10 +15,9 @@ namespace rhizome {
         }
 
         void
-        LI::write_to( ostream &out ) {
-            out << "<li>";
-            out << cdata;
-            out << "</li>\n";
+        LI::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<li>" << cdata << "</li>\n";
         }
 
         void

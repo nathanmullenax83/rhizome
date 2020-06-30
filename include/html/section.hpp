@@ -2,6 +2,7 @@
 #define RHIZOME_HTML_SECTION_HPP
 
 #include <iostream>
+#include <string>
 #include "element.hpp"
 #include "container.hpp"
 
@@ -13,7 +14,7 @@ namespace rhizome {
             Section();
             ~Section();
 
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out, size_t indent );
         };
     }
 }

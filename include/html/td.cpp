@@ -11,10 +11,11 @@ namespace rhizome {
         }
 
         void
-        Td::write_to( ostream &out ) {
-            out << "<td>";
-            write_children(out);
-            out << "</td>";
+        Td::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<td>";
+            write_children(out, indent+1);
+            out << spacer << "</td>";
         }
     }
 }

@@ -11,10 +11,11 @@ namespace rhizome {
         }
 
         void 
-        Section::write_to( ostream &out ) {
-            out << "<section>";
-            write_children(out);
-            out << "</section>";
+        Section::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<section>\n";
+            write_children(out,indent+1);
+            out << spacer << "</section>\n";
         }
     }
 }

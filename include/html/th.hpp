@@ -20,7 +20,7 @@ namespace rhizome {
             Th(string const &text, string const &scope="col");
             ~Th();
 
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out, size_t indent );
 
             virtual void serialize_to( ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;

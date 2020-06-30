@@ -10,10 +10,9 @@ namespace rhizome {
 
         }
 
-        void Th::write_to( ostream &out ) {
-            out << "<th>";
-            out << cdata;
-            out << "</th>";
+        void Th::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<th>" << cdata <<  "</th>\n";
         }
 
         void Th::serialize_to( ostream &out ) const {

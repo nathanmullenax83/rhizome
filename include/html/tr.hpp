@@ -21,7 +21,7 @@ namespace rhizome {
             Tr();
             ~Tr();
 
-            virtual void write_to( std::ostream &out );
+            virtual void write_to( std::ostream &out, size_t indent );
             virtual void serialize_to( std::ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;
             // virtual rp::Pattern * make_pattern() const override;

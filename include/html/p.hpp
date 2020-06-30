@@ -24,7 +24,7 @@ namespace rhizome {
             P(string const &cdata);
             ~P();
 
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out, size_t indent );
 
             // virtual Pattern * make_pattern();
             // virtual Pattern * make_concise_pattern();

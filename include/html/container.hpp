@@ -26,7 +26,7 @@ namespace rhizome {
             void add_child( Element *e );
             Element * child_at( size_t index );
 
-            void write_children( ostream &out );
+            void write_children( ostream &out, size_t indent );
             void serialize_children( ostream &out ) const;
 
             H1 & h1( string const &title );

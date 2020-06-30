@@ -16,12 +16,12 @@ namespace rhizome {
         }
 
         void
-        HTML::write_to( ostream &out ) {
-
+        HTML::write_to( ostream &out, size_t indent ) {
+            (void)indent;
             out << "<!DOCTYPE html>\n";
             out << "<html>\n";
-            head.write_to(out);
-            body.write_to(out);
+            head.write_to(out,1);
+            body.write_to(out,1);
             out << "</html>\n";
         }
 

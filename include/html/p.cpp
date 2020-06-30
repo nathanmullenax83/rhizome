@@ -15,10 +15,11 @@ namespace rhizome {
         }
 
         void 
-        P::write_to( ostream &out ) {
-            out << "<p>";
-            write_children(out);
-            out << "</p>";
+        P::write_to( ostream &out, size_t indent ) {
+            string spacer(indent*4,' ');
+            out << spacer << "<p>";
+            out << cdata;
+            out << "</p>\n";
         }
 
     }

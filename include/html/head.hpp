@@ -17,7 +17,7 @@ namespace rhizome {
             Head();
             ~Head();
 
-            virtual void write_to( ostream &out );
+            virtual void write_to( ostream &out, size_t indent );
             Title & title(string const &t);
 
             // virtual rp::Pattern * make_pattern() const override;
