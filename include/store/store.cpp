@@ -126,6 +126,15 @@ namespace rhizome {
             return data.count(name) > 0;
         }
 
+        bool
+        Store::exists( string const &name, TypeConstraint *tc) const { 
+            if( data.count(name)) {
+                Thing *t = data.at(name);
+                return tc->contains(t);
+            }
+            return false;
+        }
+
         void
         Store::remove( string const &name ) {
             if( data.count(name) > 0 ) {
@@ -154,8 +163,8 @@ namespace rhizome {
         }
 
         Thing *
-        Store::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Store::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Not implemented.");
         }
     }

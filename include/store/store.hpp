@@ -13,6 +13,7 @@
 #include "core/i_parser.hpp"
 #include "types/dir.hpp"
 #include "parse/parser.hpp"
+#include "types/type_constraint.hpp"
 
 using std::map;
 using std::ostream;
@@ -59,10 +60,15 @@ namespace rhizome {
             virtual void set( string const &name, Thing *thing) override;
             virtual Thing * get( string const &name ) override;
             virtual Thing * get_clone( string const &name ) const override;
+            
             virtual bool exists( string const &name ) const override;
+
+            /// Check if something exists and satisfies type-constraint /tc/.
+            virtual bool exists( string const &name, TypeConstraint *tc) const;
+
             virtual void remove( string const &name ) override;
 
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            virtual Thing * invoke( Thing * context, string const &method, Thing *arg ) override;
         };
     }
 }
