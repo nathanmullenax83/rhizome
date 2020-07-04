@@ -65,7 +65,7 @@ namespace rhizome {
             return true;
         }
 
-        unsigned long long int 
+        wchar_t
         StreamQueue::next() {
             if( ! chars.empty() ) {
                 return chars.next();
@@ -88,7 +88,8 @@ namespace rhizome {
         }
 
         Thing *
-        StreamQueue::invoke( string const &op, Thing *arg ) {
+        StreamQueue::invoke( Thing *context, string const &op, Thing *arg ) {
+            (void)context;
             if( op=="put_back" && arg->rhizome_type()=="Char") {
                 Char *c = (Char*)(arg);
                 put_back(c->v); return NULL;

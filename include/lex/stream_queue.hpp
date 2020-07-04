@@ -47,9 +47,9 @@ namespace rhizome {
             // void remove_bypass();
             
             bool empty() const;
-            unsigned long long int next();
+            wchar_t next();
 
-            virtual Thing * invoke( string const &op, Thing * arg ) override;
+            virtual Thing * invoke( Thing *context, string const &op, Thing * arg );
         };
     }
 }

@@ -14,6 +14,8 @@ using std::map;
 using std::vector;
 using std::runtime_error;
 
+namespace P = rhizome::pattern;
+
 namespace rhizome {
     namespace lex {
 
@@ -151,7 +153,7 @@ namespace rhizome {
 
         Thing *
         Lexer::next_thing(string &putback) {
-            static rhizome::log::Log log("Lexer__next_thing");
+            //static rhizome::log::Log log("Lexer__next_thing");
             stringstream pbb;
             string pb;
 
@@ -163,19 +165,19 @@ namespace rhizome {
             if( has_next_thing() ) {
                 //log.info("has_next_thing reports that there are tokens to extract.");
                 Thing *t = next(pb);
-                log.info("Extracted token.");
-                log.info( t==NULL?"Token is NULL":"Token is not NULL.");
+                //log.info("Extracted token.");
+                //log.info( t==NULL?"Token is NULL":"Token is not NULL.");
                 pbb << pb;
-                if( t!=NULL ) {
-                    std::cout << "Next returned object of type " << t->rhizome_type() << " '";
-                    t->serialize_to(std::cout);
-                    std::cout << "\n";
-                }
+                // if( t!=NULL ) {
+                //     std::cout << "Next returned object of type " << t->rhizome_type() << " '";
+                //     t->serialize_to(std::cout);
+                //     std::cout << "\n";
+                // }
                 putback = pbb.str();
                 return t;
             } else {
                 putback = pbb.str();
-                log.warn("Nothing to extract.");
+                //log.warn("Nothing to extract.");
                 return NULL;
             }
             
@@ -188,16 +190,16 @@ namespace rhizome {
             }
             IPattern *p = states.top().patterns.at(pattern_name)->clone_pattern(false);
             p->reset();
-            std::cout << "Got pattern for " << pattern_name << "\n";
+            //std::cout << "Got pattern for " << pattern_name << "\n";
 
             
             
             bool exit = false;
             while( !states.top().streams.empty() && !exit ) {
                 unsigned long long int c = states.top().streams.next();
-                std::cout << "Got '";
-                std::cout.put(c);
-                std::cout << "'\n";
+              //  std::cout << "Got '";
+                //std::cout.put(c);
+                //std::cout << "'\n";
 
                 if( p->can_transition(c)) {
                     p->transition(c);
@@ -382,6 +384,20 @@ namespace rhizome {
             patterns[name] = p;
         }
 
+        void Lexer::define_ignore_whitespace() {
+            define_token_type( "Whitespace", new P::Transform( P::plus(new P::Or(new P::Literal(" "),new P::Literal("\t"))),
+                [a = this]( Thing *t ){
+                    String *s = (String*)t;
+                    if( s->native_string()=="\n" ) {
+                        a->row++;
+                    } else {
+                        a->col++;
+                    }
+                    delete t;
+                    return (Thing*)NULL;
+                }));
+            
+        }
 
 
         void Lexer::undefine_token_type( string const &name ) {
@@ -418,8 +434,8 @@ namespace rhizome {
         }
 
         Thing *
-        Lexer::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Lexer::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
         

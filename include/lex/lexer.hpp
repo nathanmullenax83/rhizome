@@ -59,7 +59,8 @@ namespace rhizome {
         /// Converts a character stream into a token stream.
         class Lexer: public ILexer, public IDebuggable, public Thing {
         private:
-            
+            size_t row;
+            size_t col;
 
             
 
@@ -67,6 +68,7 @@ namespace rhizome {
         public:
             void push_state();
             void pop_state();
+
             virtual void dump( ostream &out ) const override;
         private:
             // to summarize: tokens are extracted from streams according to patterns.
@@ -110,6 +112,11 @@ namespace rhizome {
             // virtual void define_token_type( string const &name, IPattern *p, function< Thing*(Thing*) > ctor ) override;
             virtual void define_token_type( string const &name, string const &literal );
             virtual void define_token_type( string const &name, IPattern *p ) override;
+
+            // Shortcut for a generic rule to ignore whitespace
+            virtual void define_ignore_whitespace();
+
+            
             
 
             virtual void undefine_token_type( string const &name );
@@ -125,7 +132,7 @@ namespace rhizome {
             virtual string rhizome_type() const override;
             virtual Thing * clone() const override;
             virtual bool has_interface( string const &name ) override;
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
 
         };

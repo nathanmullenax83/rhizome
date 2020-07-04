@@ -46,7 +46,7 @@ namespace rhizome {
             virtual string rhizome_type() const override;
             virtual Thing * clone() const override;
 
-            virtual Thing * invoke( string const &op, Thing *arg ) override;
+            virtual Thing * invoke( Thing *context, string const &op, Thing *arg ) override;
         };
     }
 }

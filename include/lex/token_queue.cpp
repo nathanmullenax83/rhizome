@@ -75,7 +75,8 @@ namespace rhizome {
         }
         
         Thing *
-        TokenQueue::invoke( string const &op, Thing *arg ) {
+        TokenQueue::invoke( Thing *context, string const &op, Thing *arg ) {
+            (void)context;
             if( op=="clone" ) {
                 return clone();
             } else if( op=="has_interface" && arg->rhizome_type()=="String") {
