@@ -8,11 +8,17 @@
 #include <stack>
 #include <stdexcept>
 #include <functional>
+#include <codecvt>
+#include <locale>
+#include <cwchar>
+#include <cassert>
 
 #include <termios.h>
 #include <termcap.h>
 
 #include "screen_region.hpp"
+
+#include "core/thing.hpp"
 
 using std::ostream;
 using std::string;
@@ -20,6 +26,8 @@ using std::stringstream;
 using std::stack;
 using std::function;
 using std::runtime_error;
+
+using rhizome::core::Thing;
 
 namespace rhizome {
     namespace ui {
@@ -86,10 +94,14 @@ namespace rhizome {
 
         class Console {
         private:
+            std::ostream &console;
             size_t x;
             size_t y;
+            size_t width;
+            size_t height;
+            
 
-            std::ostream &console;
+            std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
             // To implement 'getch' style input we need:
             stack< struct termios > termios_configs;
             /// Push current termios state.
@@ -97,13 +109,18 @@ namespace rhizome {
             /// pop and enable termios state
             void pop_termios();
         public:
-            Console(std::ostream &console);
+            Console(std::ostream &console, size_t x=0, size_t y=0, size_t width=80, size_t height=30);
 
-            void clear();
-            void locate( int x, int y );
+            std::wstring_convert<std::codecvt_utf8_utf16<wchar_t> > & get_converter();
+
+            void clear(char fill=' ');
+            void clear_screen();
+            void locate( size_t x, size_t y );
             void cursor_up( size_t n=1);
             void cursor_down( size_t n=1);
             void set_mode( int mode );
+            void putch( wchar_t c );
+
             void save_cursor_position();
             void restore_cursor_position();
             /// Erases from the current cursor position to the end of the line.
@@ -111,6 +128,11 @@ namespace rhizome {
             void shift_out(); // alternate character set?
             void shift_in();  // back to normal, either way.
             unsigned long long termios_getch(bool echo); 
+
+            /// Level 1 heading
+            Console & h1(string const &s);
+
+            
             
             void fill_region( ScreenRegion const &rect, string const &fill );
 
@@ -118,6 +140,8 @@ namespace rhizome {
             
             
             Console & operator << ( int n );
+
+            Console & operator << (Thing *t);
         };
     }
 }

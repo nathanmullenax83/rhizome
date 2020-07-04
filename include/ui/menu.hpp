@@ -49,7 +49,7 @@ namespace rhizome {
             string menuprefix;
             vector< pair< string, function< void(void) > > > items;
         public:
-            Menu() : menuprefix(" \033[1;32m🌱\033[0m rhizome—") {
+            Menu() : menuprefix("—rh\033[1;32m🌱\033[0mzome—") {
 
             }
 
@@ -64,10 +64,12 @@ namespace rhizome {
                 items[itemNo%items.size()].second();
             }
 
-            void display(Console & console) const;
+            void display(Console & console ) const;
+            void display_inline(Console &console) const;
+
 
             /// Display the menu and prompt for a selection.
-            void choose(Console & console);
+            void choose(Console & console, bool inlined=false);
         };
 
         void menu_demo();

@@ -54,11 +54,22 @@ namespace rhizome {
                 std::cout << i << ": " << FG_WHITE_ON << items[i].first << RESET_COLOR << std::endl;
             }
         }
+        
+        void 
+        Menu::display_inline(Console &con) const {
+            for(size_t i=0; i<items.size(); ++i) {
+                con << "  " << i << ": " << items[i].first;
+            }
+        }
 
         void
-        Menu::choose(Console &cons) {
-            cons.clear();
-            display(cons);
+        Menu::choose(Console &cons, bool inlined) {
+            if(!inlined) {
+                cons.clear_screen();
+                display(cons);
+            } else {
+                display_inline(cons);
+            }
             size_t choice(0);
             cons << "\n Choose [0 - " << (int)((items.size()-1)) << "]: ";
             while( !(std::cin>>choice)) {
@@ -66,9 +77,13 @@ namespace rhizome {
                 std::cin.clear();
                 std::cin.ignore(INT32_MAX,'\n');
             }
-            cons.clear();
+            if( !inlined ) {
+                cons.clear_screen();
+            }
             select(choice);
         }
+
+        
 
         void menu_demo() {
 

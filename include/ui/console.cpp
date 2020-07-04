@@ -2,7 +2,8 @@
 
 namespace rhizome {
     namespace ui {
-        Console::Console(std::ostream &console): console(console) {
+        Console::Console(std::ostream &console, size_t x, size_t y, size_t width, size_t height)
+        : console(console), x(x), y(y), width(width), height(height)  {
             struct termios current;
             tcgetattr(0,&current);
             termios_configs.push(current);
@@ -10,16 +11,32 @@ namespace rhizome {
         }
 
         void
-        Console::clear() {
+        Console::clear(char fill) {
             // Esc[2J
+            // 
+            string blankrow(width,fill);
+            locate(0,0);
+            console << RESET_COLOR;
+            save_cursor_position();
+            for(size_t i=0; i<height;++i) {
+                locate(0,i);
+                (*this) << blankrow;
+            }
+            restore_cursor_position();
+        }
+
+        void
+        Console::clear_screen() {
             console << "\033[2J\033[H";
         }
 
         void
-        Console::locate(int x, int y) {
+        Console::locate(size_t x, size_t y) {
+            assert( x < width );
+            assert( y < height );
             // Esc[Line;ColumnH
             // Esc[Line;Columnf
-            console << "\033[" << y << ";" << x << "H";
+            console << "\033[" << (this->y+y) << ";" << (this->x + x) << "H";
         }
 
         void
@@ -68,6 +85,12 @@ namespace rhizome {
             console << "\017";
         }
 
+
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t> > & 
+        Console::get_converter() {
+            return converter;
+        }
+        
         void 
         Console::fill_region( ScreenRegion const &rect, string const &fill ) {
             
@@ -95,6 +118,12 @@ namespace rhizome {
             return *this;
         }
 
+        Console &
+        Console::operator<< (Thing *t) {
+            t->serialize_to(console);
+            return *this;
+        }
+
         void Console::push_termios(function< void(struct termios &) > create_top) {
             struct termios current;
             tcgetattr(0, &current);
@@ -112,6 +141,24 @@ namespace rhizome {
             } else {
                 throw runtime_error("Must be one termios state at bottom.");
             }
+        }
+
+        void Console::putch( wchar_t c ) {
+            string utf8 = converter.to_bytes( {c});
+            console << utf8;
+        }
+
+        Console & Console::h1(string const &s) {
+            std::wstring expanded = converter.from_bytes(s);
+            int w = 80;
+            int start = w/2 - expanded.length()/2;
+            std::string spacer(start-1,' ');
+            std::wstring underbar(expanded.length(),L'―');
+            console << "\n";
+            console << spacer << FG_WHITE_ON << " " << s << "\n";
+            console << RESET_COLOR;
+            console << spacer << converter.to_bytes(underbar) << "\n\n";
+            return *this;
         }
 
         unsigned long long Console::termios_getch(bool echo) {

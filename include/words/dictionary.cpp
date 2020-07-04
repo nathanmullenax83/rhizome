@@ -46,16 +46,7 @@ namespace rhizome {
             
             size_t length(0);
             size_t count(0);
-
             
-
-            // auto opt_order = [&m](string w){
-            //     return &m[w].first;
-            // };
-
-            // auto nat_order = [&m](string w) {
-            //     return &m[w].second;
-            // };
             vector< pair<string,size_t> > n;
             // Def: ideal order is count*ordinal should be kept minimal.
             //      the most concise table assigns the shortest prefix
@@ -104,7 +95,8 @@ namespace rhizome {
         }
 
         Thing *
-        Dictionary::invoke(string const &method, Thing *arg) {
+        Dictionary::invoke(Thing *context, string const &method, Thing *arg) {
+            (void)context;
             (void)method;
             (void)arg;
             throw runtime_error("Not implemented.");
