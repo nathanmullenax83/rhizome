@@ -43,8 +43,8 @@ namespace rhizome {
         }
 
         Thing *
-        LI::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        LI::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("I'm unfamiliar with that method.");
         }
     }

@@ -43,8 +43,8 @@ namespace rhizome {
         }
 
         Thing *
-        H1::invoke( string const &method, Thing *arg ) {
-            (void) method; (void)arg;
+        H1::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void) method; (void)arg; (void)context;
             throw runtime_error("No such method.");
         }
     }

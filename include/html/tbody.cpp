@@ -40,6 +40,13 @@ namespace rhizome {
             return "html::TBody";
         }
 
+        Thing *
+        TBody::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
+            (void)method;
+            (void)arg;
+            throw runtime_error("Not implemented.");
+        }
 
     }
 }

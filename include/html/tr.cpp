@@ -40,6 +40,14 @@ namespace rhizome {
             return "html::Tr";
         }
 
+        Thing *
+        Tr::invoke( Thing *context, string const &method, Thing *arg) {
+            (void)context;
+            (void)method;
+            (void)arg;
+            throw runtime_error("Not implemented.");
+        }
+
         
     }
 }

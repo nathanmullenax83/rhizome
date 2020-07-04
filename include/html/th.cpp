@@ -38,7 +38,7 @@ namespace rhizome {
         }
 
         Thing *
-        Th::invoke( string const &method, Thing *arg ) {
+        Th::invoke( Thing *context, string const &method, Thing *arg ) {
             (void)method; (void)arg;
             throw runtime_error("No such method.");
         }

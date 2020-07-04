@@ -45,8 +45,8 @@ namespace rhizome {
         }
 
         Thing *
-        Body::invoke( string const &method, Thing *arg) {
-            (void)arg;
+        Body::invoke( Thing *context, string const &method, Thing *arg) {
+            (void)arg; (void)context;
             stringstream err;
             err << "No such method: " << method;
             throw runtime_error(err.str());

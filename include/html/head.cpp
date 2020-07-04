@@ -50,8 +50,8 @@ namespace rhizome {
         }
 
         Thing *
-        Head::invoke( string const &name, Thing *arg ) {
-            (void)arg;
+        Head::invoke( Thing *context, string const &name, Thing *arg ) {
+            (void)arg; (void)context;
             stringstream ss;
             ss << "No such method: " << name;
             throw runtime_error(ss.str());

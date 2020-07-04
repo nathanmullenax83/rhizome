@@ -28,8 +28,8 @@ namespace rhizome {
         }
 
         Thing *
-        Canvas::invoke( string const &method, Thing * arg ) {
-            (void)method; (void)arg;
+        Canvas::invoke( Thing *context, string const &method, Thing * arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("No such method.");
         }
         

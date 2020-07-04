@@ -50,8 +50,8 @@ namespace rhizome {
             return "html::UL";
         }
 
-        Thing * UL::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Thing * UL::invoke(Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("No such method.");
         }
     }

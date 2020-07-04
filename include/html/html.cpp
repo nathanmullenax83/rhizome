@@ -52,8 +52,8 @@ namespace rhizome {
         }
 
         Thing *
-        HTML::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        HTML::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Don't know that method.");
         }
     }

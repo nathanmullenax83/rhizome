@@ -28,8 +28,8 @@ namespace rhizome {
             return name==rhizome_type()||name=="Thing";
         }
 
-        Thing * invoke( string const &method, Thing *arg ) {
-            (void)arg; (void)method;
+        Thing * invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)arg; (void)method; (void)context;
             throw runtime_error("No such method.");
         }
     }

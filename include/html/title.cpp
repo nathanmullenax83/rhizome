@@ -37,8 +37,8 @@ namespace rhizome {
             return "html::Title";
         }
 
-        Thing * Title::invoke( string const &method, Thing *arg ) {
-            (void) arg;
+        Thing * Title::invoke(Thing *context,  string const &method, Thing *arg ) {
+            (void) arg; (void)context;
             stringstream ss;
             ss << "No such method: " << method;
             throw runtime_error(ss.str());
