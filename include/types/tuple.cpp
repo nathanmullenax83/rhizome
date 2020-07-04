@@ -76,7 +76,8 @@ namespace rhizome {
         }
 
         Thing *
-        Tuple::invoke( string const &method, Thing *arg ) {
+        Tuple::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
             if( arg != NULL ) {
                 if( method=="append" ) {
                     append( arg );
@@ -84,7 +85,6 @@ namespace rhizome {
                     prepend(arg);
                 }
             }
-            (void)method;(void)arg;
             throw runtime_error("Nothing to invoke.");
         }
 

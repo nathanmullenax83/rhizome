@@ -145,8 +145,8 @@ namespace rhizome {
 
 
         Thing *
-        Operator::invoke( string const &method, Thing *arg ) {
-            (void)arg;
+        Operator::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)arg; (void)context;
             if(method=="`"||method=="eval") {
                 
             }

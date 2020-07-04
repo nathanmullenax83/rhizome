@@ -41,8 +41,9 @@ namespace rhizome {
             string rhizome_type() const override;
             void serialize_to( std::ostream &out ) const override;
             bool has_interface( string const &name ) override;
-            Thing * invoke( string const &method, Thing *arg ) override;
-            Thing * invoke( string const &method );
+            Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
+            Thing * invoke( Thing *context, string const &method );
+            Thing * invoke_x( Thing *context, string const &method, Thing *arg, TypeConstraint *arg_constraint);
 
             
             Thing * clone() const override;

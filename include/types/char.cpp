@@ -6,7 +6,7 @@ namespace rhizome {
 
         }
 
-        Char::Char( unsigned long long v): v(v) {
+        Char::Char( wchar_t v): v(v) {
 
         }
 
@@ -31,8 +31,9 @@ namespace rhizome {
         }
 
         Thing *
-        Char::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Char::invoke( Thing *context, string const &method, Thing *arg ) {
+            // must dispatch quickly here. No if/then/else if/else if/else if...
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

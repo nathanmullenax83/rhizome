@@ -154,8 +154,8 @@ namespace rhizome {
             return copy;
         }
 
-        Thing * Machine::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Thing * Machine::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Not implemented.");
         }
     }

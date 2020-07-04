@@ -39,7 +39,8 @@ namespace rhizome {
             return name=="Thing"||name==rhizome_type();
         }
 
-        Thing * Mapping::invoke( string const &method, Thing *arg ) {
+        Thing * Mapping::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
             if( method=="map") {
                 assert( arg->has_interface("Tuple"));
                 Tuple *t = (Tuple*)arg;

@@ -63,8 +63,8 @@ namespace rhizome {
         }
 
         Thing *
-        Table::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Table::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

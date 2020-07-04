@@ -46,8 +46,8 @@ namespace rhizome {
         }
 
         Thing *
-        Enumeration::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Enumeration::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg;(void)context;
             throw runtime_error("Nothing to invoke.");
         }
     }

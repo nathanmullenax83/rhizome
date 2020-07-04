@@ -38,7 +38,8 @@ namespace rhizome {
         }
 
         Thing *
-        System::invoke( string const &method, Thing *arg ) {
+        System::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
             if( arg==NULL ) {
                 if( method=="clone" ) {
                     return clone();
@@ -52,6 +53,41 @@ namespace rhizome {
             }
             throw runtime_error("Not implemented.");
         }
+
+        IParser *
+        System::get_parser() {
+            return parser;
+        }
+
+        ILexer *
+        System::get_lexer() {
+            return parser->get_lexer();
+        }
         
+        void
+        System::register_type( string const &name, Factory ctor, ParserSideEffect shim ) {
+            shim(parser);
+            journal.push_back( RuleConstructor(name,shim) );
+            higher_order_constructors[name] = ctor;
+        }
+
+        void 
+        System::register_type( string const &name, UnitFactory ctor, ParserSideEffect shim) {
+            shim(parser);
+            journal.push_back( RuleConstructor(name,shim));
+            simple_factories[name] = ctor;
+        }
+
+
+        Thing *
+        System::parse_thing( string const &start_rule ) {
+            return parser->parse_thing(start_rule);
+        }
+
+        Thing *
+        System::parse_thing( string const &start_rule, std::istream &in ) {
+            parser->q_stream(in);
+            return parser->parse_thing( start_rule );
+        }
     }
 }

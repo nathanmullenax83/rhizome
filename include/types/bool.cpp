@@ -27,7 +27,8 @@ namespace rhizome {
         }
 
         Thing *
-        Bool::invoke( string const &method, Thing *argument ) {
+        Bool::invoke( Thing *context, string const &method, Thing *argument ) {
+            (void)context;
             if( (method=="!" || method=="not" || method=="~") && argument==NULL ) return new Bool( !value );
             if( argument != NULL ) {
                 if( method=="=="  ) {

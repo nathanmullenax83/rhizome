@@ -189,8 +189,8 @@ namespace rhizome {
         }
 
         Thing *
-        Image::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Image::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg;(void)context;
             throw runtime_error("Nothing to invoke.");
         }
     }

@@ -4,6 +4,8 @@
 #include <errno.h>
 #include <stdexcept>
 #include <sstream>
+#include <dirent.h>
+
 
 
 using std::runtime_error;
@@ -67,9 +69,28 @@ namespace rhizome {
         }
 
         Thing *
-        Dir::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Dir::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Invoke failed.");
+        }
+
+        vector<string>
+        Dir::files( Pattern *filter ) {
+            vector<string> fs;
+            DIR *dir = opendir(prefix().c_str());
+            errno = 0;
+            while(dir) {
+                dirent *dp;
+                if ((dp = readdir(dir)) != NULL) {
+                    if( filter->accepts(string(dp->d_name)) ) {
+                        fs.push_back( string(dp->d_name));
+                    }
+                } else {
+                    closedir(dir);
+                }
+
+            }
+            return fs;
         }
     }
 }

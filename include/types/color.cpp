@@ -124,50 +124,21 @@ namespace rhizome {
             return h;
         }
 
-        // Pattern *
-        // Color::make_pattern() const {
-        //     rp::Literal *rgb = new rp::Literal("rgba");
-        //     rp::Plus *Sp = new rp::Plus( new rp::Whitespace());
-        //     rp::Literal *color = new rp::Literal("color");
-        //     rp::Cat *pref = new rp::Cat(rgb,Sp);
-        //     pref->append(color);
-        //     pref->append(Sp->clone());
-        //     throw runtime_error("color::make_pattern not implemented.");
-
-        // }
-
-        // Pattern *
-        // Color::make_concise_pattern() const {
-        //     rp::Literal *rpga = new rp::Literal("rgba");
-        //     // todo
-        //     return rpga;
-        // }
-
         void
         Color::serialize_to( ostream &out ) const {
+            // note, the serialize_to method should always be a prototype
+            // for an object literal representation on the rhizome parser.
+            // This does not preclude other representations. For instance,
+            // it is often convenient to specify a color as a hexadecimal
+            // web color. These alternative representations are truncated
+            // representations of the same. Clearly the below representation
+            // can portray all of the web colors, but the inverse is not true.
+            // It could be said of the default configuration of the parser:
+            //    There is only one internal representation, but there are
+            //    uncountably many intermediate representation that can be
+            //    supported elsewhere. 
             out << "color(" << r << "," << g << "," << b << ";" << a << ")";
         }
-
-        // void
-        // Color::deserialize_from( istream &in, IParser *parser ) {
-        //     auto s2f = [] ( string const &s ) {
-        //         stringstream ss;    ss << s;
-        //         long double v;      ss >> v;
-        //         return v;
-        //     };
-
-        //     parser->match_literal(in,"color");
-        //     parser->match_literal(in,"(");
-        //     r = s2f( parser->match_float(in) );
-        //     parser->match_literal(in,",");
-        //     g = s2f( parser->match_float(in) );
-        //     parser->match_literal(in,",");
-        //     b = s2f( parser->match_float(in) );
-        //     parser->match_literal(in,";");
-        //     a = s2f( parser->match_float(in) );
-        //     parser->match_literal(in,")");
-
-        // }
 
         Thing *
         Color::clone() const {
@@ -193,8 +164,8 @@ namespace rhizome {
         }
 
         Thing *
-        Color::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Color::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

@@ -130,7 +130,8 @@ namespace rhizome {
 
         // thing implementation
         Thing * 
-        Classifier::invoke( string const &method, Thing * arg ) {
+        Classifier::invoke( Thing *context, string const &method, Thing * arg ) {
+            (void)context;
             if( method=="∪" || method=="|") {
                 assert( arg!=NULL && arg->rhizome_type()=="Tuple" );
                 Tuple *classes = (Tuple*)arg;

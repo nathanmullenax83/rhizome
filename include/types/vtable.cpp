@@ -36,7 +36,14 @@ namespace rhizome {
 
         void
         VTable::insert( string const &name, Thing *t) {
-            vtable[t->rhizome_type()].insert(name,t);
+            string sig;
+            if(t==NULL) {
+                sig = "()";
+            } else {
+                sig = t->rhizome_type();
+            }
+            
+            vtable.at(sig).insert(name,t);
         }
 
         string
@@ -66,7 +73,7 @@ namespace rhizome {
         }
 
         Thing *
-        VTable::invoke( string const &name, Thing *arg ) {
+        VTable::invoke( Thing *context, string const &name, Thing *arg ) {
             // invoking a function named /thing/ on arg
             if( arg != NULL ) {
                 string arg_type = arg->rhizome_type();
@@ -84,19 +91,19 @@ namespace rhizome {
         }
 
         Thing *
-        VTable::invoke( string const &name ) {
-            return invoke( name, NULL );
+        VTable::invoke( Thing *context, string const &name ) {
+            return invoke( context, name, NULL );
         }
 
 
         Thing *
-        VTable::invoke_x( string const &name, Thing *arg, TypeConstraint *arg_constraint ) {
+        VTable::invoke_x( Thing *context, string const &name, Thing *arg, TypeConstraint *arg_constraint ) {
 
             // Use the other version if the type is unconstrained.
             assert(arg_constraint!=NULL);
 
             if( arg_constraint->contains(arg)) {
-                
+                return invoke( context, name, arg );
             } else {
                 stringstream err;
                 err << "Parameter ";

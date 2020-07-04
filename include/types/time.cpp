@@ -5,14 +5,30 @@
 
 #include <string>
 #include <sstream>
+#include <cassert>
 
 using std::stringstream;
 using std::string;
+
 
 namespace rhizome {
     namespace types {
         Time::Time() {
             t = time(NULL);
+        }
+
+        Time::Time( int year, int month, int day ) {
+            assert(year>=0);
+            assert(month>=0);
+            assert(day>=0);
+            struct tm the_tm;
+            the_tm.tm_year = year-1900;
+            the_tm.tm_mon = month%12;
+            the_tm.tm_mday = day;
+            the_tm.tm_sec = 0;
+            the_tm.tm_hour = 0;
+            the_tm.tm_min = 0;
+            t = mktime(&the_tm);
         }
 
         int
@@ -103,9 +119,13 @@ namespace rhizome {
             return out;            
         }
         Thing *
-        Time::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Time::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
+        }
+
+        bool operator< ( Time const &a, Time const &b ) {
+            return a.t < b.t;
         }
     }
 }

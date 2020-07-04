@@ -1,5 +1,11 @@
 #include "integer.hpp"
 
+#include <functional>
+#include <map>
+
+using std::map;
+using std::function;
+
 namespace rhizome {
     namespace types {
         Integer::Integer(): value(0) {
@@ -72,23 +78,6 @@ namespace rhizome {
         bool operator!= (Integer const &a, Integer const &b ) {
             return a.value != b.value;
         }
-/*
-        rp::Pattern *
-        Integer::make_pattern() const {
-            rp::Literal *zero = new rp::Literal("0");
-            rp::Range *one_to_nine = new rp::Range('1','9');
-            rp::Range *zero_to_nine = new rp::Range('0','9');
-            rp::Star *rest = new rp::Star(zero_to_nine);
-            rp::Cat *nonzero = new rp::Cat(one_to_nine,rest);
-            rp::Or *branches = new rp::Or(zero,nonzero);
-            rp::Group *capture = new rp::Group(branches);
-            return capture;
-        }
-
-        rp::Pattern *
-        Integer::make_concise_pattern() const {
-            return make_pattern();
-        }*/
 
         void
         Integer::serialize_to( ostream & out ) const {
@@ -111,13 +100,102 @@ namespace rhizome {
         }
 
         Thing *
-        Integer::invoke( string const &method, Thing *arg ) {
-
-            if( method=="ϵℙ" || method=="prime") {
-                assert(arg==NULL );
-                return new Bool(is_prime());
-            } 
-            throw runtime_error("Nothing to invoke.");
+        Integer::invoke( Thing *context, string const &method, Thing *arg ) {
+            static map< string, function< Thing*(Thing*) > > dispatcher = {
+                {
+                    "ϵℙ", [this]( Thing *arg ) {
+                        assert(arg==NULL );
+                        return (Thing*)new Bool(this->is_prime());
+                    }
+                },
+                {
+                    "+=", [this]( Thing *arg ) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        this->value += ((Integer*)arg)->value;
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "-=", [this]( Thing *arg ) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        this->value -= ((Integer*)arg)->value;
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "*=", [this]( Thing *arg ) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        this->value *= ((Integer*)arg)->value;
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "/=", [this]( Thing *arg ) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        this->value /= ((Integer*)arg)->value;
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "===", [this]( Thing *arg ) {
+                        assert(arg!=NULL);
+                        if( arg->rhizome_type()!=rhizome_type() ) {
+                            return (Thing*)new Bool(false);
+                        } else {
+                            return (Thing*)new Bool(value == ((Integer*)arg)->value);
+                        }        
+                    }
+                },
+                {
+                    "+", [this](Thing *arg) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( this->value + ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "%", [this](Thing *arg) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( this->value % ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "*", [this](Thing *arg) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( this->value * ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "-", [this](Thing *arg) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( this->value - ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "/", [this](Thing *arg) {
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( this->value / ((Integer*)arg)->value);
+                    }
+                }
+            };
+            if( dispatcher.count(method) > 0 ){
+                return dispatcher.at(method)(arg);
+            }
+            stringstream err;
+            err << "Unknown Int method: " << method << ".\n"; 
+            if(context!=NULL) {
+                err << "    Context: ";
+                context->serialize_to(err);
+            }
+            throw runtime_error(err.str());
         }
     }
 }

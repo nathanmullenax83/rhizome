@@ -23,7 +23,7 @@ namespace rhizome {
             virtual ~IProgrammable() {}
 
 
-            virtual Thing* invoke( string const &operation, Thing *arg ) = 0;
+            virtual Thing* invoke( Thing *context, string const &operation, Thing *arg ) = 0;
 
         };
 

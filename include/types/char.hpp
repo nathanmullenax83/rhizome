@@ -3,27 +3,36 @@
 
 #include <string>
 #include <stdexcept>
+#include <cwchar>
+#include <map>
+#include <tuple>
+#include <cwctype>
 #include "core/thing.hpp"
 
 using std::string;
 using std::runtime_error;
+using std::pair;
+using std::map;
+
 using rhizome::core::Thing;
 
 namespace rhizome {
     namespace types {
         class Char: public Thing {
         public:
-            unsigned long long int v;
+            wchar_t v;
             Char();
-            Char(unsigned long long int v);
+            Char(wchar_t v);
 
             virtual void serialize_to( std::ostream &out ) const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
             virtual Thing * clone() const override;
 
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
         };
+
+        
     }
 }
 

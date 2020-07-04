@@ -48,7 +48,8 @@ namespace rhizome {
         }
 
         Thing *
-        HasInterface::invoke( string const &method, Thing *arg ) {
+        HasInterface::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
             if( method=="contains" || method=="has") {
                 return new rhizome::types::Bool(contains(arg));
             } 

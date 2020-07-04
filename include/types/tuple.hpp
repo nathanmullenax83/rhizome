@@ -37,7 +37,7 @@ namespace rhizome {
             virtual Thing * clone() const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface(string const &name) override;
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
             // list processing
             /// Remove the first element, modifying the tuple in the process.

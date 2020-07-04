@@ -70,8 +70,10 @@ namespace rhizome {
         }
 
         Thing *
-        Fraction::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Fraction::invoke( Thing *context, string const &method, Thing *arg ) {
+            // Should we use /context/ to look up a vtable?
+
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

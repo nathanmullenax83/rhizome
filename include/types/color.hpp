@@ -80,7 +80,7 @@ namespace rhizome {
             
             virtual bool has_interface( string const &w ) override;
 
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
         };
 

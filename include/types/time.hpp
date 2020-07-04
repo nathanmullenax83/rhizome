@@ -22,6 +22,8 @@ namespace rhizome {
             time_t t;
         
             Time();
+            Time( int year, int month, int day );
+            
             int year() const;
             int month() const;
             int day() const;
@@ -47,9 +49,11 @@ namespace rhizome {
             virtual time_t get() const override;
             virtual bool has_interface( string const &name ) override;
             virtual string rhizome_type() const override;
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
             
         };
+
+        bool operator< ( Time const &a, Time const &b ); 
     }
 }
 

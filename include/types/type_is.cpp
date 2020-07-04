@@ -49,7 +49,8 @@ namespace rhizome {
         }
 
         Thing *
-        TypeIs::invoke( string const &method, Thing *arg ) {
+        TypeIs::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
             if( method=="contains" || method==":") {
                 rhizome::types::Bool *result = new Bool(contains(arg));
                 return result;

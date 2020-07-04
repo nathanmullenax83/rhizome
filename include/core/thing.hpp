@@ -43,7 +43,7 @@ namespace rhizome {
             ///    upon request.
             virtual bool has_interface( string const &name ) = 0;
 
-            virtual Thing * invoke( string const &method, Thing *argument ) = 0;
+            virtual Thing * invoke( Thing * continuation, string const &method, Thing *argument ) = 0;
             
 
 

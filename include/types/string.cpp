@@ -43,7 +43,7 @@ namespace rhizome {
         }
 
         Thing *
-        String::invoke( string const &method, Thing *arg ) {
+        String::invoke( Thing *context, string const &method, Thing *arg ) {
             if( arg==NULL ) {
                 if( method=="clone") {
                     return clone();
@@ -53,7 +53,7 @@ namespace rhizome {
                     return this;
                 }
             }
-            (void)method;
+            (void)method; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

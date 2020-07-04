@@ -66,7 +66,7 @@ namespace rhizome {
             void define_complement( string const &name, string const &a );
 
             // Thing interface
-            virtual Thing * invoke( string const &method, Thing * arg ) override;
+            virtual Thing * invoke( Thing *context, string const &method, Thing * arg ) override;
             virtual bool has_interface( string const &name ) override;
             virtual Thing * clone() const override;
             virtual void serialize_to( std::ostream &out ) const override;
