@@ -38,8 +38,8 @@ namespace rhizome {
         }
 
         Thing *
-        HTTPServer::invoke( string const &method, Thing *arg ) {
-            (void)arg; (void)method;
+        HTTPServer::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)arg; (void)method; (void)context;
             throw runtime_error("Not implemented.");
         }
 
