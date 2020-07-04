@@ -275,7 +275,7 @@ namespace rhizome{
             Thing * first = t->extract_first();
             return first;
         } else {
-            throw runtime_error("Cannot extract first element of // customizean empty list.");
+            throw runtime_error("Cannot extract first element of an empty list.");
         }
     }
 
@@ -315,12 +315,50 @@ namespace rhizome{
     }
 
 
+    void define_integer_expression( Parser * parser ) {
+        parser->rule(
+            "IntExpression",
+            gx_sequence({
+                gx_non_terminal("IntTerm"),
+                gx_star_closure(
+                    gx_sequence({
+                        gx_options({
+                            gx_literal("+"),
+                            gx_literal("-")
+                        }),
+                        gx_non_terminal("IntTerm")
+                    })
+                )
+            }));
+        parser->rule(
+            "IntTerm",
+            gx_sequence({
+                gx_non_terminal("IntLiteral"),
+                gx_star_closure(
+                    gx_sequence({
+                        gx_options({
+                            gx_literal("*"),
+                            gx_literal("/")
+                        }),
+                        gx_non_terminal("IntLiteral")
+                    })
+                )
+            })
+        );
+    }
+
+    
 
     Core::System *
     plant(string const &docroot) {
+        // Create a parser using the default lexer.
         Parser *parser = new Parser();
         Core::System *s = new Core::System(parser, new Store::Store(docroot, parser));
-        
+
+        define_integer_expression(parser);
+
+        // The default lexer recognizes all of these types in literal form.
+        // This code establishes a parser rule for each of the types.
         s->register_type("Bool",[s](Thing *t){
             return t;
         },[](IParser *p){
@@ -348,6 +386,16 @@ namespace rhizome{
             Parser *parser = (Parser*)p;
             parser->rule("DecimalLiteral",gx_match_lexer_rule("Decimal"));
         });
+
+
+
+        parser->rule( "Start", gx_options({
+            gx_non_terminal("BoolLiteral"),
+            gx_non_terminal("IntExpression"),
+            gx_non_terminal("StringLiteral"),
+            gx_non_terminal("DecimalLiteral")
+        }));
+        
         return s;
     }
 

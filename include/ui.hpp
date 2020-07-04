@@ -6,5 +6,6 @@
 #include "ui/console.hpp"
 #include "ui/aa_context.hpp"
 #include "ui/screen_region.hpp"
+#include "ui/chess_board.hpp"
 
 #endif
