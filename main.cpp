@@ -38,16 +38,11 @@ int main(int argc, char **argv) {
     std::cout << "Running system check...\n";
     bool result = rhizome::verify();
     std::cout << (result?"Passed":"Failed") << "\n";
-
-     srand(time(NULL));
-     rhizome::log::Log logger("main-thread-log");
-
-     rhizome::ui::Console c(std::cout);
-     c.clear();
-
-     rhizome::ui::Menu menu;
-    
-    
+    srand(time(NULL));
+    rhizome::log::Log logger("main-thread-log");
+    rhizome::ui::Console c(std::cout);
+    c.clear_screen();
+    rhizome::ui::Menu menu;
     
     menu.add_item( "\033[1;32mGenesis Demo\033[0m", rhizome::demo::genesis_demo );
     menu.add_item( "Alphabet Demo", rhizome::demo::alphabet_demo );

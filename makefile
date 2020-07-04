@@ -72,7 +72,10 @@ build/ui-aa-context.o: $(SRC)/ui/aa_context.cpp $(SRC)/ui/aa_context.hpp
 build/ui-screen-region.o: $(SRC)/ui/screen_region.cpp $(SRC)/ui/screen_region.hpp
 	$(CC) -c $(SRC)/ui/screen_region.cpp -o build/ui-screen-region.o
 
-UI_OBJECTS = build/ui.o build/ui-menu.o build/ui-console.o build/ui-aa-context.o build/ui-screen-region.o
+build/ui-chess-board.o: $(SRC)/ui/chess_board.cpp $(SRC)/ui/chess_board.hpp
+	$(CC) -c $(SRC)/ui/chess_board.cpp -o build/ui-chess-board.o
+
+UI_OBJECTS = build/ui.o build/ui-menu.o build/ui-console.o build/ui-aa-context.o build/ui-screen-region.o build/ui-chess-board.o
 
 lib/libui.a: $(UI_OBJECTS)
 	ar scr lib/libui.a $(UI_OBJECTS)
@@ -100,6 +103,9 @@ build/types-string.o: $(SRC)/types/string.cpp $(SRC)/types/string.hpp
 
 build/types-time.o: $(SRC)/types/time.cpp $(SRC)/types/time.hpp
 	$(CC) -c $(SRC)/types/time.cpp -o build/types-time.o
+
+build/types-timeline.o: $(SRC)/types/timeline.cpp $(SRC)/types/timeline.hpp
+	$(CC) -c $(SRC)/types/timeline.cpp -o build/types-timeline.o
 
 build/types-float.o: $(SRC)/types/float.cpp $(SRC)/types/float.hpp
 	$(CC) -c $(SRC)/types/float.cpp -o build/types-float.o 
@@ -143,7 +149,7 @@ build/types-type-is.o: $(SRC)/types/type_is.cpp $(SRC)/types/type_is.hpp
 build/types-has-interface.o: $(SRC)/types/has_interface.cpp $(SRC)/types/has_interface.hpp
 	$(CC) -c $(SRC)/types/has_interface.cpp -o build/types-has-interface.o
 
-TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o build/types-operator.o build/types-type-is.o build/types-has-interface.o
+TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o build/types-operator.o build/types-type-is.o build/types-has-interface.o build/types-timeline.o
 
 lib/libtypes.a: $(TYPES_OBJECTS)
 	ar scr lib/libtypes.a $(TYPES_OBJECTS)
