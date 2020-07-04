@@ -69,8 +69,8 @@ namespace rhizome {
         }
 
         Thing *
-        MaybeClosure::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        MaybeClosure::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Not implemented. (maybe closure)");
         }
     }

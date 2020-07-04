@@ -124,8 +124,8 @@ namespace rhizome {
         }
 
         Thing *
-        Or::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Or::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Or/invoke/whatever not implemented.");
         }
     }

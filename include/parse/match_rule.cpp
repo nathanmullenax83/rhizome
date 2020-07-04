@@ -88,7 +88,8 @@ namespace rhizome {
             return name==rhizome_type()||name=="gramex"||name=="Thing";
         }
         
-        Thing * MatchRule::invoke( string const &method, Thing *arg ) {
+        Thing * MatchRule::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
             if( method=="clone" && arg==NULL ) {
                 return clone_gramex(true);
             }

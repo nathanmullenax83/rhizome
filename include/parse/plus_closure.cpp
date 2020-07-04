@@ -74,8 +74,8 @@ namespace rhizome {
         }
 
         Thing *
-        PlusClosure::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        PlusClosure::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Invoke failed.");
         }
     }

@@ -15,6 +15,7 @@ namespace rhizome {
 
         void
         Ruleset::dump(std::ostream &out) const {
+            out << "Parser rules:\n";
             for( auto i=rules.begin(); i!=rules.end(); i++) {
                 out << "  ";
                 out << i->first << " → ";

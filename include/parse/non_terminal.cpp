@@ -74,8 +74,8 @@ namespace rhizome {
         }
 
         Thing *
-        NonTerminal::invoke( string const &method, Thing *arg ) {
-            (void) method; (void)arg;
+        NonTerminal::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void) method; (void)arg; (void)context;
             throw runtime_error("Nope.");
         }
     }

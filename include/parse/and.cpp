@@ -44,12 +44,12 @@ namespace rhizome {
 
         void
         And::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
-            static rhizome::log::Log log("seq_match");
-            {
-                stringstream p;
-                 serialize_to(p);
-                 log.info(p.str());
-             }
+            // static rhizome::log::Log log("seq_match");
+            // {
+            //     stringstream p;
+            //      serialize_to(p);
+            //      log.info(p.str());
+            //  }
 #ifdef INSTRUMENTED
             std::cout << "-- Sequence ";
             serialize_to(std::cout);
@@ -59,8 +59,8 @@ namespace rhizome {
                 // copy clause
                 Gramex *c_i = clauses[i]->clone_gramex(false);
                 c_i->match( lexer, lookup, captured );
-                log.info("Captured: ");
-                log.info(captured.str());
+                //log.info("Captured: ");
+                //log.info(captured.str());
                 append_all( c_i->clone_matched_tokens() );
                 delete c_i;
             }
@@ -131,8 +131,8 @@ namespace rhizome {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
         }
 
-        Thing * And::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Thing * And::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Don't do that!");
         } 
     }

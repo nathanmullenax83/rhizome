@@ -61,8 +61,8 @@ namespace rhizome {
         }
 
         Thing *
-        Transform::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Transform::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Invoke failed.");
         }
     }

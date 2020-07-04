@@ -186,8 +186,8 @@ namespace rhizome {
         }
 
         Thing *
-        Parser::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Parser::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("invoke: implement me!");
         }
 
@@ -250,11 +250,11 @@ namespace rhizome {
         }
 
         Gramex * gx_parens( Gramex *inner ) {
-            And *n = new And();
-            n->append( gx_literal("("));
-            n->append(inner);
-            n->append( gx_literal(")"));
-            return n;
+            return gx_sequence({
+                gx_literal("("),
+                inner,
+                gx_literal(")")
+            });
         }
 
         Gramex * gx_comma_list( std::vector<Gramex*> elems, string sep ) {

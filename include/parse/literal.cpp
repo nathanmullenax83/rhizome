@@ -91,8 +91,8 @@ namespace rhizome {
             return name==rhizome_type()||name=="Gramex"||name=="Thing";
         }
 
-        Thing * Literal::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Thing * Literal::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

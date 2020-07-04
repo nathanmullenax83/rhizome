@@ -20,7 +20,7 @@ namespace rhizome {
 
         void
         StarClosure::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
-            static rhizome::log::Log log("cfg_STAR");
+            //static rhizome::log::Log log("cfg_STAR");
             
             //log.info("Match called.");
 
@@ -30,11 +30,11 @@ namespace rhizome {
 
             while( copy->can_match(lexer,lookup)) {
                 
-                log.info("Match available.");
+                //log.info("Match available.");
                 copy->match(lexer,lookup,captured);
-                log.info("Match complete.");
+                //log.info("Match complete.");
                 append_all(copy->clone_matched_tokens());
-                log.info("Match extracted.");
+                //log.info("Match extracted.");
                 copy->clear();
                 //log.info("Copy of gramex cleared.");
             }
@@ -78,8 +78,8 @@ namespace rhizome {
         }
 
         Thing *
-        StarClosure::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        StarClosure::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Invoke failed.");
         }
     }
