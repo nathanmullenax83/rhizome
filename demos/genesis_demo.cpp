@@ -40,6 +40,11 @@ namespace rhizome {
 
         void genesis_demo() {
             ru::Console console(std::cout);
+            ru::ChessBoard cb(2,2,8,8);
+            cb.display(console);
+            console.putch('\n');
+            
+            cb.serialize_to(std::cout);
             fraction_test(console);
         }
     }

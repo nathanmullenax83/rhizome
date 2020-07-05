@@ -44,17 +44,17 @@ namespace rhizome {
 
             step( console, "Testing invoke methods." );
             substep( console, "A = B");
-            a->invoke("=",b);
+            a->invoke(NULL,"=",b);
             outvar(console,"A",a); // false
             outvar(console,"B",b); // false
                                    // c is true
             substep( console, "A ⊕= C");
-            a->invoke("⊕=",c);
+            a->invoke(NULL,"⊕=",c);
             outvar(console,"A",a); // true
                                    // b is false
             outvar(console,"C",c); // true
             substep(console, "A |= B");
-            a->invoke("|=",b);
+            a->invoke(NULL,"|=",b);
             outvar(console,"A",a); // true
 
             delete a;
@@ -71,7 +71,7 @@ namespace rhizome {
             outvar( console, "j",&j);
             substep(console, "Check if integer is prime.");
 
-            Thing *result = j.invoke("ϵℙ",NULL);
+            Thing *result = j.invoke(NULL,"ϵℙ",NULL);
             bool n_result = rhizome::system_bool(result);
             delete result;
 

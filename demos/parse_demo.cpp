@@ -174,7 +174,7 @@ namespace rhizome {
             
             parse::Parser grammar;
             grammar.rule("Start",
-                gx_apply(gx_plus_closure(gx_match_type("Integer")), [](deque<Thing*> ts){
+                gx_apply(gx_plus_closure(gx_match_type("Int")), [](deque<Thing*> ts){
                 Tuple *t = new Tuple();
                 for(size_t i=0; i<ts.size(); ++i) {
                     t->append(ts[i]);
@@ -245,12 +245,12 @@ namespace rhizome {
 
         bool parse_negative_integer() {
             parse::Parser grammar;
-            grammar.rule( "S", gx_match_lexer_rule("Integer"));
+            grammar.rule( "S", gx_match_lexer_rule("Int"));
             std::cout << test_title("Single negative integer",&grammar);
             Thing *result = grammar.parse_thing("S", "-567");
             bool pass = true;
             pass = pass && result != NULL;
-            pass = pass && result->rhizome_type()=="Integer";
+            pass = pass && result->rhizome_type()=="Int";
             pass = pass && ((rhizome::types::Integer*)result)->native_int()==-567; 
 
             return pass;
@@ -259,11 +259,11 @@ namespace rhizome {
         bool parse_test_list() {
             parse::Parser grammar;
             grammar.rule( "Start",
-                gx_apply(gx_sequence({gx_match_lexer_rule("Integer"), gx_star_closure(gx_sequence({gx_literal(","),gx_match_lexer_rule("Integer")}))}),
+                gx_apply(gx_sequence({gx_match_lexer_rule("Int"), gx_star_closure(gx_sequence({gx_literal(","),gx_match_lexer_rule("Int")}))}),
                 []( deque<Thing*> ts ){
                     rhizome::types::Tuple *tuple = new rhizome::types::Tuple();
                     for( size_t i=0; i<ts.size(); ++i) {
-                        if( ts[i]->rhizome_type()=="Integer") {
+                        if( ts[i]->rhizome_type()=="Int") {
                             tuple->append( ts[i] );
                         }
                     }

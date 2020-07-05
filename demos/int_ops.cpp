@@ -26,11 +26,11 @@ namespace rhizome {
             });
 
             Operator *plus = new Operator(L"+", [](Thing *a, Thing *b){
-                return (a->clone())->invoke("+",b);
+                return (a->clone())->invoke(NULL,"+",b);
             },rhizome::types::LEFT_TO_RIGHT);
 
             Operator *times = new Operator(L"*",[](Thing *a, Thing *b){
-                return (a->clone())->invoke("-",b);
+                return (a->clone())->invoke(NULL,"-",b);
             },rhizome::types::LEFT_TO_RIGHT);
 
 

@@ -54,7 +54,7 @@ namespace rhizome {
             Gramex * summation = gx_sequence({ gx_non_terminal("Term"), gx_star_closure( gx_sequence({term_op, gx_non_terminal("Term")}))});
             Gramex * product = gx_sequence( {gx_non_terminal("Factor"), gx_star_closure( gx_sequence({factor_op, gx_non_terminal("Factor")}))});
             Gramex * factor = gx_options({
-                gx_match_type("Integer"),
+                gx_match_type("Int"),
                 gx_apply(gx_match_lexer_rule("Bareword"),[&vars]( deque<Thing*>ts ){
                     assert(ts.size()==1);
                     String *name = (String*)ts[0];

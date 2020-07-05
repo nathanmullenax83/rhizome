@@ -2,6 +2,8 @@
 
 using rhizome::ui::Console;
 using rhizome::types::Tuple;
+using rhizome::types::Timeline;
+using rhizome::types::Time;
 using rhizome::store::Store;
 using rhizome::parse::Parser;
 using rhizome::lex::Lexer;
@@ -107,11 +109,14 @@ namespace rhizome {
             // except in that is updates the lexer's line-count fields.
             lexer->define_ignore_whitespace();
             
+            
             return lexer;
         }
 
         Parser * create_dungeon_parser(Store *game) {
             Parser *parser = new Parser(create_dungeon_lexer());
+
+
             (void)game;
             return parser;
         }
@@ -129,6 +134,23 @@ namespace rhizome {
                 game->set("cclass", new rhizome::types::String("Programmer"));
             });
             menu.choose(console,true);
+        }
+
+        Timeline * create_plausible_timeline( Store *context ) {
+            Timeline *t = new Timeline(Time(1983,12,29),Time(2020,11,1), context );
+            t->schedule( Time(2019,12,14), []( Thing *context, Time t ) {
+                (void)t;
+                // context here is a store
+                Store *store = (Store*)context;
+                store->set("Last Event", new String("Happy Anniversary!"));
+
+            });
+            t->schedule( Time(2018,12,15), []( Thing *context, Time t ){
+                (void)t;
+                Store *store = (Store*)context;
+                store->set("Last Event", new String("Happy Birthday, Ivy!"));
+            });
+            return t;
         }
 
         void dungeon() {

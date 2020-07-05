@@ -88,11 +88,18 @@ namespace rhizome {
             
             std::getline( std::cin, line );
             co << line;
-            csystem->get_parser()->q_stream(co);
-            Thing * color = csystem->get_parser()->parse_thing("Start");
-            delete csystem;
-            color->serialize_to(std::cout);
-
+            try {
+                csystem->get_parser()->q_stream(co);
+                Thing * color = csystem->parse_thing("Start");
+                color->serialize_to(std::cout);
+                delete csystem;
+            } catch (std::exception *e ) {
+                stringstream err;
+                err << "Error attempting to parse line:\n";
+                err << "    \"" << line << "\"\n";
+                ((Parser*)csystem->get_parser())->dump(err);
+                throw runtime_error(err.str());
+            }
             
             vector<Color> cs;
             std::cout << "Hex\t\tIntensity\t\tDec\t\tHue" << std::endl;
