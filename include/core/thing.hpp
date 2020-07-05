@@ -3,11 +3,15 @@
 
 #include <iostream>
 #include <sstream>
+#include <functional>
+#include <map>
 
 using std::ostream;
 using std::istream;
 using std::stringstream;
 using std::string;
+using std::map;
+using std::function;
 
 #include "i_token.hpp"
 
@@ -48,6 +52,8 @@ namespace rhizome {
 
 
         };
+
+        typedef map< string, function< Thing*(Thing*) > > Dispatcher;
     }
 }
 
