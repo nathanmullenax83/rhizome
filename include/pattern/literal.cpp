@@ -91,48 +91,48 @@ namespace rhizome {
             static Dispatcher dispatcher({
                 {
                     "reset!",
-                    [this]( Thing *arg ) {
+                    []( Thing *that, Thing *arg ) {
                         assert( arg==NULL );
-                        this->reset();
-                        return (Thing*)this;
+                        ((Literal*)that)->reset();
+                        return that;
                     }
                 },
                 {
                     "valid?",
-                    [this]( Thing *arg ) {
+                    []( Thing *that, Thing *arg ) {
                         assert( arg==NULL );
-                        return (Thing*)new Bool(this->valid());
+                        return (Thing*)new Bool(((Literal*)that)->valid());
                     }
                 },
                 {
                     "accepted?",
-                    [this]( Thing *arg) {
+                    []( Thing *that, Thing *arg) {
                         assert( arg==NULL );
-                        return (Thing*)new Bool(this->accepted());
+                        return (Thing*)new Bool(((Literal*)that)->accepted());
                     }
                 },
                 {
                     "can transition?",
-                    [this]( Thing *arg) {
+                    []( Thing *that, Thing *arg) {
                         assert( arg!=NULL );
                         assert( arg->rhizome_type()=="Char");
                         Char *c = (Char*)arg;
-                        return (Thing*)new Bool(this->can_transition(c->v));
+                        return (Thing*)new Bool(((Literal*)that)->can_transition(c->v));
                     }
                 },
                 {
                     "transition!",
-                    [this](Thing *arg) {
+                    [](Thing *that, Thing *arg) {
                         assert( arg!=NULL);
                         assert( arg->rhizome_type()=="Char");
                         Char *c = (Char*)arg;
-                        this->transition(c->v);
-                        return (Thing*)this;
+                        ((Literal*)that)->transition(c->v);
+                        return that;
                     }
                 }
             });
             try {
-                Thing *r = dispatcher.at(method)(arg);
+                Thing *r = dispatcher.at(method)(this,arg);
                 return r;
             } catch( std::exception *e ) {
                 stringstream err;

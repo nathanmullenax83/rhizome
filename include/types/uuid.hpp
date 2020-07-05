@@ -32,6 +32,8 @@ namespace rhizome {
         public:
             UUID();
 
+            string Value() const;
+
             bool operator==( UUID const &b ) const;
             virtual void serialize_to( ostream &out ) const override;
             virtual Thing * clone() const override;

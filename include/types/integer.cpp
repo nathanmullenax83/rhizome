@@ -103,99 +103,103 @@ namespace rhizome {
         Integer::invoke( Thing *context, string const &method, Thing *arg ) {
             static rhizome::core::Dispatcher dispatcher( {
                 {
-                    "ϵℙ", [this]( Thing *arg ) {
+                    "ϵℙ", []( Thing *that, Thing *arg ) {
                         assert(arg==NULL );
-                        return (Thing*)new Bool(this->is_prime());
+                        assert( that->rhizome_type()=="Int");
+                        return (Thing*)new Bool(((Integer*)that)->is_prime());
                     }
                 },
                 {
-                    "+=", [this]( Thing *arg ) {
+                    "+=", []( Thing *that, Thing *arg ) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        this->value += ((Integer*)arg)->value;
-                        return (Thing*)this;
+                        ((Integer*)that)->value += ((Integer*)arg)->value;
+                        return that;
                     }
                 },
                 {
-                    "-=", [this]( Thing *arg ) {
+                    "-=", []( Thing *that, Thing *arg ) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        this->value -= ((Integer*)arg)->value;
-                        return (Thing*)this;
+                        ((Integer*)that)->value -= ((Integer*)arg)->value;
+                        return that;
                     }
                 },
                 {
-                    "*=", [this]( Thing *arg ) {
+                    "*=", []( Thing *that, Thing *arg ) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        this->value *= ((Integer*)arg)->value;
-                        return (Thing*)this;
+                        ((Integer*)that)->value *= ((Integer*)arg)->value;
+                        return that;
                     }
                 },
                 {
-                    "/=", [this]( Thing *arg ) {
+                    "/=", []( Thing *that, Thing *arg ) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        this->value /= ((Integer*)arg)->value;
-                        return (Thing*)this;
+                        ((Integer*)that)->value /= ((Integer*)arg)->value;
+                        return that;
                     }
                 },
                 {
-                    "===", [this]( Thing *arg ) {
+                    "===", []( Thing *that, Thing *arg ) {
                         assert(arg!=NULL);
-                        if( arg->rhizome_type()!=rhizome_type() ) {
+                        if( arg->rhizome_type()!=that->rhizome_type() ) {
                             return (Thing*)new Bool(false);
                         } else {
-                            return (Thing*)new Bool(value == ((Integer*)arg)->value);
+                            Integer *t = (Integer*)that;
+                            return (Thing*)new Bool(t->value == ((Integer*)arg)->value);
                         }        
                     }
                 },
                 {
-                    "+", [this](Thing *arg) {
+                    "+", [](Thing *that, Thing *arg) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( this->value + ((Integer*)arg)->value);
+                        return (Thing*)new Integer( ((Integer*)that)->value + ((Integer*)arg)->value);
                     }
                 },
                 {
-                    "%", [this](Thing *arg) {
+                    "%", [](Thing *that, Thing *arg) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( this->value % ((Integer*)arg)->value);
+                        return (Thing*)new Integer( ((Integer*)that)->value % ((Integer*)arg)->value);
                     }
                 },
                 {
-                    "*", [this](Thing *arg) {
+                    "*", [](Thing *that, Thing *arg) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( this->value * ((Integer*)arg)->value);
+                        return (Thing*)new Integer( ((Integer*)that)->value * ((Integer*)arg)->value);
                     }
                 },
                 {
-                    "-", [this](Thing *arg) {
+                    "-", [](Thing *that, Thing *arg) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( this->value - ((Integer*)arg)->value);
+                        return (Thing*)new Integer( ((Integer*)that)->value - ((Integer*)arg)->value);
                     }
                 },
                 {
-                    "/", [this](Thing *arg) {
+                    "/", [](Thing *that, Thing *arg) {
                         assert(arg!=NULL);
                         assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( this->value / ((Integer*)arg)->value);
+                        return (Thing*)new Integer( ((Integer*)that)->value / ((Integer*)arg)->value);
                     }
                 }
             });
-            if( dispatcher.count(method) > 0 ){
-                return dispatcher.at(method)(arg);
+            try {
+                Thing *r =  dispatcher.at(method)(this,arg);
+                return r;
+            } catch( std::exception *e ) {
+                stringstream err;
+                err << "Unknown Int method: " << method << ".\n"; 
+                if(context!=NULL) {
+                    err << "    Context: ";
+                    context->serialize_to(err);
+                }
+                throw runtime_error(err.str());
             }
-            stringstream err;
-            err << "Unknown Int method: " << method << ".\n"; 
-            if(context!=NULL) {
-                err << "    Context: ";
-                context->serialize_to(err);
-            }
-            throw runtime_error(err.str());
         }
     }
 }

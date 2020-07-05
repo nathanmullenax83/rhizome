@@ -96,6 +96,9 @@ namespace rhizome {
             
             virtual void define( string const &name, vector<string> const &keywords );
             virtual bool has_next() const;
+
+            virtual wchar_t peek_next_character();
+
             virtual Thing * next(string &putback);
             //void put_back(Token t);
             // virtual void put_back(stringstream &s) override;

@@ -135,21 +135,22 @@ namespace rhizome {
         Thing * And::invoke( Thing *context, string const &method, Thing *arg ) {
             static Dispatcher dispatcher({
                 {
-                    "add clause",[this]( Thing *arg ) {
+                    "add clause",[]( Thing *that, Thing *arg ) {
                         assert( arg!=NULL && arg->has_interface("gramex"));
-                        clauses.push_back( (Gramex*)arg );
-                        return (Thing*)this;
+                        ((And*)that)->clauses.push_back( (Gramex*)arg );
+                        return that;
                     }
                 },
                 {
-                    "size", [this](Thing *arg) {
+                    "size", [](Thing *that, Thing *arg) {
                         assert(arg==NULL);
-                        return new rhizome::types::Integer(clauses.size());
+                        And *t = (And*)that;
+                        return new rhizome::types::Integer(t->clauses.size());
                     }
                 }
             });
             try {
-                return dispatcher.at(method)(arg);
+                return dispatcher.at(method)(this,arg);
             } catch( std::exception *e ) {
                 stringstream err;
                 err << "Attempted to invoked '" << method << "' on gramex::And but received an exception:\n";

@@ -53,7 +53,7 @@ namespace rhizome {
 
         };
 
-        typedef map< string, function< Thing*(Thing*) > > Dispatcher;
+        typedef map< string, function< Thing*(Thing *,Thing*) > > Dispatcher;
     }
 }
 

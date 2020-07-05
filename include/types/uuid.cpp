@@ -1,4 +1,8 @@
 #include "uuid.hpp"
+#include "types/string.hpp"
+#include <cassert>
+using rhizome::core::Dispatcher;
+using rhizome::types::String;
 
 namespace rhizome {
     namespace types {
@@ -33,10 +37,34 @@ namespace rhizome {
             return (w==rhizome_type()||w=="Thing");
         }
 
+        string
+        UUID::Value() const {
+            return value;
+        }
+
         Thing *
         UUID::invoke( Thing *context, string const &method, Thing *arg ) {
-            (void)method;(void)arg; (void)context;
-            throw runtime_error("Nothing to invoke.");
+            static Dispatcher dispatcher({
+                {
+                    "String",[] ( Thing *that, Thing * arg ) {
+                        assert( arg==NULL );
+                        String *s = new String(((UUID*)that)->Value());
+                        return s;
+                    }
+                }
+            });         
+            try {
+                Thing *r = dispatcher.at(method)(this, arg);
+                return r;
+            } catch( std::exception *e ) {
+                stringstream err;
+                err << "Error invoking " << method << " on " << rhizome_type() << ".\n";
+                if( context != NULL ) {
+                    err << "\nContext: \n    ";
+                    context->serialize_to(err);
+                }
+                throw runtime_error(err.str());
+            }
         }
     }
 }

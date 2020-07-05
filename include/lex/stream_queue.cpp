@@ -34,20 +34,6 @@ namespace rhizome {
             streams.push_back(&str);
         }
 
-        // void
-        // StreamQueue::bypass( istream &str ) {
-        //     streams.push_front( &str );
-        // }
-
-        // void
-        // StreamQueue::remove_bypass() {
-        //     if( !streams.empty() ) {
-        //         streams.pop_front();
-        //     } else {
-        //         throw new runtime_error("No bypass to remove.");
-        //     }
-        // }
-
         bool
         StreamQueue::empty() const {
             if( !chars.empty() ) {
@@ -83,7 +69,7 @@ namespace rhizome {
         }
 
         void
-        StreamQueue::put_back( unsigned long long int c ) {
+        StreamQueue::put_back( wchar_t c ) {
             chars.put_back(c);
         }
 

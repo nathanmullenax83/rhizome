@@ -23,12 +23,12 @@ namespace rhizome {
         }
 
         void 
-        CharQueue::put_back( unsigned long long int c ) {
+        CharQueue::put_back( wchar_t c ) {
             chars.push_front(c);
         }
 
         void 
-        CharQueue::q( unsigned long long int c ) {
+        CharQueue::q( wchar_t c ) {
             chars.push_back(c);
         }
 
@@ -37,12 +37,12 @@ namespace rhizome {
             return chars.size()==0;
         }
         
-        unsigned long long int 
+        wchar_t
         CharQueue::next() {
             if( empty() ) {
                 throw runtime_error("Character queue is empty!");
             }
-            unsigned long long int c = chars.front();
+            wchar_t c = chars.front();
             chars.pop_front();
             return c;
         }

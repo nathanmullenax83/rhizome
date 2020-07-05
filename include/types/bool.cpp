@@ -1,4 +1,7 @@
 #include "bool.hpp"
+#include <cassert>
+
+using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace types {
@@ -27,31 +30,73 @@ namespace rhizome {
         }
 
         Thing *
-        Bool::invoke( Thing *context, string const &method, Thing *argument ) {
-            (void)context;
-            if( (method=="!" || method=="not" || method=="~") && argument==NULL ) return new Bool( !value );
-            if( argument != NULL ) {
-                if( method=="=="  ) {
-                    if( argument->rhizome_type() == rhizome_type() ) {
-                        Bool *b = (Bool*)argument;
-                        return new Bool(b->value==value);
+        Bool::invoke( Thing *context, string const &method, Thing *arg ) {
+            static Dispatcher dispatcher({
+                {
+                    "!",[]( Thing *that, Thing * arg ) {
+                        assert(arg==NULL);
+                        return (Thing*)new Bool(!((Bool*)that)->value);
+                    }
+                },
+                {
+                    "=",[]( Thing *that, Thing *arg ) {
+                        Bool *t = (Bool*)that;
+                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
+                        ((Bool*)that)->value = ((Bool*)arg)->value;
+                        return that;
+                    }
+                },
+                {
+                    "===",[]( Thing *that, Thing *arg ) {
+                        Bool *t = (Bool*)that;
+                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        return (Thing*)new Bool(t->value==b->value);
+                    }
+                },
+                {
+                    "&=",[]( Thing *that, Thing *arg ) {
+                        Bool *t = (Bool*)that;
+                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        t->value = t->value && b->value;
+                        return that;
+                    }
+                },
+                {
+                    "|=",[]( Thing *that, Thing *arg ) {
+                        Bool *t = (Bool*)that;
+                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        t->value = t->value || b->value;
+                        return that;
+                    }
+                },
+                {
+                    "⊕=",[]( Thing *that, Thing *arg ) {
+                        Bool *t = (Bool*)that;
+                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        t->value = t->value ^ b->value;
+                        return that;
                     }
                 }
-                if( method=="=" && argument->rhizome_type()==rhizome_type()) {
-                    value = ((Bool*)argument)->value;
-                    return this;
-                } else if( method=="&=" && argument->rhizome_type()==rhizome_type()) {
-                    value = value && ((Bool*)argument)->value;
-                    return this;
-                } else if( method=="|=" && argument->rhizome_type()==rhizome_type()) {
-                    value = value || ((Bool*)argument)->value;
-                    return this;
-                } else if( (method=="⊕=" || method=="⊻=") && argument->rhizome_type()==rhizome_type()) {
-                    value = value ^ ((Bool*)argument)->value;
-                    return this;
+            });
+            try {
+                Thing *r = dispatcher.at(method)(this,arg);
+                return r;
+            } catch( std::exception *e ) {
+                stringstream err;
+                err << "Bool dispatcher does not contain the method '" << method << ".\n";
+                if( context != NULL ) {
+                    err << "Context: ";
+                    context->serialize_to(err);
                 }
+                throw runtime_error(err.str());
             }
-            throw runtime_error("I'm not familiar with that operation.");
+            
+            
+            
         }
     }
 }

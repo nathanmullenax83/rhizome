@@ -39,7 +39,7 @@ namespace rhizome {
 
             virtual void dump( std::ostream &out ) const override;
 
-            void put_back( unsigned long long c );
+            void put_back( wchar_t c );
             void q( istream &str );
 
             

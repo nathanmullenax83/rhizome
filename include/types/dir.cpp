@@ -7,9 +7,15 @@
 #include <dirent.h>
 
 
+#include "types/tuple.hpp"
+#include "types/string.hpp"
 
 using std::runtime_error;
 using std::stringstream;
+
+using rhizome::core::Dispatcher;
+using rhizome::types::Tuple;
+using rhizome::types::String;
 
 namespace rhizome {
     namespace types {
@@ -70,8 +76,42 @@ namespace rhizome {
 
         Thing *
         Dir::invoke( Thing *context, string const &method, Thing *arg ) {
-            (void)method; (void)arg; (void)context;
-            throw runtime_error("Invoke failed.");
+            static Dispatcher dispatcher({
+                {
+                    "files",[] ( Thing *that, Thing *arg ) {
+                        Dir *dir = (Dir*)that;
+                        vector<string> fs;
+                        // Function is overloaded file() is all files and files /pattern/ is filtered.
+                        if( arg!= NULL ) {
+                            assert( arg->has_interface("pattern"));
+                            Pattern *p = (Pattern*)arg;
+                            fs = dir->files(p);
+                        } else {
+                            fs = dir->files(NULL);
+                        }
+                        Tuple *the_files = new Tuple();
+                        for(size_t i=0; i<fs.size(); ++i) {
+                            the_files->append(new String(fs[i]));
+                        }
+                        return the_files;
+                    }
+                }
+            });
+            try {
+                Thing *r = dispatcher.at(method)(this,arg);
+                return r;
+            } catch( std::exception *e ) {
+                stringstream err;
+                err << "Method " << method << " could not be invoked on " << rhizome_type() << ".\n";
+                if( context != NULL ) {
+                    err << "Context:\n    ";
+                    context->serialize_to(err);
+                }
+                throw runtime_error(err.str());
+            }
+            
+            
+            
         }
 
         vector<string>

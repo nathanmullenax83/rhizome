@@ -1,5 +1,7 @@
 #include "char.hpp"
 
+using rhizome::core::Dispatcher;
+
 namespace rhizome {
     namespace types {
         Char::Char(): v(0) {
@@ -32,9 +34,23 @@ namespace rhizome {
 
         Thing *
         Char::invoke( Thing *context, string const &method, Thing *arg ) {
-            // must dispatch quickly here. No if/then/else if/else if/else if...
-            (void)method;(void)arg; (void)context;
-            throw runtime_error("Nothing to invoke.");
+            static Dispatcher dispatcher({
+                
+            });
+            try {
+                Thing *r = dispatcher.at(method)(this,arg);
+                return r;
+            } catch(std::exception *e) {
+                stringstream err;
+                err << "Could not invoke method " << method << " on " << rhizome_type() << "\n";
+                if( context != NULL ) {
+                    err << "Context:\n    ";
+                    context->serialize_to(err);
+                }
+                err << "\nError: " << e->what() << "\n";
+                throw runtime_error(err.str());
+            }
+            
         }
 
 

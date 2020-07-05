@@ -17,17 +17,17 @@ namespace rhizome {
         /// Like a stream, but with unlimited push-back. CharQueue
         class CharQueue: public Thing, public IDebuggable {
         private:
-            deque<unsigned long long int> chars;
+            deque<wchar_t> chars;
         public:
             virtual void dump( ostream &out ) const override;
             CharQueue();
             void clear();
 
-            void put_back( unsigned long long int c );
-            void q( unsigned long long int c );
+            void put_back( wchar_t c );
+            void q( wchar_t c );
 
             bool empty() const;
-            unsigned long long int next();
+            wchar_t next();
 
             virtual string rhizome_type() const override;
             virtual void serialize_to( std::ostream &out ) const override;

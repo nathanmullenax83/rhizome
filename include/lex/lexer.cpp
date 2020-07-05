@@ -91,9 +91,7 @@ namespace rhizome {
 
         bool
         Lexer::has_next() const {
-            //bool hasQueuedTokens = !states.top().tokens.empty();
             bool hasCharacters = !states.top().streams.empty();
-
             return hasCharacters;
         }
 
@@ -183,6 +181,15 @@ namespace rhizome {
             
         }
 
+        wchar_t
+        Lexer::peek_next_character() {
+            bool has_char = !states.top().streams.empty();
+            assert( has_char );
+            wchar_t next = states.top().streams.next();
+            states.top().streams.put_back(next);
+            return next;
+        }
+
         Thing *
         Lexer::next_thing(string const &pattern_name, string &putback) {
             if( !has_next() ) {
@@ -190,21 +197,14 @@ namespace rhizome {
             }
             IPattern *p = states.top().patterns.at(pattern_name)->clone_pattern(false);
             p->reset();
-            //std::cout << "Got pattern for " << pattern_name << "\n";
-
-            
             
             bool exit = false;
-            while( !states.top().streams.empty() && !exit ) {
-                unsigned long long int c = states.top().streams.next();
-              //  std::cout << "Got '";
-                //std::cout.put(c);
-                //std::cout << "'\n";
-
+            while( has_next() && !exit ) {
+                wchar_t c = peek_next_character();
                 if( p->can_transition(c)) {
                     p->transition(c);
+                    states.top().streams.next();
                 } else {
-                    states.top().streams.put_back(c);
                     exit = true;
                 }
             }
@@ -217,8 +217,7 @@ namespace rhizome {
                 err << "Expected '" << pattern_name  << "' (";
                 ((Pattern*)p)->serialize_to(err);
                 err << ")\n";
-
-                
+                err << "Plain capture so far: " << ((String*)p->captured_plain())->native_string();
                 throw runtime_error(err.str());
             }
         }

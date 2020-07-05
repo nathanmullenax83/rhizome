@@ -51,55 +51,62 @@ namespace rhizome {
         Float::invoke( Thing *context, string const &method, Thing *arg ) {
             static Dispatcher dispatcher({
                 {
-                    "===",[this]( Thing * arg ) {
-                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                    "===",[]( Thing *that, Thing * arg ) {
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
                         Float *f = (Float*)arg;
-                        return (Thing*)new Bool(f->value==value);
+                        Float *t = (Float*)that;
+                        return (Thing*)new Bool(f->value==t->value);
                     }
                 },
                 {
-                    "+=",[this](Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                    "+=",[](Thing *that, Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
                         Float *f = (Float*)arg;
-                        value += f->value;
-                        return (Thing*)this;
+                        Float *t = (Float*)that;
+                        t->value += f->value;
+                        return that;
                     }
                 },
                 {
-                    "-=",[this](Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                    "-=",[](Thing *that, Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
                         Float *f = (Float*)arg;
-                        value -= f->value;
-                        return (Thing*)this;
+                        Float *t = (Float*)that;
+                        t->value -= f->value;
+                        return that;
                     }
                 },
                 {
-                    "*=",[this](Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                    "*=",[](Thing *that, Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
                         Float *f = (Float*)arg;
-                        value *= f->value;
-                        return (Thing*)this;
+                        Float *t = (Float*)that;
+                        t->value *= f->value;
+                        return that;
                     }
                 },
                 {
-                    "/=",[this](Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                    "/=",[](Thing *that, Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
                         Float *f = (Float*)arg;
-                        value /= f->value;
-                        return (Thing*)this;
+                        Float *t = (Float*)that;
+                        t->value /= f->value;
+                        return that;
                     }
                 }
             });
-
-            dispatcher.at(method)(arg);
-
-            stringstream err;
-            err << "Unknown Decimal method: " << method << ".\n"; 
-            if(context!=NULL) {
-                err << "    Context: ";
-                context->serialize_to(err);
+            try {
+                Thing *r = dispatcher.at(method)(this,arg);
+                return r;
+            } catch( std::exception *e ) {
+                stringstream err;
+                err << "Unknown Decimal method: " << method << ".\n"; 
+                if(context!=NULL) {
+                    err << "    Context: ";
+                    context->serialize_to(err);
+                }
+                throw runtime_error(err.str());
             }
-            throw runtime_error(err.str());
         }
 
         long double
