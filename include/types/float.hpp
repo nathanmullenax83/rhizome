@@ -10,6 +10,7 @@ using std::ostream;
 using std::stringstream;
 using std::runtime_error;
 using rhizome::core::Thing;
+using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace types {

@@ -44,7 +44,7 @@ namespace rhizome {
 
         bool
         PlusClosure::has_interface( string const &name ) {
-            return name==rhizome_type()||name=="Gramex"||name=="Thing";
+            return name==rhizome_type()||name=="gramex"||name=="Thing";
         }
 
         Gramex *

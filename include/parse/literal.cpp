@@ -88,7 +88,7 @@ namespace rhizome {
 
         bool
         Literal::has_interface(string const &name ) {
-            return name==rhizome_type()||name=="Gramex"||name=="Thing";
+            return name==rhizome_type()||name=="gramex"||name=="Thing";
         }
 
         Thing * Literal::invoke( Thing *context, string const &method, Thing *arg ) {

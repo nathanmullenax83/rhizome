@@ -101,7 +101,7 @@ namespace rhizome {
 
         Thing *
         Integer::invoke( Thing *context, string const &method, Thing *arg ) {
-            static map< string, function< Thing*(Thing*) > > dispatcher = {
+            static rhizome::core::Dispatcher dispatcher( {
                 {
                     "ϵℙ", [this]( Thing *arg ) {
                         assert(arg==NULL );
@@ -185,7 +185,7 @@ namespace rhizome {
                         return (Thing*)new Integer( this->value / ((Integer*)arg)->value);
                     }
                 }
-            };
+            });
             if( dispatcher.count(method) > 0 ){
                 return dispatcher.at(method)(arg);
             }

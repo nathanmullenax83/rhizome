@@ -2,6 +2,7 @@
 
 
 #include "log.hpp"
+#include <cassert>
 
 namespace rhizome {
     namespace parse {
@@ -128,12 +129,38 @@ namespace rhizome {
 
         bool
         And::has_interface( string const &name) {
-            return name==rhizome_type()||name=="Gramex"||name=="Thing";
+            return name==rhizome_type()||name=="gramex"||name=="Thing";
         }
 
         Thing * And::invoke( Thing *context, string const &method, Thing *arg ) {
-            (void)method; (void)arg; (void)context;
-            throw runtime_error("Don't do that!");
+            static Dispatcher dispatcher({
+                {
+                    "add clause",[this]( Thing *arg ) {
+                        assert( arg!=NULL && arg->has_interface("gramex"));
+                        clauses.push_back( (Gramex*)arg );
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "size", [this](Thing *arg) {
+                        assert(arg==NULL);
+                        return new rhizome::types::Integer(clauses.size());
+                    }
+                }
+            });
+            try {
+                return dispatcher.at(method)(arg);
+            } catch( std::exception *e ) {
+                stringstream err;
+                err << "Attempted to invoked '" << method << "' on gramex::And but received an exception:\n";
+                err << e->what();
+                if( context != NULL ) {
+                    err << "\nContext:\n";
+                    err << "    ";
+                    context->serialize_to(err);
+                }
+                throw runtime_error(err.str());
+            }
         } 
     }
 }

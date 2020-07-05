@@ -164,7 +164,7 @@ namespace rhizome{
         p->rule("EntityDefinition",
             gx_sequence({
                 gx_literal("("), 
-                gx_match_type("Integer"), 
+                gx_match_type("Int"), 
                 gx_literal(")")
             })
         ); // entity is a specific character, represented by /Integer/ in ASCII
@@ -314,6 +314,57 @@ namespace rhizome{
         return converter.to_bytes(w);
     }
 
+    void define_grammatical_expression( Parser * parser ) {
+
+        /// All grammatical expression are prefixed with gx
+        parser->rule(
+            "GrammaticalExpression",
+            gx_apply(
+                gx_sequence({
+                    gx_literal("gx"),
+                    gx_non_terminal("GrammaticalExpansion")
+                }),
+                []( deque<Thing*> ts ) {
+                    assert( ts.size()==2);
+                    assert( ts[1]!=NULL && ts[1]->has_interface("gramex"));
+                    return ts[1];
+                }
+            )
+        );
+
+        /// gx is followed by any of a number of gx constructors
+        parser->rule(
+            "GrammaticalExpansion",
+            gx_options({
+                /// String literals within a grammatical expansion represent literal characters
+                /// within a token rule. Messing with lexical rules is done within pattern expressions.
+                /// (not here)
+                gx_apply(
+                    gx_match_lexer_rule("String"),
+                    [parser](deque<Thing*> ts) {
+                        assert( ts.size()==1);
+                        assert( ts[0]!=NULL && ts[0]->rhizome_type()=="String" );
+                        String *s = (String*)ts[0];
+                        return gx_literal(s->native_string());
+                    }),
+                /// Non-terminals are represented within < > brackets
+                gx_apply(
+                    gx_sequence({
+                        gx_literal("<"),
+                        gx_non_terminal("StringExpression"),
+                        gx_literal(">")
+                    }),
+                    [parser]( deque<Thing*> ts) {
+                        assert(ts.size()==3);
+                        assert(ts[1]!=NULL && ts[1]->rhizome_type()=="String");
+                        String *s = (String*)ts[1];
+                        return gx_non_terminal(s->native_string());
+                    }
+                )
+            })
+        );
+    }
+
 
     void define_integer_expression( Parser * parser ) {
         parser->rule(
@@ -356,6 +407,7 @@ namespace rhizome{
         Core::System *s = new Core::System(parser, new Store::Store(docroot, parser));
 
         define_integer_expression(parser);
+        define_grammatical_expression(parser);
 
         // The default lexer recognizes all of these types in literal form.
         // This code establishes a parser rule for each of the types.
@@ -381,6 +433,8 @@ namespace rhizome{
         });
 
         s->register_type("Decimal",[s](Thing *t){
+            assert (t!=NULL);
+            assert (t->rhizome_type()=="Decimal");
             return t; 
         },[](IParser *p){
             Parser *parser = (Parser*)p;
@@ -393,7 +447,8 @@ namespace rhizome{
             gx_non_terminal("BoolLiteral"),
             gx_non_terminal("IntExpression"),
             gx_non_terminal("StringLiteral"),
-            gx_non_terminal("DecimalLiteral")
+            gx_non_terminal("DecimalLiteral"),
+            gx_non_terminal("GrammaticalExpression")
         }));
         
         return s;

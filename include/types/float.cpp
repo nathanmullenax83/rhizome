@@ -1,5 +1,8 @@
 #include "float.hpp"
 
+#include "types/bool.hpp"
+#include <cassert>
+
 namespace rhizome {
     namespace types {
         Float::Float(): value(0) {
@@ -41,14 +44,62 @@ namespace rhizome {
 
         bool
         Float::has_interface(string const &w) {
-            return (w==rhizome_type()||w=="Number"||w=="Thing");
+            return (w==rhizome_type()||w=="number"||w=="Thing");
         }
 
         Thing *
         Float::invoke( Thing *context, string const &method, Thing *arg ) {
-            
-            (void)method;(void)arg; (void)context;
-            throw runtime_error("Nothing to invoke.");
+            static Dispatcher dispatcher({
+                {
+                    "===",[this]( Thing * arg ) {
+                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                        Float *f = (Float*)arg;
+                        return (Thing*)new Bool(f->value==value);
+                    }
+                },
+                {
+                    "+=",[this](Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                        Float *f = (Float*)arg;
+                        value += f->value;
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "-=",[this](Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                        Float *f = (Float*)arg;
+                        value -= f->value;
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "*=",[this](Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                        Float *f = (Float*)arg;
+                        value *= f->value;
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "/=",[this](Thing *arg) {
+                        assert(arg!=NULL && arg->rhizome_type()==rhizome_type());
+                        Float *f = (Float*)arg;
+                        value /= f->value;
+                        return (Thing*)this;
+                    }
+                }
+            });
+
+            dispatcher.at(method)(arg);
+
+            stringstream err;
+            err << "Unknown Decimal method: " << method << ".\n"; 
+            if(context!=NULL) {
+                err << "    Context: ";
+                context->serialize_to(err);
+            }
+            throw runtime_error(err.str());
         }
 
         long double

@@ -1,5 +1,7 @@
 #include "parser.hpp"
 
+#include "log/log.hpp"
+
 namespace rhizome {
     namespace parse {
         Pattern *
@@ -25,7 +27,7 @@ namespace rhizome {
         string_pattern() {
             pat::Cat *c = new pat::Cat();
             c->append(new pat::Literal("\""));
-            c->append( new pat::Negated(new pat::Chars("\"")));
+            c->append(new pat::Star( new pat::Negated(new pat::Chars("\""))));
             c->append( new pat::Literal("\""));
             return c;
         }
@@ -41,6 +43,8 @@ namespace rhizome {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
         Parser::Parser() {
+            static rhizome::log::Log log("parser_constructor");
+            auto &cap = log;
             lexer = new Lexer();
             
             lexer->define_token_type( "Newline", new pat::Transform( new pat::Literal("\n"),[](Thing *t){
@@ -62,10 +66,19 @@ namespace rhizome {
             ));
             
             lexer->define_token_type( "Decimal", new pat::Transform( decimal_pattern(),
-                []( Thing *t ) {
+                [&cap]( Thing *t ) {
+                    //cap.info("Matched Decimal pattern.");
+                    assert(t!=NULL && t->rhizome_type()=="String");
+                    //cap.info("Token type is string:");
                     string v = ((String*)t)->native_string();
+                    //cap.info(v);
                     delete t;
-                    return new rhizome::types::Float(v);
+                    //cap.info("Deleted t");
+                    rhizome::types::Float *f = new rhizome::types::Float(v);
+                    stringstream eff;
+                    f->serialize_to(eff);
+                    //cap.info(eff.str());
+                    return f;
                 }));
             lexer->define_token_type( "Int", new pat::Transform( integer_pattern(),
                 []( Thing *t ) {
@@ -74,8 +87,17 @@ namespace rhizome {
                     return new rhizome::types::Integer(v);
                 }));
             lexer->define_token_type( "String", new pat::Transform( string_pattern(),
-                []( Thing *t )     {
-                    return t;
+                [&cap]( Thing *t )     {
+                    //cap.info("Lexer 'String' rule matched.");
+                    assert( t!=NULL );
+                    assert( t->rhizome_type()=="String");
+
+                    string v = ((String*)t)->native_string();
+                    //cap.info("Contents of token: ");
+                    //cap.info(v.c_str());
+
+                    delete t;
+                    return new rhizome::types::String(v);
                 }));
             
             lexer->define_token_type( "OParen", "(");

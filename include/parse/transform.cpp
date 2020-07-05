@@ -49,7 +49,7 @@ namespace rhizome {
         }
 
         bool Transform::has_interface( string const &name ) {
-            return name==rhizome_type()||name=="Gramex"||name=="Thing";
+            return name==rhizome_type()||name=="gramex"||name=="Thing";
         }
 
         string Transform::rhizome_type() const {
