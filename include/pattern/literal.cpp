@@ -1,9 +1,13 @@
 #include "literal.hpp"
 #include "types/string.hpp"
-
-
+#include "types/bool.hpp"
+#include "types/char.hpp"
+#include <cassert>
 
 using rhizome::types::String;
+using rhizome::core::Dispatcher;
+using rhizome::types::Bool;
+using rhizome::types::Char;
 
 namespace rhizome {
     namespace pattern {
@@ -79,13 +83,66 @@ namespace rhizome {
 
         bool
         Literal::has_interface(string const &name ) {
-            return name==rhizome_type()||name=="Pattern"||name=="Thing";
+            return name==rhizome_type()||name=="pattern"||name=="Thing";
         }
 
         Thing *
-        Literal::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
-            throw runtime_error("Nothing to invoke.");
+        Literal::invoke( Thing *context, string const &method, Thing *arg ) {
+            static Dispatcher dispatcher({
+                {
+                    "reset!",
+                    [this]( Thing *arg ) {
+                        assert( arg==NULL );
+                        this->reset();
+                        return (Thing*)this;
+                    }
+                },
+                {
+                    "valid?",
+                    [this]( Thing *arg ) {
+                        assert( arg==NULL );
+                        return (Thing*)new Bool(this->valid());
+                    }
+                },
+                {
+                    "accepted?",
+                    [this]( Thing *arg) {
+                        assert( arg==NULL );
+                        return (Thing*)new Bool(this->accepted());
+                    }
+                },
+                {
+                    "can transition?",
+                    [this]( Thing *arg) {
+                        assert( arg!=NULL );
+                        assert( arg->rhizome_type()=="Char");
+                        Char *c = (Char*)arg;
+                        return (Thing*)new Bool(this->can_transition(c->v));
+                    }
+                },
+                {
+                    "transition!",
+                    [this](Thing *arg) {
+                        assert( arg!=NULL);
+                        assert( arg->rhizome_type()=="Char");
+                        Char *c = (Char*)arg;
+                        this->transition(c->v);
+                        return (Thing*)this;
+                    }
+                }
+            });
+            try {
+                Thing *r = dispatcher.at(method)(arg);
+                return r;
+            } catch( std::exception *e ) {
+                stringstream err;
+                err << "Method " << method << " is not defined on " << rhizome_type();
+                if( context != NULL ) {
+                    err << "\nContext: ";
+                    context->serialize_to(err);
+                }
+                throw runtime_error(err.str());
+            }
         }
 
         Thing *
@@ -96,11 +153,7 @@ namespace rhizome {
 
         Thing *
         Literal::captured_transformed() {
-            Thing *c = captured_plain();
-            //std::cout << "Literal captured: ";
-            //c->serialize_to(std::cout);
-            //std::cout << "\n";
-            return c;
+            return captured_plain();
         }
 
         Literal * literal( string const &v ) {

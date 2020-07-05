@@ -63,8 +63,8 @@ namespace rhizome {
         }
 
         Thing *
-        Range::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Range::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

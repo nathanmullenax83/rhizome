@@ -117,8 +117,8 @@ namespace rhizome {
         }
 
         Thing *
-        Plus::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Plus::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

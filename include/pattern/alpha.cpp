@@ -71,8 +71,8 @@ namespace rhizome {
         }
 
         Thing *
-        Alpha::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Alpha::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

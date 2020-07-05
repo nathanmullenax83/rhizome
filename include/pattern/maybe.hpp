@@ -30,7 +30,7 @@ namespace rhizome {
             virtual Thing * captured_plain() override;
             virtual Thing * captured_transformed() override;
 
-            virtual Thing * invoke( string const &method, Thing *arg ) override;
+            virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
         };
 
         Maybe * maybe( IPattern *inner );

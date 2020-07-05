@@ -31,11 +31,11 @@ namespace rhizome {
         }
 
         void Chars::serialize_to( std::ostream &out ) const {
-            out << "{";
+            //out << "{";
             for( auto i=cs.begin(); i!=cs.end(); i++) {
                 out.put(*i);
             }
-            out << "}";
+            //out << "}";
         }
 
         void Chars::serialize_to_cclass_context( std::ostream &out ) const {
@@ -75,8 +75,8 @@ namespace rhizome {
             return _valid && state==1;
         }
 
-        Thing * Chars::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        Thing * Chars::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Not implemented.");
         }
 

@@ -27,6 +27,7 @@ namespace rhizome {
         Negated::transition(char c) {
             if( can_transition(c) ) {
                 n_accepted++;
+                _captured.put(c);
                 return;
             } else {
                 stringstream err;
@@ -44,8 +45,8 @@ namespace rhizome {
         }
 
         Thing *
-        Negated::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Negated::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

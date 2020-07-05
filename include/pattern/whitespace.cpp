@@ -90,7 +90,8 @@ namespace rhizome {
         }
 
         Thing *
-        Whitespace::invoke( string const &method, Thing *arg ) {
+        Whitespace::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)context;
             if( method=="clone" && arg==NULL ) return clone();
             throw runtime_error("Invalid invocation.");
         }

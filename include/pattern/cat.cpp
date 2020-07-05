@@ -121,8 +121,8 @@ namespace rhizome {
         }
 
         Thing *
-        Cat::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Cat::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg;(void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

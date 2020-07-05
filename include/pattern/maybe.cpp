@@ -71,10 +71,8 @@ namespace rhizome {
             } 
         }
 
-        Thing * Maybe::invoke(string const &method, Thing *arg ) {
-            (void)method;
-
-            delete arg;
+        Thing * Maybe::invoke(Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)context; (void)arg;
             throw runtime_error("Not implemented.");
         }
 

@@ -107,8 +107,8 @@ namespace rhizome {
         }
 
         Thing *
-        NTimes::invoke( string const &method, Thing *arg ) {
-            (void)method; (void)arg;
+        NTimes::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method; (void)arg; (void)context;
             throw runtime_error("Invalid invocation.");
         }
 

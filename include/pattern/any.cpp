@@ -59,8 +59,8 @@ namespace rhizome {
         }
 
         Thing *
-        Any::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Any::invoke( Thing * context, string const &method, Thing *arg ) {
+            (void)method;(void)arg;(void)context;
             throw runtime_error("Nothing to invoke.");
         }
 
@@ -73,5 +73,17 @@ namespace rhizome {
         Any::captured_transformed() {
             return captured_plain();
         }
+
+        string
+        Any::rhizome_type() const {
+            return "AnyChar";
+        }
+
+        bool
+        Any::has_interface( string const &name ) {
+            return name=="Thing"||name=="pattern"||name==rhizome_type();
+        }
+
+
     }
 }

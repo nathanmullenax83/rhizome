@@ -68,8 +68,8 @@ namespace rhizome {
             return name==rhizome_type()||name=="Pattern"||name=="Thing";
         }
         Thing *
-        Beginning::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Beginning::invoke( Thing * context, string const &method, Thing *arg ) {
+            (void)method;(void)arg;(void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

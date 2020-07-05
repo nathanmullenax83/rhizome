@@ -30,8 +30,8 @@ namespace rhizome {
         }
 
         Thing *
-        NonGreedy::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        NonGreedy::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

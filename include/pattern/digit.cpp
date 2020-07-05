@@ -3,6 +3,7 @@
 #include "types/string.hpp"
 
 using rhizome::types::String;
+using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace pattern {
@@ -73,8 +74,8 @@ namespace rhizome {
         }
 
         Thing *
-        Digit::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Digit::invoke( Thing *context, string const &method, Thing *arg ) {
+            (void)method;(void)arg;(void)context;
             throw runtime_error("Nothing to invoke.");
         }
 

@@ -90,8 +90,8 @@ namespace rhizome {
         }
 
         Thing *
-        Star::invoke( string const &method, Thing *arg ) {
-            (void)method;(void)arg;
+        Star::invoke( Thing *context,string const &method, Thing *arg ) {
+            (void)method;(void)arg; (void)context;
             throw runtime_error("Nothing to invoke.");
         }
 
@@ -116,8 +116,17 @@ namespace rhizome {
                     return new String(xd.str());
                 }
 
-            } else {
+            } if(accepted()) {
                 return new String(xd.str());
+            } else {
+                stringstream err;
+                err << "Attempted to capture part of a repetition of a pattern. \n";
+                err << "This is most certainly an error. \nHere's some diagnostic info:\n";
+                err << "This pattern: ";
+                serialize_to(err);
+                err << "\nCaptured plain: " << _captured.str() << "\n";
+                err << "Captured transformed: " << xd.str() << "\n";
+                throw runtime_error(err.str());
             }
         }
     }
