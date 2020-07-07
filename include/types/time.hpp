@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include "core/thing.hpp"
 #include "core/i_time.hpp"
+#include "types/expression.hpp"
 
 using std::time_t;
 using std::ostream;
@@ -17,7 +18,7 @@ using rhizome::core::ITime;
 
 namespace rhizome {
     namespace types {
-        class Time: public Thing, public ITime {
+        class Time: public Expression, public ITime {
         public:
             time_t t;
         
@@ -51,6 +52,9 @@ namespace rhizome {
             virtual string rhizome_type() const override;
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
             
+
+            // expression interface
+            virtual Thing * evaluate( Thing * context ) const override;
         };
 
         bool operator< ( Time const &a, Time const &b ); 

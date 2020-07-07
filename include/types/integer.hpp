@@ -11,8 +11,10 @@
 
 #include "core/thing.hpp"
 #include "types/bool.hpp"
+#include "types/expression.hpp"
 
 using rhizome::core::Thing;
+using rhizome::types::Expression;
 using rhizome::types::Bool;
 
 using std::string;
@@ -22,7 +24,7 @@ using std::stringstream;
 
 namespace rhizome {
     namespace types {
-        class Integer: public Thing {
+        class Integer: public Expression {
         public:
             mpz_class value;
 
@@ -64,6 +66,8 @@ namespace rhizome {
             virtual bool has_interface( string const &name );
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
+
+            virtual Thing * evaluate( Thing *context ) const override;
         };
 
         

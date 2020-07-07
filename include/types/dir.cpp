@@ -19,6 +19,31 @@ using rhizome::types::String;
 
 namespace rhizome {
     namespace types {
+
+        namespace dir {
+            static Dispatcher<Dir> dispatcher({
+                {
+                    "files",[] ( Thing *context, Dir *that, Thing *arg ) {
+                        (void)context;
+                        vector<string> fs;
+                        // Function is overloaded file() is all files and files /pattern/ is filtered.
+                        if( arg!= NULL ) {
+                            assert( arg->has_interface("pattern"));
+                            Pattern *p = (Pattern*)arg;
+                            fs = that->files(p);
+                        } else {
+                            fs = that->files(NULL);
+                        }
+                        Tuple *the_files = new Tuple();
+                        for(size_t i=0; i<fs.size(); ++i) {
+                            the_files->append(new String(fs[i]));
+                        }
+                        return the_files;
+                    }
+                }
+            });
+        }
+
         bool
         Dir::dir_exists( string const &name ) {
             struct stat st{};
@@ -76,29 +101,9 @@ namespace rhizome {
 
         Thing *
         Dir::invoke( Thing *context, string const &method, Thing *arg ) {
-            static Dispatcher dispatcher({
-                {
-                    "files",[] ( Thing *that, Thing *arg ) {
-                        Dir *dir = (Dir*)that;
-                        vector<string> fs;
-                        // Function is overloaded file() is all files and files /pattern/ is filtered.
-                        if( arg!= NULL ) {
-                            assert( arg->has_interface("pattern"));
-                            Pattern *p = (Pattern*)arg;
-                            fs = dir->files(p);
-                        } else {
-                            fs = dir->files(NULL);
-                        }
-                        Tuple *the_files = new Tuple();
-                        for(size_t i=0; i<fs.size(); ++i) {
-                            the_files->append(new String(fs[i]));
-                        }
-                        return the_files;
-                    }
-                }
-            });
+            
             try {
-                Thing *r = dispatcher.at(method)(this,arg);
+                Thing *r = dir::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch( std::exception *e ) {
                 stringstream err;

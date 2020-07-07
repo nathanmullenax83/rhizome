@@ -5,6 +5,61 @@
 
 namespace rhizome {
     namespace types {
+        namespace floats {
+            static Dispatcher<Float> dispatcher({
+                {
+                    "===",[]( Thing * context, Float *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Float *f = (Float*)arg;
+                        return (Thing*)new Bool(f->value==that->value);
+                    }
+                },
+                {
+                    "+=",[]( Thing * context, Float *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Float *f = (Float*)arg;
+                        that->value += f->value;
+                        return that;
+                    }
+                },
+                {
+                    "-=",[]( Thing * context, Float *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Float *f = (Float*)arg;
+                        that->value -= f->value;
+                        return that;
+                    }
+                },
+                {
+                    "*=",[]( Thing * context, Float *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Float *f = (Float*)arg;
+                        that->value *= f->value;
+                        return that;
+                    }
+                },
+                {
+                    "/=",[]( Thing * context, Float *that, Thing * arg ){
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Float *f = (Float*)arg;
+                        that->value /= f->value;
+                        return that;
+                    }
+                },
+                {
+                    "evaluate",[] ( Thing *context, Float *that, Thing *arg) {
+                        assert(arg==NULL);
+                        return that->evaluate(context);
+                    }
+                }
+            });
+        }
+
         Float::Float(): value(0) {
 
         }
@@ -49,54 +104,9 @@ namespace rhizome {
 
         Thing *
         Float::invoke( Thing *context, string const &method, Thing *arg ) {
-            static Dispatcher dispatcher({
-                {
-                    "===",[]( Thing *that, Thing * arg ) {
-                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
-                        Float *f = (Float*)arg;
-                        Float *t = (Float*)that;
-                        return (Thing*)new Bool(f->value==t->value);
-                    }
-                },
-                {
-                    "+=",[](Thing *that, Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
-                        Float *f = (Float*)arg;
-                        Float *t = (Float*)that;
-                        t->value += f->value;
-                        return that;
-                    }
-                },
-                {
-                    "-=",[](Thing *that, Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
-                        Float *f = (Float*)arg;
-                        Float *t = (Float*)that;
-                        t->value -= f->value;
-                        return that;
-                    }
-                },
-                {
-                    "*=",[](Thing *that, Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
-                        Float *f = (Float*)arg;
-                        Float *t = (Float*)that;
-                        t->value *= f->value;
-                        return that;
-                    }
-                },
-                {
-                    "/=",[](Thing *that, Thing *arg) {
-                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
-                        Float *f = (Float*)arg;
-                        Float *t = (Float*)that;
-                        t->value /= f->value;
-                        return that;
-                    }
-                }
-            });
+
             try {
-                Thing *r = dispatcher.at(method)(this,arg);
+                Thing *r = floats::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch( std::exception *e ) {
                 stringstream err;
@@ -112,6 +122,12 @@ namespace rhizome {
         long double
         Float::get_value() const {
             return value;
+        }
+
+        Thing *
+        Float::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
         }
     }
 }

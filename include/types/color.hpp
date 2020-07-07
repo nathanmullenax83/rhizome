@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 #include "core/thing.hpp"
+#include "types/expression.hpp"
 
 using std::string;
 using std::vector;
@@ -19,7 +20,7 @@ using std::runtime_error;
 using std::stringstream;
 
 using rhizome::core::Thing;
-
+using rhizome::types::Expression;
 
 namespace rhizome {
     namespace types {
@@ -32,7 +33,7 @@ namespace rhizome {
         double random_double();
         char hex_digit( size_t n );
 
-        class Color : public Thing {
+        class Color : public Expression {
         public:
             
             double r;
@@ -82,6 +83,8 @@ namespace rhizome {
 
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
+            // expression interface
+            virtual Thing * evaluate( Thing *context ) const override;
         };
 
 

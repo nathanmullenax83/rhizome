@@ -6,6 +6,19 @@ using rhizome::types::String;
 
 namespace rhizome {
     namespace types {
+        namespace uuid {
+            static Dispatcher<UUID> dispatcher({
+                {
+                    "String",[] ( Thing *context, UUID *that, Thing * arg ) {
+                        (void)context;
+                        assert( arg==NULL );
+                        String *s = new String(that->Value());
+                        return s;
+                    }
+                }
+            }); 
+        }
+
         UUID::UUID() {
             stringstream s;
             for(size_t i=0; i<RHIZOME_UUID_LENGTH; ++i) {
@@ -44,17 +57,9 @@ namespace rhizome {
 
         Thing *
         UUID::invoke( Thing *context, string const &method, Thing *arg ) {
-            static Dispatcher dispatcher({
-                {
-                    "String",[] ( Thing *that, Thing * arg ) {
-                        assert( arg==NULL );
-                        String *s = new String(((UUID*)that)->Value());
-                        return s;
-                    }
-                }
-            });         
+        
             try {
-                Thing *r = dispatcher.at(method)(this, arg);
+                Thing *r = uuid::dispatcher.at(method)(context,this, arg);
                 return r;
             } catch( std::exception *e ) {
                 stringstream err;
@@ -65,6 +70,12 @@ namespace rhizome {
                 }
                 throw runtime_error(err.str());
             }
+        }
+
+        Thing *
+        UUID::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
         }
     }
 }

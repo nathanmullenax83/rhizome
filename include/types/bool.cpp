@@ -5,6 +5,62 @@ using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace types {
+        namespace bools {
+            static Dispatcher<Bool> dispatcher({
+                {
+                    "!",[]( Thing *context, Bool *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg==NULL);
+                        return (Thing*)new Bool(!that->value);
+                    }
+                },
+                {
+                    "=",[]( Thing *context, Bool *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        that->value = ((Bool*)arg)->value;
+                        return that;
+                    }
+                },
+                {
+                    "===",[]( Thing *context, Bool *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        return (Thing*)new Bool(that->value==b->value);
+                    }
+                },
+                {
+                    "&=",[]( Thing *context, Bool *that, Thing * arg ){
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        that->value = that->value && b->value;
+                        return that;
+                    }
+                },
+                {
+                    "|=",[]( Thing *context, Bool *that, Thing * arg ){
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        that->value = that->value || b->value;
+                        return that;
+                    }
+                },
+                {
+                    "⊕=",[]( Thing *context, Bool *that, Thing * arg ) {
+                        (void)context;
+                        assert(arg!=NULL && arg->rhizome_type()==that->rhizome_type());
+                        Bool *b = (Bool*)arg;
+                        that->value = that->value ^ b->value;
+                        return that;
+                    }
+                }
+            });
+        }
+
+
         Bool::Bool( bool value ): value(value) {
 
         }
@@ -31,59 +87,9 @@ namespace rhizome {
 
         Thing *
         Bool::invoke( Thing *context, string const &method, Thing *arg ) {
-            static Dispatcher dispatcher({
-                {
-                    "!",[]( Thing *that, Thing * arg ) {
-                        assert(arg==NULL);
-                        return (Thing*)new Bool(!((Bool*)that)->value);
-                    }
-                },
-                {
-                    "=",[]( Thing *that, Thing *arg ) {
-                        Bool *t = (Bool*)that;
-                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
-                        ((Bool*)that)->value = ((Bool*)arg)->value;
-                        return that;
-                    }
-                },
-                {
-                    "===",[]( Thing *that, Thing *arg ) {
-                        Bool *t = (Bool*)that;
-                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
-                        Bool *b = (Bool*)arg;
-                        return (Thing*)new Bool(t->value==b->value);
-                    }
-                },
-                {
-                    "&=",[]( Thing *that, Thing *arg ) {
-                        Bool *t = (Bool*)that;
-                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
-                        Bool *b = (Bool*)arg;
-                        t->value = t->value && b->value;
-                        return that;
-                    }
-                },
-                {
-                    "|=",[]( Thing *that, Thing *arg ) {
-                        Bool *t = (Bool*)that;
-                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
-                        Bool *b = (Bool*)arg;
-                        t->value = t->value || b->value;
-                        return that;
-                    }
-                },
-                {
-                    "⊕=",[]( Thing *that, Thing *arg ) {
-                        Bool *t = (Bool*)that;
-                        assert(arg!=NULL && arg->rhizome_type()==t->rhizome_type());
-                        Bool *b = (Bool*)arg;
-                        t->value = t->value ^ b->value;
-                        return that;
-                    }
-                }
-            });
+
             try {
-                Thing *r = dispatcher.at(method)(this,arg);
+                Thing *r = bools::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch( std::exception *e ) {
                 stringstream err;
@@ -94,9 +100,12 @@ namespace rhizome {
                 }
                 throw runtime_error(err.str());
             }
-            
-            
-            
+        }
+
+        Thing *
+        Bool::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
         }
     }
 }

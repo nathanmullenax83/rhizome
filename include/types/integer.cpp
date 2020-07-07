@@ -5,9 +5,117 @@
 
 using std::map;
 using std::function;
+using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace types {
+        namespace integer {
+            static Dispatcher<Integer> dispatcher( {
+                {
+                    "ϵℙ", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg==NULL );
+                        assert( that->rhizome_type()=="Int");
+                        return (Thing*)new Bool(((Integer*)that)->is_prime());
+                    }
+                },
+                {
+                    "+=", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        ((Integer*)that)->value += ((Integer*)arg)->value;
+                        return that;
+                    }
+                },
+                {
+                    "-=", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        ((Integer*)that)->value -= ((Integer*)arg)->value;
+                        return that;
+                    }
+                },
+                {
+                    "*=", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        ((Integer*)that)->value *= ((Integer*)arg)->value;
+                        return that;
+                    }
+                },
+                {
+                    "/=", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        ((Integer*)that)->value /= ((Integer*)arg)->value;
+                        return that;
+                    }
+                },
+                {
+                    "===", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        if( arg->rhizome_type()!=that->rhizome_type() ) {
+                            return (Thing*)new Bool(false);
+                        } else {
+                            Integer *t = (Integer*)that;
+                            return (Thing*)new Bool(t->value == ((Integer*)arg)->value);
+                        }        
+                    }
+                },
+                {
+                    "+", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( ((Integer*)that)->value + ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "%", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( ((Integer*)that)->value % ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "*", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( ((Integer*)that)->value * ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "-", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( ((Integer*)that)->value - ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "/", []( Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        return (Thing*)new Integer( ((Integer*)that)->value / ((Integer*)arg)->value);
+                    }
+                },
+                {
+                    "evaluate", [] (Thing *context, Integer *that, Thing *arg) {
+                        assert(arg==NULL);
+                        return that->evaluate(context);
+                    }
+                }
+            });
+        }
+
         Integer::Integer(): value(0) {
 
         }
@@ -101,105 +209,22 @@ namespace rhizome {
 
         Thing *
         Integer::invoke( Thing *context, string const &method, Thing *arg ) {
-            static rhizome::core::Dispatcher dispatcher( {
-                {
-                    "ϵℙ", []( Thing *that, Thing *arg ) {
-                        assert(arg==NULL );
-                        assert( that->rhizome_type()=="Int");
-                        return (Thing*)new Bool(((Integer*)that)->is_prime());
-                    }
-                },
-                {
-                    "+=", []( Thing *that, Thing *arg ) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        ((Integer*)that)->value += ((Integer*)arg)->value;
-                        return that;
-                    }
-                },
-                {
-                    "-=", []( Thing *that, Thing *arg ) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        ((Integer*)that)->value -= ((Integer*)arg)->value;
-                        return that;
-                    }
-                },
-                {
-                    "*=", []( Thing *that, Thing *arg ) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        ((Integer*)that)->value *= ((Integer*)arg)->value;
-                        return that;
-                    }
-                },
-                {
-                    "/=", []( Thing *that, Thing *arg ) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        ((Integer*)that)->value /= ((Integer*)arg)->value;
-                        return that;
-                    }
-                },
-                {
-                    "===", []( Thing *that, Thing *arg ) {
-                        assert(arg!=NULL);
-                        if( arg->rhizome_type()!=that->rhizome_type() ) {
-                            return (Thing*)new Bool(false);
-                        } else {
-                            Integer *t = (Integer*)that;
-                            return (Thing*)new Bool(t->value == ((Integer*)arg)->value);
-                        }        
-                    }
-                },
-                {
-                    "+", [](Thing *that, Thing *arg) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( ((Integer*)that)->value + ((Integer*)arg)->value);
-                    }
-                },
-                {
-                    "%", [](Thing *that, Thing *arg) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( ((Integer*)that)->value % ((Integer*)arg)->value);
-                    }
-                },
-                {
-                    "*", [](Thing *that, Thing *arg) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( ((Integer*)that)->value * ((Integer*)arg)->value);
-                    }
-                },
-                {
-                    "-", [](Thing *that, Thing *arg) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( ((Integer*)that)->value - ((Integer*)arg)->value);
-                    }
-                },
-                {
-                    "/", [](Thing *that, Thing *arg) {
-                        assert(arg!=NULL);
-                        assert(arg->rhizome_type()=="Int");
-                        return (Thing*)new Integer( ((Integer*)that)->value / ((Integer*)arg)->value);
-                    }
-                }
-            });
             try {
-                Thing *r =  dispatcher.at(method)(this,arg);
+                Thing *r =  integer::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch( std::exception *e ) {
-                stringstream err;
-                err << "Unknown Int method: " << method << ".\n"; 
-                if(context!=NULL) {
-                    err << "    Context: ";
-                    context->serialize_to(err);
+                if( integer::dispatcher.count(method)==0) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
                 }
-                throw runtime_error(err.str());
             }
+        }
+
+        Thing *
+        Integer::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
         }
     }
 }

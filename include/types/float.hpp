@@ -5,16 +5,18 @@
 #include <sstream>
 #include <stdexcept>
 #include "core/thing.hpp"
+#include "types/expression.hpp"
 
 using std::ostream;
 using std::stringstream;
 using std::runtime_error;
 using rhizome::core::Thing;
 using rhizome::core::Dispatcher;
+using rhizome::types::Expression;
 
 namespace rhizome {
     namespace types {
-        class Float: public Thing {
+        class Float: public Expression {
         public:
             long double value;
             Float();
@@ -31,6 +33,9 @@ namespace rhizome {
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
             long double get_value() const;
+
+            // expression interface
+            virtual Thing * evaluate( Thing *context ) const override;
         };
     }
 }

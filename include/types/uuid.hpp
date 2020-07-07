@@ -9,6 +9,7 @@
 #include <random>
 #include <stdexcept>
 #include "core/thing.hpp"
+#include "types/expression.hpp"
 
 
 
@@ -19,13 +20,14 @@ using std::stringstream;
 using std::runtime_error;
 
 using rhizome::core::Thing;
+using rhizome::types::Expression;
 
 namespace rhizome {
     namespace types {
         static default_random_engine r;
         static uniform_int_distribution<int> dist(0,255);
 
-        class UUID: public Thing {
+        class UUID: public Expression {
         private:
             string value;
             
@@ -40,6 +42,9 @@ namespace rhizome {
             virtual string rhizome_type() const override;
             virtual bool has_interface(string const &name) override;
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
+
+            // expression interface
+            virtual Thing * evaluate( Thing *context ) const override;
         };
     }
 }

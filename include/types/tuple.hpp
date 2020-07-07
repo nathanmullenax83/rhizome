@@ -6,19 +6,21 @@
 #include <tuple>
 #include "core/thing.hpp"
 #include "pattern.hpp"
+#include "types/expression.hpp"
 
 using std::deque;
 using std::string;
 using std::pair;
 using rhizome::pattern::Pattern;
 using rhizome::core::Thing;
+using rhizome::types::Expression;
 
 namespace rhizome {
     namespace types {
         
         /// Represent an ordered set of things
         /// with no particular type constraint.
-        class Tuple: public Thing {
+        class Tuple: public Expression {
         private:
             deque< Thing* > items;
         public:
@@ -48,7 +50,8 @@ namespace rhizome {
             // bridge methods
             vector<string> get_vector_of_native_strings();
 
-
+            // expression interface
+            virtual Thing * evaluate( Thing *context ) const override;
         };
     }
 }

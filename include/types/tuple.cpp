@@ -1,7 +1,36 @@
 #include "tuple.hpp"
 
+using rhizome::core::Dispatcher;
+
 namespace rhizome {
     namespace types {
+        namespace tuples {
+            static Dispatcher<Tuple> dispatcher({
+                {
+                    "evaluate",[](Thing *context, Tuple *that, Thing *arg) {
+                        assert(arg==NULL);
+                        return that->evaluate(context);
+                    }
+                },
+                {
+                    "append",[](Thing *context, Tuple *that, Thing *arg) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        that->append(arg);
+                        return that;
+                    }
+                },
+                {
+                    "prepend",[](Thing *context, Tuple *that, Thing *arg) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        that->prepend(arg);
+                        return that;
+                    },
+                }
+            });
+        }
+
         Tuple::Tuple() {
 
         }
@@ -77,15 +106,15 @@ namespace rhizome {
 
         Thing *
         Tuple::invoke( Thing *context, string const &method, Thing *arg ) {
-            (void)context;
-            if( arg != NULL ) {
-                if( method=="append" ) {
-                    append( arg );
-                } else if( method=="prepend") {
-                    prepend(arg);
+            try {
+                return tuples::dispatcher.at(method)(context,this,arg);
+            } catch( std::exception *e ) {
+                if( tuples::dispatcher.count(method)==0) {
+                    throw runtime_error( rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error( rhizome::core::invoke_error(method,arg,this,context,e));
                 }
             }
-            throw runtime_error("Nothing to invoke.");
         }
 
         size_t Tuple::size() const { return items.size(); }
@@ -104,6 +133,12 @@ namespace rhizome {
             Thing *f = items.back();
             items.pop_back();
             return f;
+        }
+
+        Thing *
+        Tuple::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
         }
 
     }

@@ -8,8 +8,7 @@
 #include <tuple>
 #include "i_parser.hpp"
 #include "i_store.hpp"
-#include "machine.hpp"
-
+#include "thing.hpp"
 
 using std::map;
 using std::string;
@@ -63,8 +62,14 @@ namespace rhizome {
             // or this one, if you are parsing from a particular source (say, a filestream)
             Thing * parse_thing( string const &start_rule, std::istream &in);
 
+            
+
         };
+
+        
     }
 }
+
+
 
 #endif

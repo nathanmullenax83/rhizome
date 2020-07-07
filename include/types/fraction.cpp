@@ -83,5 +83,11 @@ namespace rhizome {
             long double d = denomenator.native_int();
             return n/d;// customize
         }
+
+        Thing *
+        Fraction::evaluate( Thing *context) const {
+            (void)context;
+            return clone();
+        }
     }
 }

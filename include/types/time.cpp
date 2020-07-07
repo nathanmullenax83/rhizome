@@ -9,10 +9,22 @@
 
 using std::stringstream;
 using std::string;
-
+using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace types {
+
+        namespace timesx {
+            static Dispatcher<Time> dispatcher({
+                {
+                    "evaluate",[] (Thing *context, Time *that, Thing *arg )    {
+                        assert(arg==NULL);
+                        return that->evaluate(context);
+                    }
+                }
+            });
+        }
+
         Time::Time() {
             t = time(NULL);
         }
@@ -120,8 +132,22 @@ namespace rhizome {
         }
         Thing *
         Time::invoke( Thing *context, string const &method, Thing *arg ) {
-            (void)method;(void)arg; (void)context;
-            throw runtime_error("Nothing to invoke.");
+            try {
+                return timesx::dispatcher.at(method)(context,this,arg);
+            } catch(std::exception *e) {
+                if( timesx::dispatcher.count(method) == 0 ) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
+                }
+            }
+            
+        }
+
+        Thing *
+        Time::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
         }
 
         bool operator< ( Time const &a, Time const &b ) {

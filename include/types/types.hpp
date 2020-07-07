@@ -21,6 +21,9 @@
 #include "vtable.hpp"
 #include "type_is.hpp"
 #include "has_interface.hpp"
+#include "expression.hpp"
+#include "statement.hpp"
+#include "invokation.hpp"
 
 namespace rhizome {
     namespace types {

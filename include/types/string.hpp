@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include "core/thing.hpp"
+#include "types/expression.hpp"
 
 
 using std::string;
@@ -14,10 +15,11 @@ using std::stringstream;
 using std::runtime_error;
 
 using rhizome::core::Thing;
+using rhizome::types::Expression;
 
 namespace rhizome {
     namespace types {
-        class String: public Thing {
+        class String: public Expression {
         private:
             std::string value;
         public:
@@ -41,6 +43,9 @@ namespace rhizome {
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
             string native_string() const;
+
+            // expression interface
+            virtual Thing * evaluate( Thing *context ) const override;
         };
     }
 }

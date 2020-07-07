@@ -53,7 +53,12 @@ namespace rhizome {
 
         };
 
-        typedef map< string, function< Thing*(Thing *,Thing*) > > Dispatcher;
+        template< class T >
+        using Dispatcher =  map< string, function< Thing*(Thing *,T*,Thing*) > >;
+
+        string invoke_method_not_found( string const &method_name, Thing *on_object, Thing *context );
+        string invoke_error( string const &method_name, Thing *arg, Thing *on_object, Thing *context, std::exception *e);
+        
     }
 }
 

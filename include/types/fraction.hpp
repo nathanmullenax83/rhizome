@@ -5,14 +5,16 @@
 #include <iostream>
 
 #include "core/thing.hpp"
+#include "types/expression.hpp"
 #include "integer.hpp"
 
 
 using rhizome::core::Thing;
+using rhizome::types::Expression;
 
 namespace rhizome {
     namespace types {
-        class Fraction: public Thing {
+        class Fraction: public Expression {
         public:
             Integer numerator;
             Integer denomenator;
@@ -40,6 +42,9 @@ namespace rhizome {
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
             long double decimal() const;
+
+            // expression interface
+            virtual Thing * evaluate( Thing *context ) const override;
         };
     }
 }

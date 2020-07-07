@@ -169,6 +169,12 @@ namespace rhizome {
             throw runtime_error("Nothing to invoke.");
         }
 
+        Thing *
+        Color::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
+        }
+
         
     }
 }

@@ -4,6 +4,13 @@ using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace types {
+        namespace chars {
+            static Dispatcher<Char> dispatcher({
+                
+            });
+
+        }
+
         Char::Char(): v(0) {
 
         }
@@ -34,11 +41,9 @@ namespace rhizome {
 
         Thing *
         Char::invoke( Thing *context, string const &method, Thing *arg ) {
-            static Dispatcher dispatcher({
-                
-            });
+            
             try {
-                Thing *r = dispatcher.at(method)(this,arg);
+                Thing *r = chars::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch(std::exception *e) {
                 stringstream err;
@@ -53,6 +58,10 @@ namespace rhizome {
             
         }
 
-
+        Thing *
+        Char::evaluate( Thing *context ) const {
+            (void)context;
+            return clone();
+        }
     }
 }
