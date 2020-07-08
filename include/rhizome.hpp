@@ -8,6 +8,7 @@
 #include "core/i_parser.hpp"
 #include "core/i_store.hpp"
 #include "core/system.hpp"
+#include "core/machine.hpp"
 #include "core/universe.hpp"
 #include "alphabet.hpp"
 #include "words.hpp"

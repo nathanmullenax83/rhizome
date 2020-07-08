@@ -368,33 +368,15 @@ namespace rhizome{
 
     void define_integer_expression( Parser * parser ) {
         parser->rule(
-            "IntExpression",
-            gx_sequence({
-                gx_non_terminal("IntTerm"),
-                gx_star_closure(
-                    gx_sequence({
-                        gx_options({
-                            gx_literal("+"),
-                            gx_literal("-")
-                        }),
-                        gx_non_terminal("IntTerm")
-                    })
-                )
-            }));
+            "IntExpression", gx_binary_infix_operator_left({"+","-"},"IntTerm")
+        );
+
         parser->rule(
-            "IntTerm",
-            gx_sequence({
-                gx_non_terminal("IntLiteral"),
-                gx_star_closure(
-                    gx_sequence({
-                        gx_options({
-                            gx_literal("*"),
-                            gx_literal("/")
-                        }),
-                        gx_non_terminal("IntLiteral")
-                    })
-                )
-            })
+            "IntTerm", gx_binary_infix_operator_left({"*","/"},"IntFactor")
+        );
+
+        parser->rule(
+            "IntFactor", gx_binary_infix_operator_left({"^"},"IntLiteral")
         );
     }
 
