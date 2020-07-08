@@ -16,6 +16,7 @@ namespace rhizome {
             virtual ~And();
 
             void append( Gramex *g );
+            size_t size() const;
 
             virtual bool can_match( ILexer *lexer, GrammarFn lookup ) const override;
             virtual void match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) override;

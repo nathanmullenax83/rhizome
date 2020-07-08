@@ -149,7 +149,16 @@ build/types-type-is.o: $(SRC)/types/type_is.cpp $(SRC)/types/type_is.hpp
 build/types-has-interface.o: $(SRC)/types/has_interface.cpp $(SRC)/types/has_interface.hpp
 	$(CC) -c $(SRC)/types/has_interface.cpp -o build/types-has-interface.o
 
-TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o build/types-operator.o build/types-type-is.o build/types-has-interface.o build/types-timeline.o
+build/types-expression.o: $(SRC)/types/expression.cpp $(SRC)/types/expression.hpp
+	$(CC) -c $(SRC)/types/expression.cpp -o build/types-expression.o
+
+build/types-invokation.o: $(SRC)/types/invokation.cpp $(SRC)/types/invokation.hpp
+	$(CC) -c $(SRC)/types/invokation.cpp -o build/types-invokation.o
+
+build/types-binary-expression.o: $(SRC)/types/binary_expression.cpp $(SRC)/types/binary_expression.hpp
+	$(CC) -c $(SRC)/types/binary_expression.cpp -o build/types-binary-expression.o 
+
+TYPES_OBJECTS = build/types-string.o build/types-integer.o build/types-time.o build/types.o build/types-float.o build/types-fraction.o build/types-uuid.o build/types-color.o build/types-image.o build/types-tuple.o build/types-table.o build/types-char.o build/types-bool.o build/types-enumeration.o build/types-dir.o build/types-operator.o build/types-type-is.o build/types-has-interface.o build/types-timeline.o build/types-invokation.o build/types-binary-expression.o build/types-expression.o 
 
 lib/libtypes.a: $(TYPES_OBJECTS)
 	ar scr lib/libtypes.a $(TYPES_OBJECTS)
@@ -382,7 +391,10 @@ build/core-universe.o: $(SRC)/core/universe.cpp $(SRC)/core/universe.hpp
 build/core-i-lexer.o: $(SRC)/core/i_lexer.cpp $(SRC)/core/i_lexer.hpp
 	$(CC) -c $(SRC)/core/i_lexer.cpp -o build/core-i-lexer.o
 
-CORE_OBJECTS = build/core-system.o build/core-machine.o build/core-universe.o build/core-i-lexer.o
+build/core-thing.o: $(SRC)/core/thing.cpp $(SRC)/core/thing.hpp
+	$(CC) -c $(SRC)/core/thing.cpp -o build/core-thing.o
+
+CORE_OBJECTS = build/core-system.o build/core-machine.o build/core-universe.o build/core-i-lexer.o build/core-thing.o
 
 lib/libcore.a: $(CORE_OBJECTS)
 	ar cr lib/libcore.a $(CORE_OBJECTS)
@@ -450,7 +462,7 @@ build/librhizome-demos.a: $(DEMOS)
 	ar scr build/librhizome-demos.a $(DEMOS)
 
 # build archive of libs
-LIB_OBJECTS = $(ALPHABET_OBJECTS) $(WORDS_OBJECTS) $(PATTERN_OBJECTS) $(TYPES_OBJECTS) $(LEXER_OBJECTS) $(LOG_OBJECTS) $(UI_OBJECTS) $(COLOR_OBJECTS) $(HTML_OBJECTS) $(LOGIC_OBJECTS) $(IMAGE_OBJECTS) $(IPC_OBJECTS) $(NET_OBJECTS) $(STORE_OBJECTS) $(PARSE_OBJECTS) $(SDT_OBJECTS) $(CORE_OBJECTS) $(META_OBJECTS)
+LIB_OBJECTS = $(ALPHABET_OBJECTS) $(WORDS_OBJECTS) $(PATTERN_OBJECTS) $(TYPES_OBJECTS) $(LEXER_OBJECTS) $(LOG_OBJECTS) $(UI_OBJECTS) $(COLOR_OBJECTS) $(HTML_OBJECTS) $(LOGIC_OBJECTS) $(IMAGE_OBJECTS) $(IPC_OBJECTS) $(NET_OBJECTS) $(STORE_OBJECTS) $(PARSE_OBJECTS) $(SDT_OBJECTS) $(META_OBJECTS) $(CORE_OBJECTS)
 lib/librhizome.a: $(LIB_OBJECTS)
 	ar scr lib/librhizome.a $(LIB_OBJECTS)
 

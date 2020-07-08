@@ -4,7 +4,7 @@
 #include "ui.hpp"
 
 using rhizome::lex::Token;
-using rhizome::core::Machine;
+
 using rhizome::core::System;
 using rhizome::store::Store;
 
@@ -30,10 +30,7 @@ namespace rhizome {
                 return (Thing*)new Parser();
             }));
 
-            lexer.define_token_type( "☭Machine", new Transform(new rhizome::pattern::Literal("☭Machine"),[](Thing *t){
-                delete t;
-                return (Thing*)new Machine();
-            }));
+            
 
             // special tokens can manipulate the lexer
 
@@ -55,9 +52,9 @@ namespace rhizome {
                 //std::cout << "Attempting to look ahead.";
                 deque<Thing *> parser_NULL_machine = lexer.peek_next_thing(3,false);
                 Thing *t_parser = parser_NULL_machine[0];
-                Thing *t_machine = parser_NULL_machine[2];
+                
                 std::cout << "Parser? " << t_parser->rhizome_type();
-                std::cout << "Machine? " << t_machine->rhizome_type();
+                
 
                 
             } catch( std::exception e ) {

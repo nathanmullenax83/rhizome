@@ -109,13 +109,11 @@ namespace rhizome {
                 Thing *r = floats::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch( std::exception *e ) {
-                stringstream err;
-                err << "Unknown Decimal method: " << method << ".\n"; 
-                if(context!=NULL) {
-                    err << "    Context: ";
-                    context->serialize_to(err);
+                if( floats::dispatcher.count(method)==0) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
                 }
-                throw runtime_error(err.str());
             }
         }
 

@@ -92,13 +92,11 @@ namespace rhizome {
                 Thing *r = bools::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch( std::exception *e ) {
-                stringstream err;
-                err << "Bool dispatcher does not contain the method '" << method << ".\n";
-                if( context != NULL ) {
-                    err << "Context: ";
-                    context->serialize_to(err);
+                if( bools::dispatcher.count(method)==0) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
                 }
-                throw runtime_error(err.str());
             }
         }
 

@@ -1,8 +1,22 @@
 #include "fraction.hpp"
+#include <cassert>
 
+using rhizome::core::Dispatcher;
 
 namespace rhizome {
     namespace types {
+
+        namespace fractions {
+            static Dispatcher<Fraction> dispatcher({
+                {
+                    "evaluate", [](Thing *context, Fraction *that, Thing *arg ) {
+                        assert(arg==NULL);
+                        return that->evaluate(context);
+                    }
+                }
+            });
+        }
+
         Fraction::Fraction(Integer numerator, Integer denomenator ) {
             if( numerator < 0 && denomenator < 0 ) {
                 Integer d = gcd(0-numerator,0-denomenator);
@@ -71,10 +85,16 @@ namespace rhizome {
 
         Thing *
         Fraction::invoke( Thing *context, string const &method, Thing *arg ) {
-            // Should we use /context/ to look up a vtable?
-
-            (void)method;(void)arg; (void)context;
-            throw runtime_error("Nothing to invoke.");
+            try {
+                Thing *r =  fractions::dispatcher.at(method)(context,this,arg);
+                return r;
+            } catch( std::exception *e ) {
+                if( fractions::dispatcher.count(method)==0) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
+                }
+            }
         }
 
         long double

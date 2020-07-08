@@ -6,6 +6,26 @@
 
 namespace rhizome {
     namespace parse {
+        namespace ands {
+            static Dispatcher<And> dispatcher({
+                {
+                    "add clause",[]( Thing *context, And *that, Thing *arg ) {
+                        (void)context;
+                        assert( arg!=NULL && arg->has_interface("gramex"));
+                        that->append( (Gramex*)arg );
+                        return that;
+                    }
+                },
+                {
+                    "size", []( Thing *context, And *that, Thing *arg) {
+                        (void)context;
+                        assert(arg==NULL);
+                        return new rhizome::types::Integer(that->size());
+                    }
+                }
+            });
+        }
+
         And::And() {
 
         }
@@ -127,30 +147,20 @@ namespace rhizome {
             return "gramex::And";
         }
 
+        size_t 
+        And::size() const {
+            return clauses.size();
+        }
+
         bool
         And::has_interface( string const &name) {
             return name==rhizome_type()||name=="gramex"||name=="Thing";
         }
 
         Thing * And::invoke( Thing *context, string const &method, Thing *arg ) {
-            static Dispatcher dispatcher({
-                {
-                    "add clause",[]( Thing *that, Thing *arg ) {
-                        assert( arg!=NULL && arg->has_interface("gramex"));
-                        ((And*)that)->clauses.push_back( (Gramex*)arg );
-                        return that;
-                    }
-                },
-                {
-                    "size", [](Thing *that, Thing *arg) {
-                        assert(arg==NULL);
-                        And *t = (And*)that;
-                        return new rhizome::types::Integer(t->clauses.size());
-                    }
-                }
-            });
+
             try {
-                return dispatcher.at(method)(this,arg);
+                return ands::dispatcher.at(method)(context,this,arg);
             } catch( std::exception *e ) {
                 stringstream err;
                 err << "Attempted to invoked '" << method << "' on gramex::And but received an exception:\n";

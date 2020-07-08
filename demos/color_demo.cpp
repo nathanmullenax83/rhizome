@@ -92,6 +92,12 @@ namespace rhizome {
                 csystem->get_parser()->q_stream(co);
                 Thing * color = csystem->parse_thing("Start");
                 color->serialize_to(std::cout);
+                if( color->has_interface("expression")) {
+                    Thing *ev = color->invoke(NULL,"evaluate",NULL);
+                    ev->serialize_to(std::cout);
+                    std::cout << "\n";
+                    delete ev;
+                }
                 delete csystem;
             } catch (std::exception *e ) {
                 stringstream err;

@@ -9,14 +9,22 @@ using rhizome::ui::Console;
 namespace rhizome {
     namespace demo {
         void alphabet_demo() {
-            Console console(std::cout);
+            Console console(std::cout,1,1,60,20);
 
             Classifier *c = rhizome::alphabet::create_rhizome_classifier();
-            console.h1("Character classification test.");
-            std::wstring test(L"This is an alphabet classification test. Test();");
+            
+            console
+                .h1("Character classification test.")
+                .para("The Classifier object is for classifying wide characters. "
+                    "Just embed whatever functions you need to categorize characters "
+                    "for your lexical phase. ");
+            
+            std::wstring test(L"Classify (this)!");
+
             for(size_t i=0; i<test.size(); ++i) {
                 wchar_t w = test[i];
                 std::set<string> cs = c->classes(test[i]);
+                console << "    ";
                 std::cout << rhizome::ui::FG_GREEN_ON;
                 std::wcout << w;
                 std::cout << rhizome::ui::RESET_COLOR;
@@ -27,9 +35,14 @@ namespace rhizome {
                 }
                 std::cout << "\n";
             }
+
+            console
+                .para("Press any key to return to the main menu.");
+
             console.termios_getch(false);
             console.termios_getch(false);
 
+            delete c;
         }
     }
 }

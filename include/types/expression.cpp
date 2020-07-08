@@ -3,7 +3,7 @@
 namespace rhizome {
     namespace types {
         namespace expression {
-            static Dispatcher dispatcher({
+            static Dispatcher<Expression> dispatcher({
 
             });
         }

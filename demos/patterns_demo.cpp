@@ -18,10 +18,7 @@ namespace rhizome {
             return p;
         }
 
-        Pattern * literal( string const &w ) {
-            rp::Literal *p = new rp::Literal(w);
-            return p;
-        }
+        
 
         string exactly(size_t n, string const &w, bool quoted=false ) {
             stringstream ss;
@@ -109,7 +106,7 @@ namespace rhizome {
         }
 
         bool test_literal(Console &console) {
-            rp::Pattern *p = literal("test");
+            rp::Pattern *p = rp::p_literal("test");
             console << test_title( "Literal test", p);
             bool status  = tr(p, "test",           true);
                  status &= tr(p, "test testing",   false);
@@ -122,8 +119,8 @@ namespace rhizome {
 
         bool test_or(Console &console) {
             rp::Or *p = new rp::Or();
-            p->add_clause(literal("A"));
-            p->add_clause(literal("B"));
+            p->add_clause(rp::p_literal("A"));
+            p->add_clause(rp::p_literal("B"));
             console << test_title( "Test or", p );
             bool status  = tr(p,"C",     false);
                  status &= tr(p,"B",     true);
@@ -135,7 +132,7 @@ namespace rhizome {
         }
 
         bool test_star(Console &console) {
-            rp::Pattern *star = new rp::Star(literal("a"));
+            rp::Pattern *star = new rp::Star(rp::p_literal("a"));
             console << test_title("Repetition", star);
             bool status  = tr(star,"",     true);
                  status &= tr(star,"a",    true);
@@ -161,7 +158,7 @@ namespace rhizome {
         }
 
         bool test_cat(Console &console) {
-            rp::Cat *cat = new rp::Cat(new rp::Plus(literal("a")),new rp::Star(literal("b")));
+            rp::Cat *cat = new rp::Cat(new rp::Plus(rp::p_literal("a")),new rp::Star(rp::p_literal("b")));
             console << test_title("Concatenation", cat);
             bool status  = tr(cat,"",false);
                  status &= tr(cat,"a",true);
@@ -176,7 +173,7 @@ namespace rhizome {
         }
 
         bool test_repeat_n(Console &console) {
-            rp::NTimes *p = new rp::NTimes(3,literal("a"));
+            rp::NTimes *p = new rp::NTimes(3,rp::p_literal("a"));
             
             console << test_title("Repetition",p);
             bool status  = tr(p,   "",        false);
@@ -192,7 +189,7 @@ namespace rhizome {
         }
 
         bool test_maybe( Console &console ) {
-            rp::Maybe *m = rp::maybe( rp::literal("+"));
+            rp::Maybe *m = rp::maybe( rp::p_literal("+"));
             console << test_title("Maybe",m);
             bool status  = tr(m, "",  true);
                  status &= tr(m, "+", true);

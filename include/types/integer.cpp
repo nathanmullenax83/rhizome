@@ -108,6 +108,15 @@ namespace rhizome {
                     }
                 },
                 {
+                    "^", [](Thing *context, Integer *that, Thing *arg ) {
+                        (void)context;
+                        assert(arg!=NULL);
+                        assert(arg->rhizome_type()=="Int");
+                        mpz_class p = that->value ^ ((Integer*)arg)->value;
+                        return (Thing*)new Integer(p);
+                    }
+                },
+                {
                     "evaluate", [] (Thing *context, Integer *that, Thing *arg) {
                         assert(arg==NULL);
                         return that->evaluate(context);
@@ -204,7 +213,7 @@ namespace rhizome {
 
         bool
         Integer::has_interface( string const &name ) {
-            return (name=="Thing"||name=="Number"||name==rhizome_type());
+            return (name=="Thing"||name=="number"||name==rhizome_type());
         }
 
         Thing *

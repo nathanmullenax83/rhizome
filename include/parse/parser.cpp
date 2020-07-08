@@ -1,6 +1,10 @@
+#include <cassert>
 #include "parser.hpp"
 
 #include "log/log.hpp"
+#include "types/binary_expression.hpp"
+
+using rhizome::types::BinaryExpression;
 
 namespace rhizome {
     namespace parse {
@@ -18,7 +22,7 @@ namespace rhizome {
             pat::Plus *p = pat::plus( new pat::Digit() );
 
             return pat::cat({
-                pat::maybe(pat::literal("-")),
+                pat::maybe(pat::p_literal("-")),
                 p
             });
         }
@@ -26,9 +30,9 @@ namespace rhizome {
         Pattern *
         string_pattern() {
             pat::Cat *c = new pat::Cat();
-            c->append(new pat::Literal("\""));
+            c->append(pat::p_literal("\""));
             c->append(new pat::Star( new pat::Negated(new pat::Chars("\""))));
-            c->append( new pat::Literal("\""));
+            c->append( pat::p_literal("\""));
             return c;
         }
 
@@ -109,6 +113,7 @@ namespace rhizome {
             lexer->define_token_type( "Semicolon", ";");
             lexer->define_token_type( "Plus", "+");
             lexer->define_token_type( "Minus", "-");
+            lexer->define_token_type( "Carat", "^");
             lexer->define_token_type( "Times", "*");
             lexer->define_token_type( "Div", "/");
             lexer->define_token_type( "Dot", ".");
@@ -239,6 +244,19 @@ namespace rhizome {
             return p;
         }
 
+        Gramex * gx_options( std::vector<string> cs ) {
+            if( cs.size() > 1 ) {
+                Or *p = new Or();
+                for( auto i=cs.begin(); i!=cs.end(); i++) {
+                    p->add_clause(gx_literal(*i));
+                }
+                return p;
+            } else {
+                assert(cs.size()==1);
+                return gx_literal(cs[0]);
+            }
+        }
+
         Gramex * gx_non_terminal(string const &name) {
             return new NonTerminal(name);
         }
@@ -288,6 +306,70 @@ namespace rhizome {
                 }
             }
             return n;
+        }
+
+        Gramex * gx_binary_infix_operator_left( vector<string> ops, string const &subex ) {
+            Gramex *list = 
+                gx_apply(
+                    gx_sequence({
+                        gx_star_closure(
+                            gx_sequence({
+                                gx_non_terminal(subex),
+                                gx_options(ops)
+                            })
+                        ),
+                        gx_non_terminal(subex)
+                    }),
+                    []( deque<Thing*> ts ) {
+                        if( ts.size()==1) {
+                            return ts[0];
+                        } else {
+                            Expression *left = (Expression*)ts[0];
+                            BinaryExpression *be;
+                            for(size_t i=1; i<ts.size(); i+=2) {
+                                String *op = (String*)(ts[i]);
+                                Expression *right = (Expression*)ts[i+1];
+                                be = new BinaryExpression(op->native_string(),left,right);
+                                left = be;
+                            }
+                            return (Thing*)be;
+                        }
+                        
+                    }
+                );
+            return list;
+        }
+
+        Gramex * gx_binary_infix_operator_right( vector<string> ops, string const &subex ) {
+            Gramex *list = 
+                gx_apply(
+                    gx_sequence({
+                        gx_star_closure(
+                            gx_sequence({
+                                gx_non_terminal(subex),
+                                gx_options(ops)
+                            })
+                        ),
+                        gx_non_terminal(subex)
+                    }),
+                    []( deque<Thing*> ts ) {
+                        if( ts.size()==1) {
+                            return ts[0];
+                        } else {
+                            Expression *right = (Expression*)ts[ts.size()-1];
+                            BinaryExpression *be;
+                            for(size_t i=ts.size()-2; i>0; i-=2) {
+                                String *op = (String*)(ts[i]);
+                                Expression *left = (Expression*)ts[i-1];
+                                be = new BinaryExpression(op->native_string(),left,right);
+                                right = be;
+                            }
+                            return (Thing*)be;
+                        }
+                        
+                    }
+                );
+            return list;
         }
     }
 }

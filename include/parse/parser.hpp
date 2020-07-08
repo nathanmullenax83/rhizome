@@ -101,6 +101,12 @@ namespace rhizome {
         // match a, b, c
         Gramex * gx_comma_list( std::vector<Gramex*> elems, string sep="," );
 
+        // match and produce (((a + b) + c) + d)
+        Gramex * gx_binary_infix_operator_left( vector<string> ops, string const &subex );
+
+        // match and produce (a + (b + (c + d)))
+        Gramex * gx_binary_infix_operator_right( vector<string> ops, string const &subex );
+
         /// Match one or more of a sentence.
         Gramex * gx_plus_closure( Gramex * inner );
 

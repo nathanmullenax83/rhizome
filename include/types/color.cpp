@@ -1,7 +1,12 @@
+#include <cassert>
 #include "color.hpp"
 
+
+using rhizome::core::Dispatcher;
 namespace rhizome {
     namespace types {
+        
+
         double clamp(double v) {
             return std::min(std::max(0.0,v),1.0);
         }
@@ -18,6 +23,18 @@ namespace rhizome {
         char hex_digit( size_t n ) {
             string digs("0123456789abcdef");
             return digs[n%16];
+        }
+
+
+        namespace colors {
+            static Dispatcher<Color> dispatcher({
+                {
+                    "evaluate", [] (Thing *context, Color *that, Thing *arg ) {
+                        assert(arg==NULL);
+                        return that->evaluate(context);
+                    }
+                }
+            });
         }
 
         Color::Color()
@@ -165,8 +182,16 @@ namespace rhizome {
 
         Thing *
         Color::invoke( Thing *context, string const &method, Thing *arg ) {
-            (void)method;(void)arg; (void)context;
-            throw runtime_error("Nothing to invoke.");
+            try {
+                Thing *r =  colors::dispatcher.at(method)(context,this,arg);
+                return r;
+            } catch( std::exception *e ) {
+                if( colors::dispatcher.count(method)==0) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
+                }
+            }
         }
 
         Thing *

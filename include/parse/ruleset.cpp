@@ -1,7 +1,15 @@
 #include "ruleset.hpp"
 
+using rhizome::core::Dispatcher;
+
 namespace rhizome {
     namespace parse {
+        namespace ruleset {
+            static Dispatcher<Ruleset> dispatcher ({
+
+            });
+        }
+
         Ruleset::Ruleset() {
             
         }
@@ -46,6 +54,49 @@ namespace rhizome {
 
         }
 
+        string
+        Ruleset::rhizome_type() const {
+            return "parse.Ruleset";
+        }
+
+        bool
+        Ruleset::has_interface( string const &name ) {
+            return name=="Thing"||name==rhizome_type();
+        }
+
+        void
+        Ruleset::serialize_to( std::ostream &out ) const {
+            out << rhizome_type() << "{\n";
+            for(auto i=rules.begin(); i!=rules.end(); i++) {
+                out << "    " << i->first << ": ";
+                i->second->serialize_to(out);
+                out << "\n";
+            }
+            out << "}\n";
+        }
+
+        Thing *
+        Ruleset::clone() const {
+            Ruleset *copy = new Ruleset();
+            for(auto i=rules.begin(); i!=rules.end(); i++) {
+                copy->rules[i->first] =  i->second->clone_gramex(false);
+            }
+            return copy;
+        }
         
+
+        Thing *
+        Ruleset::invoke( Thing *context, string const &method, Thing *arg ) {
+            try {
+                return ruleset::dispatcher.at(method)(context,this,arg);
+            } catch( std::exception *e ) {
+                if( ruleset::dispatcher.count(method)==0) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
+                }
+            }
+        }
+
     }
 }

@@ -24,6 +24,7 @@
 #include "expression.hpp"
 #include "statement.hpp"
 #include "invokation.hpp"
+#include "binary_expression.hpp"
 
 namespace rhizome {
     namespace types {

@@ -20,7 +20,7 @@ namespace rhizome {
             Parser *parser = create_parser();
             Menu menu;
 
-            Store s("knitters_point",parser);
+            Store s(".knitters_point",parser);
             menu.add_item("Party?", [&s](){
                 Thing *orgs = s.retrieve("organizations");
                 (void)orgs;
