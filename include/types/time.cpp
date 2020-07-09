@@ -10,6 +10,7 @@
 using std::stringstream;
 using std::string;
 using rhizome::core::Dispatcher;
+using rhizome::core::indent;
 
 namespace rhizome {
     namespace types {
@@ -93,8 +94,8 @@ namespace rhizome {
         // at runtime per object instance!
 
         void
-        Time::serialize_to( ostream &out ) const {
-            out << rhizome_type() << "(" << t << ")";
+        Time::serialize_to( size_t level, ostream &out ) const {
+            out << indent(level) << rhizome_type() << "(" << t << ")";
         }
 
         Thing * 

@@ -66,7 +66,8 @@ namespace rhizome {
         }
 
         void
-        Bool::serialize_to(std::ostream &out) const {
+        Bool::serialize_to(size_t level, std::ostream &out) const {
+            (void)level;
             out << (value?"true":"false");
         }
 

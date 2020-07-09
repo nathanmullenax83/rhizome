@@ -53,7 +53,8 @@ namespace rhizome {
         }
 
         void
-        CharQueue::serialize_to( std::ostream &out ) const {
+        CharQueue::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type() << "(";
             out << ")";
         }

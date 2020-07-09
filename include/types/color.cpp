@@ -142,7 +142,8 @@ namespace rhizome {
         }
 
         void
-        Color::serialize_to( ostream &out ) const {
+        Color::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             // note, the serialize_to method should always be a prototype
             // for an object literal representation on the rhizome parser.
             // This does not preclude other representations. For instance,

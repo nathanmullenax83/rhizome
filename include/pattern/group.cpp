@@ -60,9 +60,9 @@ namespace rhizome {
         }
 
         void
-        Group::serialize_to( ostream &out ) const {
+        Group::serialize_to( size_t level, ostream &out ) const {
             out << "(";
-            dynamic_cast<Thing*>(inner)->serialize_to(out);
+            dynamic_cast<Thing*>(inner)->serialize_to(level,out);
             out << ")";
         }
 

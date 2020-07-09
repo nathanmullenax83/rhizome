@@ -167,7 +167,8 @@ namespace rhizome {
         }
 
         void
-        Image::serialize_to( ostream &out ) const {
+        Image::serialize_to( size_t level, ostream &out ) const {
+            (void) level;
             out << "Image";
             throw runtime_error("Not implemented.");
         }

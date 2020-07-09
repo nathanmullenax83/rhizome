@@ -101,9 +101,9 @@ namespace rhizome {
         }
 
         void
-        Cat::serialize_to( ostream &out ) const {
+        Cat::serialize_to( size_t level, ostream &out ) const {
             for(size_t i=0; i<parts.size(); ++i) {
-                ((Pattern*)parts[i])->serialize_to(out);
+                ((Pattern*)parts[i])->serialize_to(level,out);
                 if( i+1<parts.size() ) {
                     out << "⁀";
                 }
@@ -135,7 +135,7 @@ namespace rhizome {
                 
                 Thing *s = parts[i]->captured_transformed();
                 if( s!=NULL && s->rhizome_type()=="String") {
-                    s->serialize_to(capd);
+                    s->serialize_to(0,capd);
                 }
                 
             }

@@ -27,9 +27,9 @@ namespace rhizome {
             string & operator[] ( string const &attr_name );
 
             /// generate <element attr1=val1...> 
-            string open_tag( string const &tagname );
+            string open_tag( string const &tagname ) const;
 
-            virtual void write_to( ostream &out, size_t indent )=0;
+            virtual void write_to( ostream &out, size_t indent ) const =0;
             
 
             virtual bool has_interface( string const &name ) override;

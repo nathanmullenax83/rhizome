@@ -71,7 +71,7 @@ namespace rhizome {
             /// booleanExpr ? v1 : v2 is the ordinary ternary (infix arity 2)
             Operator( vector<wstring> ops, size_t arity, NAryFunction apply, OperatorType t);
 
-            virtual void serialize_to( std::ostream &out ) const override;
+            virtual void serialize_to( size_t level, std::ostream &out ) const override;
             virtual string rhizome_type() const override;
             virtual Thing * clone() const override;
             virtual bool has_interface( string const &name ) override;

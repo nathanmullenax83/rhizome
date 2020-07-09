@@ -31,7 +31,7 @@ namespace rhizome {
             void set( string const &name, Thing *value );
             void remove( string const &name );
 
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to(size_t level, ostream &out ) const override;
             virtual string rhizome_type() const override;
 
             virtual Thing * clone() const override;

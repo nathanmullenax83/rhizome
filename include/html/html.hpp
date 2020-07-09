@@ -30,12 +30,12 @@ namespace rhizome {
             HTML( string const &title );
             virtual ~HTML();
             
-            virtual void write_to( ostream &out , size_t indent=0 );
+            virtual void write_to( ostream &out , size_t indent=0 ) const;
             
             // virtual rp::Pattern * make_pattern() const override;
             // virtual rp::Pattern * make_concise_pattern() const override;
 
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to( size_t level, ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;
 
             virtual Thing * clone() const;

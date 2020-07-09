@@ -59,7 +59,8 @@ namespace rhizome {
         }
 
         void
-        NonTerminal::serialize_to( std::ostream &out ) const {
+        NonTerminal::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << name;
         }
 

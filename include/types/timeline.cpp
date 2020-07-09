@@ -17,7 +17,8 @@ namespace rhizome {
         }
 
         void
-        Timeline::serialize_to( std::ostream &out ) const {
+        Timeline::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             (void)out;
             throw runtime_error("Cannot serialize a timeline, as it contains synthesized functions.");
         }

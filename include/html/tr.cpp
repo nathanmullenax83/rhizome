@@ -11,20 +11,18 @@ namespace rhizome {
         }
 
         void
-        Tr::write_to( ostream &out, size_t indent ) {
+        Tr::write_to( ostream &out, size_t indent ) const {
             string spacer(indent*4,' ');
             out << spacer << "<tr>\n";
             for(size_t i=0; i<cells.size(); ++i) {
-                cells[i].write_to(out,indent+1);
+                cells.at(i).write_to(out,indent+1);
             }
             out << spacer << "</tr>\n";
         }
 
         void
-        Tr::serialize_to( std::ostream &out ) const {
-            out << rhizome_type() << "(";
-            serialize_children(out);
-            out << ")";
+        Tr::serialize_to( size_t level, std::ostream &out ) const {
+            write_to(out,level);
         }
 
         Thing * 

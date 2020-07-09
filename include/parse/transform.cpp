@@ -16,12 +16,7 @@ namespace rhizome {
             //static rhizome::log::Log log("xform_match");
 
             Gramex *copy = inner->clone_gramex(false);
-            {
-                stringstream gx; 
-                gx << "Copied inner gramex: ";
-                copy->serialize_to(gx);
-                //log.info(gx.str());
-            }
+            
             copy->match( lexer, lookup, captured );
             //log.info("Matched inner gramex.");
             Thing * made = transform( copy->clone_matched_tokens() );
@@ -42,9 +37,10 @@ namespace rhizome {
             return t;
         }
 
-        void Transform::serialize_to( std::ostream &out ) const {
+        void Transform::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << "F(";
-            inner->serialize_to(out);
+            inner->serialize_to(0,out);
             out << ")";
         }
 

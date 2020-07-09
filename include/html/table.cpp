@@ -12,7 +12,7 @@ namespace rhizome {
 
 
         void 
-        Table::write_to( ostream &out, size_t indent ) {
+        Table::write_to( ostream &out, size_t indent ) const {
             string spacer(indent*4,' ');
             out << spacer << "<table>\n";
             thead.write_to(out, indent+1);
@@ -21,11 +21,8 @@ namespace rhizome {
         }
 
         void
-        Table::serialize_to( ostream &out ) const {
-            out << "table(";
-            thead.serialize_to(out);
-            tbody.serialize_to(out);
-            out << ")";
+        Table::serialize_to( size_t level, ostream &out ) const {
+            write_to(out,level);
         }
     }
 }

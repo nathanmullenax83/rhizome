@@ -21,6 +21,7 @@ namespace rhizome {
             c << "\n";
             return c;
         }
+        
         Console & substep( Console &c, string const &desc ) {
             c << "  • " << rhizome::ui::FG_YELLOW_ON;
             c << desc;

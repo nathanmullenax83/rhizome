@@ -57,9 +57,9 @@ namespace rhizome {
         }
 
         void
-        PlusClosure::serialize_to( ostream &out ) const {
+        PlusClosure::serialize_to( size_t level, ostream &out ) const {
             out << "(";
-            inner->serialize_to(out);
+            inner->serialize_to(level, out);
             out << ")+";
         }
 

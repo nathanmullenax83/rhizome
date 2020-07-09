@@ -42,7 +42,7 @@ namespace rhizome {
             virtual void deserialize_from( istream &in, IParser *parser ) override;
             */
 
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to(size_t level, ostream &out ) const override;
             virtual Thing * clone() const;
 
 

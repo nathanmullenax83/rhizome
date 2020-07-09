@@ -127,7 +127,7 @@ namespace rhizome {
         string unrecognized_method( string const &name, Thing *arg ) {
             stringstream err;
             err << "Method " << name << " is unrecognized by the ChessBoard class. Argument was ";
-            arg->serialize_to(err);
+            arg->serialize_to(1,err);
             err << ".";
             return err.str();
         }
@@ -142,7 +142,8 @@ namespace rhizome {
         }
 
         void
-        ChessBoard::serialize_to( std::ostream &out ) const {
+        ChessBoard::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type() << "{\n";
             for( size_t y=0; y<height; ++y) {
                 out << "\t\"";

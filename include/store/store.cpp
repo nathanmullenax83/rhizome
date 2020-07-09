@@ -1,10 +1,41 @@
+#include <cassert>
 #include "store.hpp"
 
 
 namespace P = rhizome::pattern;
 
+using rhizome::core::Dispatcher;
+
 namespace rhizome {
     namespace store {
+
+        namespace stores {
+            static Dispatcher<Store> dispatcher({
+                {
+                    "get", []( Thing *context, Store *that, Thing *arg ) {
+                        (void)context;
+                        assert( arg!=NULL && arg->rhizome_type()=="String");
+                        String *s = (String*)arg;
+                        return that->retrieve(s->native_string());
+                    }
+                },
+                {
+                    "set", [](Thing *context, Store *that, Thing *arg) {
+                        (void)context;
+                        assert(arg!=NULL&&arg->has_interface("Tuple"));
+                        Tuple *t = (Tuple*)arg;
+                        assert(t->size()==2);
+                        Thing *tname = t->at(0);
+                        Thing *tvalue = t->at(1);
+                        assert(tname->rhizome_type()=="String");
+                        String *sname = (String*)tname;
+                        that->set(sname->native_string(),tvalue);
+                        return that;
+                    }
+                }
+            });
+        }
+
         Store::Store(string const &path, IParser *p): root(path) {
             parser = p;
         }
@@ -27,17 +58,17 @@ namespace rhizome {
                     std::ofstream::trunc | std::ofstream::out 
                 );
 
-                i->second->serialize_to(obj);
+                i->second->serialize_to(0,obj);
                 obj.close();
             }
         }
 
         void
-        Store::serialize_to( ostream &out ) const {
+        Store::serialize_to(size_t level, ostream &out ) const {
             out << rhizome_type() << "(";
             for( auto it=data.begin(); it!= data.end(); ++it) {
                 out << it->first << ":";
-                it->second->serialize_to(out);
+                it->second->serialize_to(level+1,out);
                 auto whu = it;
                 if( ++whu != data.end() ) {
                     out << ";";
@@ -50,7 +81,7 @@ namespace rhizome {
         Store::lazy_load( string const &name ) {
             Parser *psr = (Parser*)parser;
             // get a list of files
-            Pattern *p = P::cat({P::literal(name),new P::Star(new P::Any())}); 
+            Pattern *p = P::cat({P::p_literal(name),new P::Star(new P::Any())}); 
             vector<string> fs = root.files( p );
             delete p;
 
@@ -162,10 +193,20 @@ namespace rhizome {
             }
         }
 
+        
         Thing *
         Store::invoke( Thing *context, string const &method, Thing *arg ) {
-            (void)method; (void)arg; (void)context;
-            throw runtime_error("Not implemented.");
+
+            try {
+                Thing *r = stores::dispatcher.at(method)(context,this,arg);
+                return r;
+            } catch( std::exception *e ) {
+                if( stores::dispatcher.count(method)==0) {
+                    throw runtime_error(rhizome::core::invoke_method_not_found(method,this,context));
+                } else {
+                    throw runtime_error(rhizome::core::invoke_error(method,arg,this,context,e));
+                }
+            }
         }
     }
 }

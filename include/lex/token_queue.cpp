@@ -60,7 +60,8 @@ namespace rhizome {
         }
 
         void 
-        TokenQueue::serialize_to( std::ostream &out ) const {
+        TokenQueue::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type() << "(";
             out << ")";
         }
@@ -81,7 +82,7 @@ namespace rhizome {
                 return clone();
             } else if( op=="has_interface" && arg->rhizome_type()=="String") {
                 stringstream name;
-                arg->serialize_to(name);
+                arg->serialize_to(0,name);
                 return new Bool( has_interface(name.str()));
             } else if( op=="next" ) {
                 return next();

@@ -26,7 +26,7 @@ namespace rhizome {
             virtual ~Negated();
             // cclass::
             virtual void serialize_to_cclass_context( ostream &out ) const override;
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to( size_t level, ostream &out ) const override;
             // pattern::
             virtual void transition( char c ) override;
             virtual bool can_transition( char c) const override;

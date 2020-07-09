@@ -11,7 +11,7 @@ namespace rhizome {
         }
 
         void
-        TBody::write_to( ostream &out, size_t indent ) {
+        TBody::write_to( ostream &out, size_t indent ) const{
             string spacer(indent*4,' ');
             out << spacer << "<tbody>\n";
             for(size_t i=0; i<rows.size(); ++i) {
@@ -21,10 +21,8 @@ namespace rhizome {
         }
 
         void
-        TBody::serialize_to( ostream &out ) const {
-            out << "tbody(";
-            serialize_children(out);
-            out << ")";
+        TBody::serialize_to( size_t level, ostream &out ) const {
+            write_to(out,level);
         }
 
         Thing *

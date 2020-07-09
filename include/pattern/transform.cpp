@@ -57,9 +57,9 @@ namespace rhizome {
         
 
         void 
-        Transform::serialize_to( ostream &out ) const {
+        Transform::serialize_to( size_t level, ostream &out ) const {
             out << "λ❨";
-            ((Pattern*)inner)->serialize_to(out);
+            ((Pattern*)inner)->serialize_to(level,out);
             out << "❩";
         }
 

@@ -5,13 +5,17 @@
 #include <sstream>
 #include <functional>
 #include <map>
+#include <set>
+#include <vector>
 
 using std::ostream;
 using std::istream;
 using std::stringstream;
 using std::string;
 using std::map;
+using std::set;
 using std::function;
+using std::vector;
 
 #include "i_token.hpp"
 
@@ -30,7 +34,7 @@ namespace rhizome {
 
 
             /// Describe the internal format of this object.
-            virtual void serialize_to( ostream &out ) const = 0;
+            virtual void serialize_to( size_t indent, ostream &out ) const = 0;
             //virtual void deserialize_from( istream &in, IParser *parser ) = 0;
 
             /// Deep clone of this object.
@@ -59,6 +63,28 @@ namespace rhizome {
         string invoke_method_not_found( string const &method_name, Thing *on_object, Thing *context );
         string invoke_error( string const &method_name, Thing *arg, Thing *on_object, Thing *context, std::exception *e);
         
+        /// Keep track of a handful of pointers. This might have function scope or class scope,
+        /// but it is designed for functions to help keep marshalling functions from leaking 
+        /// memory.
+        class FreeList {
+        public:
+            set<Thing*> elems;
+
+            FreeList();
+            virtual ~FreeList();
+
+            /// Add a pointer to the set.
+            FreeList & operator+= (Thing *t);
+
+            /// Add and pass a pointer
+            Thing * operator() (Thing *t);
+
+            /// This one takes some explaining, maybe.
+            /// You can expressly free everything but return_value from this set.
+            Thing * empty( Thing *return_value );
+        };
+
+        string indent( size_t level );
     }
 }
 

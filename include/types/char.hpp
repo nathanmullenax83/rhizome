@@ -26,7 +26,7 @@ namespace rhizome {
             Char();
             Char(wchar_t v);
 
-            virtual void serialize_to( std::ostream &out ) const override;
+            virtual void serialize_to( size_t level, std::ostream &out ) const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
             virtual Thing * clone() const override;

@@ -1,7 +1,31 @@
 #include "classifier.hpp"
 
+#include <map>
+
+using std::map;
+
 namespace rhizome {
     namespace alphabet {
+
+
+        namespace classifier {
+
+            static map< string, function<int(wint_t)> > fns_library({
+                { "iswalnum", iswalnum },
+                { "iswalpha", iswalpha },
+                { "iswblank", iswblank },
+                { "iswcntrl", iswcntrl },
+                { "iswdigit", iswdigit },
+                { "iswgraph", iswgraph },
+                { "iswlower", iswlower },
+                { "iswprint", iswprint },
+                { "iswpunct", iswpunct },
+                { "iswspace", iswspace },
+                { "iswupper", iswupper },
+                { "iswxdigit", iswxdigit }
+            });
+
+        }
 
         Classifier::Classifier() {
 
@@ -196,8 +220,20 @@ namespace rhizome {
             return c;
         }
 
-        void Classifier::serialize_to( std::ostream &out ) const {
-            out << rhizome_type() << "{}";
+        
+
+        void Classifier::serialize_to( size_t indent, std::ostream &out ) const {
+            auto indents = []( size_t level ) {
+                string space( level*4,' ');
+                return space;
+            };
+            out << indents(indent) << rhizome_type() << " {\n";
+            for( auto i=fns.begin(); i!=fns.end(); i++) {
+                out << indents(indent+1);
+                out << i->first << ": ";
+                
+            }
+            out << indents(indent) << "}\n";
         }
 
         string Classifier::rhizome_type() const {

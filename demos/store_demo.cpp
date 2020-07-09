@@ -24,7 +24,7 @@ namespace rhizome {
 
             rhizome::types::String *hi = new rhizome::types::String("Hello world!");
             s.set( "hi", hi);
-            s.serialize_to( std::cout );
+            s.serialize_to( 0,std::cout );
         }
     }
 }

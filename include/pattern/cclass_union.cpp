@@ -70,7 +70,8 @@ namespace rhizome {
         }
 
         void
-        CClassUnion::serialize_to( ostream &out ) const {
+        CClassUnion::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << "[";
             serialize_to_cclass_context(out);
             out << "]";

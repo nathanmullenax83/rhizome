@@ -42,7 +42,7 @@ namespace rhizome {
             s << testname;
             s << rhizome::ui::RESET_COLOR;
             s << " : " << rhizome::ui::FG_CYAN_ON;
-            p->serialize_to(s);
+            p->serialize_to(0,s);
             s << rhizome::ui::RESET_COLOR;
             s << "\n";
             return s.str();
@@ -71,14 +71,14 @@ namespace rhizome {
 
                 stringstream buffer;
                 buffer << rhizome::ui::BG_BLUE_ON;
-                plain_capture->serialize_to(buffer);
+                plain_capture->serialize_to(0,buffer);
                 buffer << rhizome::ui::RESET_COLOR;
                 std::cout << "  " << exactly(30,buffer.str());
                 buffer = stringstream();
                 
                 if( xd_capture != NULL ) {
                     buffer << rhizome::ui::BG_MAGENTA_ON;
-                    xd_capture->serialize_to(buffer);
+                    xd_capture->serialize_to(0,buffer);
                 } else {
                     buffer << rhizome::ui::FG_GREEN_ON;
                     buffer << "NULL";

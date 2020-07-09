@@ -17,13 +17,13 @@ namespace rhizome {
             Head();
             ~Head();
 
-            virtual void write_to( ostream &out, size_t indent );
+            virtual void write_to( ostream &out, size_t indent ) const;
             Title & title(string const &t);
 
             // virtual rp::Pattern * make_pattern() const override;
             // virtual rp::Pattern * make_concise_pattern() const override;
 
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to( size_t level, ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;
 
             virtual Thing * clone() const;

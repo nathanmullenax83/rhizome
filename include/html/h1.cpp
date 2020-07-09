@@ -15,16 +15,14 @@ namespace rhizome {
         }
 
         void
-        H1::write_to( ostream &out, size_t indent ) {
+        H1::write_to( ostream &out, size_t indent ) const {
             string spacer(indent*4,' ');
             out << spacer << "<h1>" << title << "</h1>\n";
         }
 
         void
-        H1::serialize_to( ostream &out ) const {
-            out << rhizome_type() << "(\"";
-            out << title;
-            out << "\")";
+        H1::serialize_to( size_t level, ostream &out ) const {
+            write_to(out,level);
         }
 
         Thing *

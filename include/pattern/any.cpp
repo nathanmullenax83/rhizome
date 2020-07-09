@@ -39,7 +39,8 @@ namespace rhizome {
             }
         }
 
-        void Any::serialize_to( ostream &out ) const {
+        void Any::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << ".";
         }
 

@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include "binary_expression.hpp"
 using rhizome::core::Dispatcher;
+using rhizome::core::indent;
 using std::runtime_error;
 
 namespace rhizome {
@@ -50,16 +51,19 @@ namespace rhizome {
         }
         
         void
-        BinaryExpression::serialize_to( std::ostream &out ) const {
-            out << rhizome_type() << "{\n";
-            out << "    op: " << op << "\n";
-            out << "    left: ";
-            left->serialize_to(out);
+        BinaryExpression::serialize_to( size_t level, std::ostream &out ) const {
+            out << "\n" << indent(level) << rhizome_type() << " {\n";
+            out << indent(level+1) << "op: \"" << op << "\"\n";
+            
+            out << indent(level+1) << "left: ";
+            left->serialize_to(level+2,out);
             out << "\n";
-            out << "    right: ";
-            right->serialize_to(out);
 
-            out << "}\n";
+            out << indent(level+1) << "right: ";
+            right->serialize_to(level+2,out);
+            out << "\n";
+
+            out << indent(level) << "}\n";
         }
         
         bool

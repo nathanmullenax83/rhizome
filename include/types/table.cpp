@@ -1,5 +1,7 @@
 #include "table.hpp"
 
+using rhizome::core::indent;
+
 namespace rhizome {
     namespace types {
         Table::Table() {
@@ -12,17 +14,17 @@ namespace rhizome {
 
         
 
-        void Table::serialize_to( ostream &out ) const {
-            out << "Table {";
+        void Table::serialize_to( size_t level, ostream &out ) const {
+            out << indent( level) << "Table {\n";
             for( auto row = rows.begin(); row != rows.end(); row++) {
-                out << row->first << ":";
-                row->second->serialize_to(out);
+                out << indent(level+1) << row->first << ":";
+                row->second->serialize_to(level+2, out);
                 auto whu = row;
                 if( ++whu != rows.end() ) {
                     out << ",";
                 }
             }
-            out << "}";
+            out << indent(level) << "}\n";
         }
 
         bool Table::contains( string const &name ) const {

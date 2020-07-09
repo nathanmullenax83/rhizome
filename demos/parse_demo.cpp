@@ -44,7 +44,7 @@ namespace rhizome {
             grammar.dump(std::cout);
             Thing * result = grammar.parse_thing("<start>", "A B A B");
             std::cout << "Result: ";
-            result->serialize_to(std::cout);
+            result->serialize_to(1,std::cout);
             std::cout << "\n";
             delete result;
             return true;
@@ -71,7 +71,7 @@ namespace rhizome {
             p.q_stream(s);
             try {
                 Thing *result = p.parse_thing("D");
-                result->serialize_to(std::cout);
+                result->serialize_to(1,std::cout);
                 std::cout << "\n";
 
                 return true;
@@ -101,7 +101,7 @@ namespace rhizome {
             try{
                 Thing *result = p.parse_thing("S");
                 std::cout << "Result: ";
-                result->serialize_to(std::cout);
+                result->serialize_to(1,std::cout);
                 std::cout << "\n";
                 return true;
             }catch(std::exception *e) {
@@ -124,7 +124,7 @@ namespace rhizome {
                         rhizome::types::String *s = new rhizome::types::String();
                         for( size_t i=0; i<ts.size(); ++i) {
                             stringstream ss;
-                            ts[i]->serialize_to(ss);
+                            ts[i]->serialize_to(0,ss);
                             s->append( ss.str() );
                         }
                         return s;
@@ -139,7 +139,7 @@ namespace rhizome {
             Thing * result = grammar.parse_thing( "<start>");
 
             std::cout << "Result: ";
-            result->serialize_to(std::cout);
+            result->serialize_to(1,std::cout);
             std::cout << '\n';
             delete result;
             return true;
@@ -164,7 +164,7 @@ namespace rhizome {
             
             bool pass = (vs->size()==1);
             for(size_t i=0; i<vs->size(); ++i) {
-                vs->at(i)->serialize_to(std::cout);
+                vs->at(i)->serialize_to(1,std::cout);
                 std::cout <<  "\n";
             }
             return pass;
@@ -186,7 +186,7 @@ namespace rhizome {
             bool pass(true);
             auto debug_print = [&pass]( string const &vname, Thing *t )  {
                 std::cout << vname << " = ";
-                t->serialize_to( std::cout);
+                t->serialize_to(0,std::cout);
                 std::cout << "( status = " << (pass?"passing":"failing") << " )";
                 std::cout << "\n";
             };
@@ -227,7 +227,7 @@ namespace rhizome {
             bool pass(true);
             auto debug_print = [&pass]( string const &vname, Thing *t )  {
                 std::cout << vname << " = ";
-                t->serialize_to( std::cout);
+                t->serialize_to( 0,std::cout);
                 std::cout << "( status = " << (pass?"passing":"failing") << " )";
                 std::cout << "\n";
             };
@@ -279,7 +279,7 @@ namespace rhizome {
                 std::cout << "\tInput: '" << rhizome::ui::FG_WHITE_ON << alist.str() << rhizome::ui::RESET_COLOR << "'\n";
                 rhizome::types::Tuple *vs = (rhizome::types::Tuple*)grammar.parse_thing("Start",alist.str());
                 std::cout << "\tOutput: '" << rhizome::ui::FG_GREEN_ON;
-                vs->serialize_to(std::cout);
+                vs->serialize_to(1,std::cout);
                 std::cout << rhizome::ui::RESET_COLOR << "'\n";
                 pass = pass && (vs->size()==i);
                 alist << "," << ((int)(rand()%100)-50);

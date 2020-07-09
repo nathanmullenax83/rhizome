@@ -5,13 +5,18 @@
 #include <string>
 
 using rhizome::ui::Console;
+using rhizome::core::FreeList;
 
 namespace rhizome {
     namespace demo {
         void alphabet_demo() {
+            FreeList pointers;
+
             Console console(std::cout,1,1,60,20);
 
             Classifier *c = rhizome::alphabet::create_rhizome_classifier();
+            pointers += c;
+
             
             console
                 .h1("Character classification test.")
@@ -41,8 +46,6 @@ namespace rhizome {
 
             console.termios_getch(false);
             console.termios_getch(false);
-
-            delete c;
         }
     }
 }

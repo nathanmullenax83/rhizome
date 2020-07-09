@@ -2,6 +2,7 @@
 #include <cassert>
 
 using rhizome::core::Dispatcher;
+using rhizome::core::indent;
 
 namespace rhizome {
     namespace types {
@@ -51,8 +52,8 @@ namespace rhizome {
         }
 
         void
-        Fraction::serialize_to( ostream &out ) const {
-            out << rhizome_type() << "(";
+        Fraction::serialize_to( size_t level, ostream &out ) const {
+            out << indent(level) << rhizome_type() << "(";
             out << numerator << "/" << denomenator;
             out << ")";
         }

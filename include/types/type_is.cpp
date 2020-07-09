@@ -20,7 +20,8 @@ namespace rhizome {
         }
 
         void
-        TypeIs::serialize_to( std::ostream &out ) const {
+        TypeIs::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << ":" << type_name;
         }
 
@@ -41,7 +42,7 @@ namespace rhizome {
             err << "but " << rt << " is unfamiliar with that method.";
             err << " The argument was: ";
             if( arg != NULL ){
-                arg->serialize_to(err);
+                arg->serialize_to(0,err);
             } else {
                 err << "()";
             }

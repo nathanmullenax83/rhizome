@@ -91,8 +91,8 @@ namespace rhizome {
         }
 
         void
-        NTimes::serialize_to( ostream &out ) const {
-            ((Pattern*)inner)->serialize_to(out);
+        NTimes::serialize_to( size_t level, ostream &out ) const {
+            ((Pattern*)inner)->serialize_to(level,out);
             out << "{" << N << "}";
         }
 
@@ -121,7 +121,7 @@ namespace rhizome {
         NTimes::captured_transformed() {
             if( inner->accepted() ) {
                 Thing *t = inner->captured_transformed();
-                t->serialize_to(xd);
+                t->serialize_to(0,xd);
             }
             return new String(xd.str());
         }

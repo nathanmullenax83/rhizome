@@ -43,7 +43,7 @@ namespace rhizome {
             // Thing::type()
             virtual string rhizome_type() const override;
 
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to(size_t level, ostream &out ) const override;
             virtual Thing * clone() const override;
             
             

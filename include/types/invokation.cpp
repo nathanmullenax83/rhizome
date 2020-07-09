@@ -1,5 +1,7 @@
 #include "invokation.hpp"
 
+using rhizome::core::indent;
+
 namespace rhizome
 {
     namespace types
@@ -32,16 +34,14 @@ namespace rhizome
         }
 
         void
-        Invokation::serialize_to(std::ostream &out) const
+        Invokation::serialize_to( size_t level, std::ostream &out) const
         {
-            out << rhizome_type() << "{\n";
-            out << "    target: ";
-            target->serialize_to(out);
-            out << "\n";
-            out << "    arg: ";
-            arg->serialize_to(out);
-            out << "\n";
-            out << "}\n";
+            out << indent(level) << rhizome_type() << "{\n";
+            out << indent(level+1) << "target:\n";
+            target->serialize_to(level+2,out);
+            out << indent(level+1) << "arg:\n";
+            arg->serialize_to(level+2, out);
+            out << indent(level) << "}\n";
         }
 
         bool

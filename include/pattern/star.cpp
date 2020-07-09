@@ -74,8 +74,8 @@ namespace rhizome {
         }
 
         void
-        Star::serialize_to( ostream &out ) const {
-            ((Pattern*)inner)->serialize_to(out);
+        Star::serialize_to( size_t level, ostream &out ) const {
+            ((Pattern*)inner)->serialize_to(level,out);
             out << "*";
         }
 
@@ -123,7 +123,7 @@ namespace rhizome {
                 err << "Attempted to capture part of a repetition of a pattern. \n";
                 err << "This is most certainly an error. \nHere's some diagnostic info:\n";
                 err << "This pattern: ";
-                serialize_to(err);
+                serialize_to(2,err);
                 err << "\nCaptured plain: " << _captured.str() << "\n";
                 err << "Captured transformed: " << xd.str() << "\n";
                 throw runtime_error(err.str());

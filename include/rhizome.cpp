@@ -59,7 +59,7 @@ namespace rhizome{
                 new rhizome::pattern::Group( new rhizome::pattern::Plus( new rhizome::pattern::Range('A','Z')) ),
                 [](Thing * t){
                     std::cout << "A_YELLED: ";
-                    t->serialize_to(std::cout);
+                    t->serialize_to(0,std::cout);
                     std::cout << "\n";
                     return t;
                 }));
@@ -106,11 +106,11 @@ namespace rhizome{
                 }), 
                 []( deque<Thing*> ts){
                     std::cout << "Rule: ";
-                    ts[0]->serialize_to(std::cout);
+                    ts[0]->serialize_to(0,std::cout);
                     tps::Tuple *vs = new tps::Tuple();
                     vs->append( ts[0]); // name of token type
                     vs->append( ts[3]); // non-term "Definition"
-                    vs->serialize_to(std::cout);
+                    vs->serialize_to(0,std::cout);
                     return vs;
                 } // end parse-time application
             ) // end apply
@@ -243,7 +243,7 @@ namespace rhizome{
                 return str->native_string();
             } else {
                 stringstream s;
-                t->serialize_to(s);
+                t->serialize_to(0,s);
                 return s.str();
             }
         } else {
@@ -254,7 +254,7 @@ namespace rhizome{
     string t_not_expected( Thing *t, string const &expectation ) {
         stringstream s;
         s << expectation;
-        t->serialize_to(s);
+        t->serialize_to(0,s);
         return s.str();
     }
 

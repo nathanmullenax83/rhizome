@@ -11,7 +11,56 @@ using rhizome::types::Char;
 
 namespace rhizome {
     namespace pattern {
-
+        namespace literal {
+            static Dispatcher<Literal> dispatcher({
+                {
+                    "reset!",
+                    []( Thing *context, Literal *that, Thing *arg ) {
+                        (void)context;
+                        assert( arg==NULL );
+                        ((Literal*)that)->reset();
+                        return that;
+                    }
+                },
+                {
+                    "valid?",
+                    []( Thing *context, Literal *that, Thing *arg ) {
+                        (void)context;
+                        assert( arg==NULL );
+                        return (Thing*)new Bool(((Literal*)that)->valid());
+                    }
+                },
+                {
+                    "accepted?",
+                    []( Thing *context, Literal *that, Thing *arg) {
+                        (void)context;
+                        assert( arg==NULL );
+                        return (Thing*)new Bool(((Literal*)that)->accepted());
+                    }
+                },
+                {
+                    "can transition?",
+                    []( Thing *context, Literal *that, Thing *arg) {
+                        (void)context;
+                        assert( arg!=NULL );
+                        assert( arg->rhizome_type()=="Char");
+                        Char *c = (Char*)arg;
+                        return (Thing*)new Bool(((Literal*)that)->can_transition(c->v));
+                    }
+                },
+                {
+                    "transition!",
+                    [](Thing *context, Literal *that, Thing *arg) {
+                        (void)context;
+                        assert( arg!=NULL);
+                        assert( arg->rhizome_type()=="Char");
+                        Char *c = (Char*)arg;
+                        ((Literal*)that)->transition(c->v);
+                        return that;
+                    }
+                }
+            });
+        }
 
         Literal::Literal( string const &w ): w(w), state(0) {
 
@@ -27,7 +76,7 @@ namespace rhizome {
                 } else {
                     stringstream err;
                     err << "'"; err.put(c); err << "' is not a valid transition for the pattern ";
-                    serialize_to(err);
+                    serialize_to(1,err);
                     err << " state = " << state << "; _captured = " << _captured.str();
                     throw runtime_error(err.str());
                 }
@@ -72,7 +121,8 @@ namespace rhizome {
         }
 
         void
-        Literal::serialize_to( ostream &out ) const {
+        Literal::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << "«" << w << "»";
         }
 
@@ -88,58 +138,15 @@ namespace rhizome {
 
         Thing *
         Literal::invoke( Thing *context, string const &method, Thing *arg ) {
-            static Dispatcher dispatcher({
-                {
-                    "reset!",
-                    []( Thing *that, Thing *arg ) {
-                        assert( arg==NULL );
-                        ((Literal*)that)->reset();
-                        return that;
-                    }
-                },
-                {
-                    "valid?",
-                    []( Thing *that, Thing *arg ) {
-                        assert( arg==NULL );
-                        return (Thing*)new Bool(((Literal*)that)->valid());
-                    }
-                },
-                {
-                    "accepted?",
-                    []( Thing *that, Thing *arg) {
-                        assert( arg==NULL );
-                        return (Thing*)new Bool(((Literal*)that)->accepted());
-                    }
-                },
-                {
-                    "can transition?",
-                    []( Thing *that, Thing *arg) {
-                        assert( arg!=NULL );
-                        assert( arg->rhizome_type()=="Char");
-                        Char *c = (Char*)arg;
-                        return (Thing*)new Bool(((Literal*)that)->can_transition(c->v));
-                    }
-                },
-                {
-                    "transition!",
-                    [](Thing *that, Thing *arg) {
-                        assert( arg!=NULL);
-                        assert( arg->rhizome_type()=="Char");
-                        Char *c = (Char*)arg;
-                        ((Literal*)that)->transition(c->v);
-                        return that;
-                    }
-                }
-            });
             try {
-                Thing *r = dispatcher.at(method)(this,arg);
+                Thing *r = literal::dispatcher.at(method)(context,this,arg);
                 return r;
             } catch( std::exception *e ) {
                 stringstream err;
                 err << "Method " << method << " is not defined on " << rhizome_type();
                 if( context != NULL ) {
                     err << "\nContext: ";
-                    context->serialize_to(err);
+                    context->serialize_to(1,err);
                 }
                 throw runtime_error(err.str());
             }
@@ -156,7 +163,7 @@ namespace rhizome {
             return captured_plain();
         }
 
-        Literal * literal( string const &v ) {
+        Literal * p_literal( string const &v ) {
             return new Literal(v);
         }
     }

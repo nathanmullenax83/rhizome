@@ -3,6 +3,7 @@
 #include "types/char.hpp"
 
 using rhizome::core::Dispatcher;
+using rhizome::core::indent;
 using rhizome::types::Char;
 
 namespace rhizome {
@@ -27,7 +28,7 @@ namespace rhizome {
                         } else {
                             // anything is appended using serialize_to method.
                             stringstream whatever;
-                            arg->serialize_to(whatever);
+                            arg->serialize_to(0,whatever);
                             that->append(whatever.str());
                         }
                         // in all cases return a pointer to the string that has been augmented.
@@ -57,8 +58,9 @@ namespace rhizome {
         }
 
         void
-        String::serialize_to( ostream &out ) const {
-            out << value;
+        String::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
+            out <<  value;
         }
 
         Thing *

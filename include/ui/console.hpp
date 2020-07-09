@@ -109,7 +109,7 @@ namespace rhizome {
             /// pop and enable termios state
             void pop_termios();
         public:
-            Console(std::ostream &console, size_t x=0, size_t y=0, size_t width=80, size_t height=30);
+            Console(std::ostream &console, size_t x=0, size_t y=0, size_t width=40, size_t height=30);
 
             std::wstring_convert<std::codecvt_utf8_utf16<wchar_t> > & get_converter();
 
@@ -131,6 +131,8 @@ namespace rhizome {
 
             /// Level 1 heading
             Console & h1(string const &s);
+            /// A paragraph
+            Console & para( string const &p );
 
             
             
@@ -142,6 +144,8 @@ namespace rhizome {
             Console & operator << ( int n );
 
             Console & operator << (Thing *t);
+
+            string get_line( string const &prompt );
         };
     }
 }

@@ -80,7 +80,7 @@ namespace rhizome {
                     //cap.info("Deleted t");
                     rhizome::types::Float *f = new rhizome::types::Float(v);
                     stringstream eff;
-                    f->serialize_to(eff);
+                    f->serialize_to(0,eff);
                     //cap.info(eff.str());
                     return f;
                 }));
@@ -190,7 +190,8 @@ namespace rhizome {
         }
 
         void
-        Parser::serialize_to( std::ostream &out ) const {
+        Parser::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type() << "{";
             out << "}";
         }

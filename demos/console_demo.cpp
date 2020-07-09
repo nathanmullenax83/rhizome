@@ -13,7 +13,7 @@ namespace rhizome {
         }
 
         void console_demo() {
-            ru::Console console(std::cout);
+            ru::Console console(std::cout,10,10,40,20);
             console.termios_getch(false);
             ru::ScreenRegion rect;
 

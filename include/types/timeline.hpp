@@ -33,7 +33,7 @@ namespace rhizome {
             /// Thing interface.
             string rhizome_type() const override;
             bool has_interface( string const &name ) override;
-            void serialize_to( std::ostream &out ) const override;
+            void serialize_to( size_t level, std::ostream &out ) const override;
             Thing * clone() const override;
             Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 

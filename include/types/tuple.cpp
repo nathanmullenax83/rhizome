@@ -1,6 +1,7 @@
 #include "tuple.hpp"
 
 using rhizome::core::Dispatcher;
+using rhizome::core::indent;
 
 namespace rhizome {
     namespace types {
@@ -47,7 +48,7 @@ namespace rhizome {
             vector<string> vs;
             for(size_t i=0; i<items.size(); ++i) {
                 stringstream e;
-                items[i]->serialize_to(e);
+                items[i]->serialize_to(0,e);
                 vs.push_back(e.str());
             }
             return vs;
@@ -63,15 +64,15 @@ namespace rhizome {
         }
 
         void 
-        Tuple::serialize_to( ostream &out ) const {
-            out << "(";
+        Tuple::serialize_to( size_t level, ostream &out ) const {
+            out << indent(level) << "(\n";
             for(size_t i=0; i<items.size();++i) {
-                items[i]->serialize_to(out);
+                items[i]->serialize_to(level+1,out);
                 if( i < items.size()-1) {
                     out << ",";
                 }
             }
-            out << ")";
+            out << indent(level) << ")\n";
         }
 
         string

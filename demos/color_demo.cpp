@@ -2,6 +2,7 @@
 
 using namespace rhizome::parse;
 using namespace rhizome::types;
+using rhizome::core::FreeList;
 
 namespace rhizome {
     namespace demo {
@@ -74,31 +75,33 @@ namespace rhizome {
         }
 
         void color_demo() {
+            FreeList pointers;
             rhizome::core::System * csystem = rhizome::plant(".color");
+            pointers += csystem;
             
             
             rhizome::ui::Console console(std::cout);
             console.termios_getch(false);
 
-            console.h1("Color Demo");
-            
-            std::cout << "Enter a web color #xxxxxx:\n";
+            console.h1("Expression parser demo");
+            console << rhizome::ui::FG_GREEN_ON;
+            string line = console.get_line("> ");
+            console << rhizome::ui::RESET_COLOR;
             stringstream co;
-            string line;
-            
-            std::getline( std::cin, line );
             co << line;
+
             try {
                 csystem->get_parser()->q_stream(co);
                 Thing * color = csystem->parse_thing("Start");
-                color->serialize_to(std::cout);
+                pointers += color;
+                color->serialize_to(1,std::cout);
                 if( color->has_interface("expression")) {
                     Thing *ev = color->invoke(NULL,"evaluate",NULL);
-                    ev->serialize_to(std::cout);
+                    pointers += ev;
+                    ev->serialize_to(1,std::cout);
                     std::cout << "\n";
-                    delete ev;
                 }
-                delete csystem;
+                
             } catch (std::exception *e ) {
                 stringstream err;
                 err << "Error attempting to parse line:\n";

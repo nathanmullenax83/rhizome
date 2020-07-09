@@ -26,7 +26,7 @@ namespace rhizome {
             virtual bool has_interface( string const &w ) override;
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;
 
-            virtual void serialize_to( std::ostream &out ) const override;
+            virtual void serialize_to( size_t level, std::ostream &out ) const override;
             virtual void serialize_to_cclass_context( std::ostream &out ) const override;
             virtual IPattern * clone_pattern(bool withstate) const override;
 

@@ -20,7 +20,8 @@ namespace rhizome {
         }
 
         void
-        HasInterface::serialize_to( std::ostream &out ) const {
+        HasInterface::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << " has " << interface_name;
         }
 
@@ -38,9 +39,9 @@ namespace rhizome {
             stringstream err;
             err << "Attempted to invoke " << name << " on " << rt << " ";
             err << "but " << rt << " is unfamiliar with that method.";
-            err << " The argument was: ";
+            err << " The argument was:\n";
             if( arg != NULL ){
-                arg->serialize_to(err);
+                arg->serialize_to(1,err);
             } else {
                 err << "()";
             }

@@ -16,7 +16,7 @@ namespace rhizome {
         }
 
         void
-        HTML::write_to( ostream &out, size_t indent ) {
+        HTML::write_to( ostream &out, size_t indent ) const {
             (void)indent;
             out << "<!DOCTYPE html>\n";
             out << "<html>\n";
@@ -26,11 +26,8 @@ namespace rhizome {
         }
 
         void
-        HTML::serialize_to( ostream &out ) const {
-            out << "html(";
-            head.serialize_to(out);
-            body.serialize_to(out);
-            out << ")";
+        HTML::serialize_to( size_t level, ostream &out ) const {
+            write_to(out,level);
         }
 
         Thing * 

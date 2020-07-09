@@ -69,7 +69,8 @@ namespace rhizome {
         }
 
         void
-        Digit::serialize_to( ostream &out ) const {
+        Digit::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             serialize_to_cclass_context(out);
         }
 

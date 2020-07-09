@@ -20,8 +20,8 @@ namespace rhizome {
             Table();
             ~Table();
 
-            virtual void write_to( ostream &out, size_t indent );
-            virtual void serialize_to( ostream &out ) const;
+            virtual void write_to( ostream &out, size_t indent ) const;
+            virtual void serialize_to( size_t level,ostream &out ) const;
         };
     }
 }

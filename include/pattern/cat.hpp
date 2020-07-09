@@ -26,7 +26,7 @@ namespace rhizome {
             virtual bool can_transition(char c) const;
             virtual void reset();
             virtual IPattern * clone_pattern(bool withstate) const;
-            virtual void serialize_to( ostream &out ) const;
+            virtual void serialize_to( size_t level,ostream &out ) const;
 
             virtual bool has_interface( string const &name ) override;
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;

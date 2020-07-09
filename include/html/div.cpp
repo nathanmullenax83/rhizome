@@ -11,7 +11,7 @@ namespace rhizome {
         }
 
         void
-        Div::write_to( ostream &out, size_t indent ) {
+        Div::write_to( ostream &out, size_t indent ) const {
             string spacer(indent*4,' ');
             out << spacer << open_tag("div");
             write_children(out,indent+1);

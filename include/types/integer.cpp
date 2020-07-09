@@ -197,7 +197,8 @@ namespace rhizome {
         }
 
         void
-        Integer::serialize_to( ostream & out ) const {
+        Integer::serialize_to( size_t level, ostream & out ) const {
+            (void)level;
             out << value.get_str();
         }
 

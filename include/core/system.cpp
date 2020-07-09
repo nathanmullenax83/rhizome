@@ -17,7 +17,8 @@ namespace rhizome {
         }
 
         void 
-        System::serialize_to( std::ostream &out ) const {
+        System::serialize_to(size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type() << "{";
             out << "}";
         }
@@ -47,7 +48,7 @@ namespace rhizome {
                     
                 } else if( method=="parse") {
                     stringstream ss;
-                    arg->serialize_to(ss);
+                    arg->serialize_to(0,ss);
                     return parser->parse_thing( ss.str() );
                 }
             }

@@ -12,7 +12,7 @@ namespace rhizome {
         }
 
         void 
-        UL::write_to( ostream &out, size_t indent ) {
+        UL::write_to( ostream &out, size_t indent ) const {
             string spacer(indent*4,' ');
             out << spacer << "<ul>\n";
             for(size_t i=0; i<items.size(); ++i) {
@@ -22,12 +22,8 @@ namespace rhizome {
         }
 
         void
-        UL::serialize_to( ostream &out ) const {
-            out << rhizome_type() << "(";
-            for(size_t i=0; i<items.size(); ++i) {
-                items[i].serialize_to(out);
-            }
-            out << ")";
+        UL::serialize_to( size_t level, ostream &out ) const {
+            write_to(out,level);
         }
 
         LI &

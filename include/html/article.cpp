@@ -1,5 +1,7 @@
 #include "article.hpp"
 
+using rhizome::core::indent;
+
 namespace rhizome {
     namespace html {
         Article::Article() {
@@ -11,10 +13,10 @@ namespace rhizome {
         }
 
         void
-        Article::write_to( ostream &out, size_t indent ) {
-            out << "<article>";
-            write_children(out, indent+1);
-            out << "</article>";
+        Article::write_to( ostream &out, size_t level ) const {
+            out << indent(level) << "<article>\n";
+            write_children(out, level+1);
+            out << indent(level) << "</article>\n";
         }
     }
 }

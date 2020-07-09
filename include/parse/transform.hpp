@@ -25,7 +25,7 @@ namespace rhizome {
 
             virtual Gramex * clone_gramex(bool withmatches) const override;
 
-            virtual void serialize_to(ostream &out) const override;
+            virtual void serialize_to(size_t level, ostream &out) const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;

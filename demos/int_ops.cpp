@@ -11,7 +11,7 @@ namespace rhizome {
         
         void summarize_operator( Operator *p ) {
             std::cout << "Operator Definition:\n\t";
-            p->serialize_to(std::cout);
+            p->serialize_to(1,std::cout);
             std::cout << "\n";
         }
 

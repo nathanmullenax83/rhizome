@@ -51,9 +51,10 @@ namespace rhizome {
         }
 
         void
-        MaybeClosure::serialize_to( ostream &out ) const {
+        MaybeClosure::serialize_to(size_t level, ostream &out ) const {
+            (void)level;
             out << "(";
-            inner->serialize_to(out);
+            inner->serialize_to(level,out);
             out << ")?";
         }
 

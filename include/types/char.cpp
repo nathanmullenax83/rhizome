@@ -36,8 +36,9 @@ namespace rhizome {
         }
 
         void
-        Char::serialize_to( std::ostream &out ) const {
-            out << v;
+        Char::serialize_to( size_t level, std::ostream &out ) const {
+            (void) level;
+            out << "'" << v << "'";
         }
 
         Thing *

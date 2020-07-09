@@ -22,8 +22,8 @@ namespace rhizome {
             UL();
             ~UL();
 
-            virtual void write_to( ostream &out, size_t indent );
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void write_to( ostream &out, size_t indent ) const;
+            virtual void serialize_to( size_t level, ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;
 
             LI & li( string const &contents );

@@ -76,7 +76,7 @@ namespace rhizome {
                 } else {
                     out << rhizome::ui::FG_RED_ON;
                 }
-                p->serialize_to(out);
+                p->serialize_to(1,out);
                 out << rhizome::ui::RESET_COLOR;
                 out << "\t";
             }
@@ -215,7 +215,7 @@ namespace rhizome {
             } else {
                 stringstream err;
                 err << "Expected '" << pattern_name  << "' (";
-                ((Pattern*)p)->serialize_to(err);
+                ((Pattern*)p)->serialize_to(0,err);
                 err << ")\n";
                 err << "Plain capture so far: " << ((String*)p->captured_plain())->native_string();
                 throw runtime_error(err.str());
@@ -412,12 +412,13 @@ namespace rhizome {
         }
 
 
-        void Lexer::serialize_to( std::ostream &out ) const {
+        void Lexer::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             auto &patterns = states.top().patterns;
             out << rhizome_type() << "{\n";
             for( auto i = patterns.begin(); i!=patterns.end(); i++ ) {
-                out << "\t" << i->first << ":";
-                ((Pattern*)i->second)->serialize_to(out);
+                out << "\t" << i->first << ":\n";
+                ((Pattern*)i->second)->serialize_to(level+1,out);
                 out << "\n";
             }
             out << "}\n";

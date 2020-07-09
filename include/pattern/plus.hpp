@@ -22,7 +22,7 @@ namespace rhizome {
             virtual bool accepted() const;
 
             virtual IPattern * clone_pattern(bool withstate) const override;
-            virtual void serialize_to( ostream &out ) const;
+            virtual void serialize_to( size_t level, ostream &out ) const;
 
             virtual bool has_interface( string const &name ) override;
             virtual Thing * invoke( Thing *context, string const &method, Thing *arg ) override;

@@ -2,6 +2,7 @@
 #include "types/string.hpp"
 #include <cassert>
 using rhizome::core::Dispatcher;
+using rhizome::core::indent;
 using rhizome::types::String;
 
 namespace rhizome {
@@ -35,8 +36,8 @@ namespace rhizome {
         
 
         void
-        UUID::serialize_to(ostream &out) const {
-            out << rhizome_type() << "(" << value;
+        UUID::serialize_to(size_t level, ostream &out) const {
+            out << indent(level) << rhizome_type() << "(" << value;
             out << ")";
         }
 
@@ -66,7 +67,7 @@ namespace rhizome {
                 err << "Error invoking " << method << " on " << rhizome_type() << ".\n";
                 if( context != NULL ) {
                     err << "\nContext: \n    ";
-                    context->serialize_to(err);
+                    context->serialize_to(1,err);
                 }
                 throw runtime_error(err.str());
             }

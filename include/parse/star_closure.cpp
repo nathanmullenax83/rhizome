@@ -61,9 +61,9 @@ namespace rhizome {
         }
 
         void
-        StarClosure::serialize_to( ostream &out ) const {
+        StarClosure::serialize_to( size_t level, ostream &out ) const {
             out << "(";
-            inner->serialize_to(out);
+            inner->serialize_to(level,out);
             out << ")*";
         }
 

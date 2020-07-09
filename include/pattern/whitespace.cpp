@@ -75,7 +75,8 @@ namespace rhizome {
         }
 
         void 
-        Whitespace::serialize_to( ostream &out ) const {
+        Whitespace::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             serialize_to_cclass_context(out);
         }
 

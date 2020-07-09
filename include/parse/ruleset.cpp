@@ -27,7 +27,7 @@ namespace rhizome {
             for( auto i=rules.begin(); i!=rules.end(); i++) {
                 out << "  ";
                 out << i->first << " → ";
-                i->second->serialize_to(out);
+                i->second->serialize_to(0,out);
                 out << "\n";
             }
         }
@@ -65,11 +65,11 @@ namespace rhizome {
         }
 
         void
-        Ruleset::serialize_to( std::ostream &out ) const {
+        Ruleset::serialize_to(size_t level, std::ostream &out ) const {
             out << rhizome_type() << "{\n";
             for(auto i=rules.begin(); i!=rules.end(); i++) {
                 out << "    " << i->first << ": ";
-                i->second->serialize_to(out);
+                i->second->serialize_to(level+1, out);
                 out << "\n";
             }
             out << "}\n";

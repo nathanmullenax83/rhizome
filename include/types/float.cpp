@@ -75,10 +75,9 @@ namespace rhizome {
         }
 
         void
-        Float::serialize_to( ostream &out ) const {
-            out << rhizome_type() << "(";
+        Float::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << value;
-            out << ")";
         }
 
         Thing *

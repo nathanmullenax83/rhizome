@@ -50,7 +50,7 @@ namespace rhizome {
                     err << "Plus: inner pattern cannot transition on '";
                     err.put(c);
                     err << "'\n";
-                    ((Pattern*)inner)->serialize_to(err);
+                    ((Pattern*)inner)->serialize_to(1,err);
                     throw runtime_error(err.str());
                 }
                 inner->transition(c);
@@ -101,8 +101,8 @@ namespace rhizome {
         }
 
         void
-        Plus::serialize_to( ostream &out ) const {
-            ((Pattern*)inner)->serialize_to(out);
+        Plus::serialize_to( size_t level, ostream &out ) const {
+            ((Pattern*)inner)->serialize_to(level,out);
             out << "+";
         }
 

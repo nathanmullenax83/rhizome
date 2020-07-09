@@ -62,7 +62,8 @@ namespace rhizome {
         }
 
         void
-        HexDigit::serialize_to( ostream &out ) const {
+        HexDigit::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << "[";
             serialize_to_cclass_context(out);
             out << "]";
@@ -88,7 +89,7 @@ namespace rhizome {
         HexDigit::captured_plain() {
             if( accepted()) {
                 stringstream s;
-                serialize_to(s);
+                serialize_to(0,s);
                 return new String(s.str());
             } else {
                 return new String("");

@@ -131,10 +131,10 @@ namespace rhizome {
         }
 
         void 
-        And::serialize_to( ostream &out ) const {
+        And::serialize_to(size_t level, ostream &out ) const {
             out << "(";
             for(size_t i=0; i<clauses.size(); ++i) {
-                clauses[i]->serialize_to(out);
+                clauses[i]->serialize_to(level,out);
                 if( i<(clauses.size()-1) ) {
                     out << " ";
                 }
@@ -167,8 +167,7 @@ namespace rhizome {
                 err << e->what();
                 if( context != NULL ) {
                     err << "\nContext:\n";
-                    err << "    ";
-                    context->serialize_to(err);
+                    context->serialize_to(1,err);
                 }
                 throw runtime_error(err.str());
             }

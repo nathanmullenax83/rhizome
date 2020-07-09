@@ -119,7 +119,7 @@ namespace rhizome {
         bool Machine::check_constraints( Thing *t ) {
             auto stringify = []( Thing const * const t ) {
                 stringstream ss;
-                t->serialize_to(ss);
+                t->serialize_to(0,ss);
                 return ss.str();
             };
             for(size_t i=0; i<machine_constraints.size();++i) {
@@ -143,7 +143,8 @@ namespace rhizome {
             return name==rhizome_type()||name=="Thing";
         }
 
-        void Machine::serialize_to( std::ostream &out ) const {
+        void Machine::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type() << "(";
 
             out << ")";

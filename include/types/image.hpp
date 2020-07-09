@@ -44,7 +44,7 @@ namespace rhizome {
             void checker_board( size_t h, size_t w, Color const &a, Color const &b );
 
             // Thing interface
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to(size_t level, ostream &out ) const override;
             virtual string rhizome_type() const override;
 
             virtual Thing * clone() const override;

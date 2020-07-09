@@ -13,6 +13,7 @@ namespace rhizome {
         void Maybe::reset() {
             this->_captured = stringstream();
             this->_valid = true;
+            this->inner->reset();
         }
 
         bool Maybe::can_transition( char c ) const {
@@ -24,8 +25,8 @@ namespace rhizome {
                 stringstream err;
                 err << "Cannot transition on '";
                 err.put(c);
-                err << "'. Pattern: ";
-                serialize_to(err);
+                err << "'. Pattern:\n";
+                serialize_to(1,err);
                 throw runtime_error(err.str());
             }
             _captured.put(c);
@@ -45,8 +46,8 @@ namespace rhizome {
             return m;
         }
 
-        void Maybe::serialize_to( std::ostream &out ) const {
-            ((Pattern*)inner)->serialize_to(out);
+        void Maybe::serialize_to( size_t level, std::ostream &out ) const {
+            ((Pattern*)inner)->serialize_to(level,out);
             out << "?";
         }
 

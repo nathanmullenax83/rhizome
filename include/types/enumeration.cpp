@@ -1,5 +1,7 @@
 #include "enumeration.hpp"
 
+using rhizome::core::indent;
+
 namespace rhizome {
     namespace types {
         Thing * Enumeration::clone() const {
@@ -33,16 +35,16 @@ namespace rhizome {
             return name==rhizome_type() || name=="Thing";
         }
 
-        void Enumeration::serialize_to( std::ostream &out ) const {
-            out << rhizome_type() << "{";
+        void Enumeration::serialize_to( size_t level, std::ostream &out ) const {
+            out << indent(level) << rhizome_type() << " {\n";
             for( auto i=data.begin(); i!=data.end(); i++) {
-                out << i->first << ":";
-                i->second->serialize_to(out);
+                out << indent(level+1) << i->first << ":\n";
+                i->second->serialize_to(level+2,out);
                 if( i!=data.end() ) {
                     out << ";";
                 }
             }
-            out << "}";
+            out << indent(level) << "}\n";
         }
 
         Thing *

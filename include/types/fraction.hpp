@@ -30,7 +30,7 @@ namespace rhizome {
 
             friend std::ostream & operator<< ( std::ostream &out, Fraction const &q  );
 
-            virtual void serialize_to(ostream &out) const override;
+            virtual void serialize_to(size_t level, ostream &out) const override;
             //virtual void deserialize_from( istream &in, IParser *parser ) override;
             
             Fraction operator+ ( Fraction const &f2 ) const;

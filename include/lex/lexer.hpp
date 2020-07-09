@@ -130,7 +130,7 @@ namespace rhizome {
             virtual IPattern * clone_pattern( string const &name ) const override;
 
             // thing interface
-            virtual void serialize_to( std::ostream &out ) const override;
+            virtual void serialize_to( size_t level, std::ostream &out ) const override;
             
             virtual string rhizome_type() const override;
             virtual Thing * clone() const override;

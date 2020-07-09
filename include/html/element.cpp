@@ -19,7 +19,7 @@ namespace rhizome {
         }
 
         string
-        Element::open_tag( string const &name ) {
+        Element::open_tag( string const &name ) const {
             stringstream tag;
             tag << "<" << name;
             if( attributes.size() > 0 ) {

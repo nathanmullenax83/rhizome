@@ -22,9 +22,9 @@ namespace rhizome {
             explicit H1(string const &title);
             ~H1();
 
-            virtual void write_to( ostream &out, size_t indent );
+            virtual void write_to( ostream &out, size_t indent ) const;
             
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to( size_t level, ostream &out ) const override;
 
             virtual Thing * clone() const;
             virtual string rhizome_type() const override;

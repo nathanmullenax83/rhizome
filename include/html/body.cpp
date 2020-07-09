@@ -1,5 +1,7 @@
 #include "body.hpp"
 
+using rhizome::core::indent;
+
 namespace rhizome {
     namespace html {
         Body::Body() {
@@ -11,18 +13,15 @@ namespace rhizome {
         }
 
         void
-        Body::write_to( ostream &out, size_t indent ) {
-            string spacer( indent*4, ' ');
-            out << spacer << "<body>\n";
-            write_children(out,indent+1);
-            out << spacer << "</body>\n";
+        Body::write_to( ostream &out, size_t level ) const {
+            out << indent(level) << "<body>\n";
+            write_children(out,level+1);
+            out << indent(level) << "</body>\n";
         }
 
         void
-        Body::serialize_to( ostream &out ) const {
-            out << "body(";
-            serialize_children(out);
-            out << ")";
+        Body::serialize_to( size_t level, ostream &out ) const {
+            write_to(out,level);
         }
 
  

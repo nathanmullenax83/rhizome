@@ -33,16 +33,16 @@ namespace rhizome {
         }
 
         void
-        Container::write_children( ostream &out, size_t indent ) {
+        Container::write_children( ostream &out, size_t indent ) const{
             for(size_t i=0; i<children.size();++i) {
-                children[i]->write_to(out,indent+1);
+                children.at(i)->write_to(out,indent+1);
             }
         }
 
         void
         Container::serialize_children( ostream &out ) const {
             for(size_t i=0; i<children.size();++i) {
-                children[i]->serialize_to(out);
+                children[i]->serialize_to(1,out);
             }
         }
 

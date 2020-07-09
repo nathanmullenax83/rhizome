@@ -16,7 +16,7 @@ namespace rhizome {
             IPattern *pattern = lexer->clone_pattern(name);
             Thing *nt = (lexer->peek_next_thing(1,true))[0];
             stringstream ss;
-            nt->serialize_to(ss);
+            nt->serialize_to(0,ss);
             bool cm = pattern->accepts(ss.str());
             delete nt; delete pattern;
             return cm;
@@ -34,7 +34,7 @@ namespace rhizome {
                 string tok;
                 if( nt->rhizome_type() != "String") {
                     stringstream v;
-                    nt->serialize_to(v);
+                    nt->serialize_to(0,v);
                     tok = v.str();
                 } else {
                     tok = ((String*)nt)->native_string();
@@ -43,7 +43,7 @@ namespace rhizome {
                     stringstream err;
                     err << "Error matching lexical rule. Token Pattern '" << name << "' cannot produce '" << tok << "'\n";
                     err << "    " << name << " → ";
-                    ((Pattern*)pattern)->serialize_to(err);
+                    ((Pattern*)pattern)->serialize_to(0,err);
                     err << "Lexer:\n";
                     ((Lexer*)lexer)->dump(err);
                     throw runtime_error(err.str());
@@ -75,7 +75,8 @@ namespace rhizome {
             return m;
         }
 
-        void MatchRule::serialize_to( std::ostream &out ) const {
+        void MatchRule::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << "<" << name << ">";
         }
 

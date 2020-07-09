@@ -23,7 +23,8 @@ namespace rhizome {
             return "alphabet::Mapping";
         }
 
-        void Mapping::serialize_to( std::ostream &out ) const {
+        void Mapping::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type();
             out << "{";
             for( auto i=mapping.begin(); i!=mapping.end(); i++) {

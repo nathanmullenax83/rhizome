@@ -77,7 +77,8 @@ namespace rhizome {
             arity_from = arity_to = arity;
         }
 
-        void Operator::serialize_to( std::ostream &out ) const {
+        void Operator::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
             out << rhizome_type() << " ";
             if(arity_from != arity_to ) {

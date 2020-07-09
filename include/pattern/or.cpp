@@ -11,11 +11,11 @@ namespace rhizome {
             out << "\nDEBUG: pattern::Or " << (_valid?"Valid":"Not valid") << "\n";
             for( size_t i=0; i<clauses.size(); ++i) {
                 out << "\t";
-                ((Pattern*)clauses[i])->serialize_to(out);
+                ((Pattern*)clauses[i])->serialize_to(1,out);
                 out << "\t";
                 out << (clauses[i]->valid()?"Valid":"Not valid");
                 out << "\t'";
-                clauses[i]->captured_plain()->serialize_to(out);
+                clauses[i]->captured_plain()->serialize_to(1,out);
                 out << "'\n";
             }
         }
@@ -46,7 +46,7 @@ namespace rhizome {
             if(!pass) {
                 stringstream err;
                 err << "No transition available for pattern ";
-                serialize_to(err);
+                serialize_to(1,err);
                 err << "\n";
                 err << "Captured so far: '" << _captured.str() << "'";
                 throw runtime_error(err.str());
@@ -110,9 +110,10 @@ namespace rhizome {
         }
 
         void
-        Or::serialize_to( ostream &out ) const {
+        Or::serialize_to( size_t level, ostream &out ) const {
+            
             for(size_t i=0; i<clauses.size(); ++i) {
-                ((Pattern*)clauses[i])->serialize_to(out);
+                ((Pattern*)clauses[i])->serialize_to(level,out);
                 
                 if( i+1 < clauses.size() ) {
                     out << "|";
@@ -153,7 +154,7 @@ namespace rhizome {
                 {
                     stringstream err;
                     err << "Couldn't find a matching clause: ";
-                    serialize_to(err);
+                    serialize_to(1,err);
                     err << "\n";
                     err << "Plain capture so far: '";
                     err << _captured.str();

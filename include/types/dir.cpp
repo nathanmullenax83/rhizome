@@ -14,6 +14,7 @@ using std::runtime_error;
 using std::stringstream;
 
 using rhizome::core::Dispatcher;
+using rhizome::core::indent;
 using rhizome::types::Tuple;
 using rhizome::types::String;
 
@@ -93,10 +94,10 @@ namespace rhizome {
         }
 
         void
-        Dir::serialize_to( std::ostream &out ) const {
-            out << rhizome_type() << "(";
-            out << path;
-            out << ")";
+        Dir::serialize_to( size_t level, std::ostream &out ) const {
+            out << indent(level) << rhizome_type() << " (\n";
+            out << indent(level+1) << path;
+            out << indent(level) << ")\n";
         }
 
         Thing *
@@ -110,7 +111,7 @@ namespace rhizome {
                 err << "Method " << method << " could not be invoked on " << rhizome_type() << ".\n";
                 if( context != NULL ) {
                     err << "Context:\n    ";
-                    context->serialize_to(err);
+                    context->serialize_to(1,err);
                 }
                 throw runtime_error(err.str());
             }

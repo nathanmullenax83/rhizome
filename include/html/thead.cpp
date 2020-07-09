@@ -11,7 +11,7 @@ namespace rhizome {
         }
 
         void
-        THead::write_to( ostream &out, size_t indent ) {
+        THead::write_to( ostream &out, size_t indent ) const {
             string spacer(indent*4,' ');
             out << spacer << "<thead>";
             row.write_to(out,indent+1);
@@ -19,10 +19,8 @@ namespace rhizome {
         }
 
         void
-        THead::serialize_to( ostream &out ) const {
-            out << "thead(";
-            row.serialize_to(out);
-            out << ")";
+        THead::serialize_to( size_t level, ostream &out ) const {
+            write_to(out,level);
         }
 
         // void

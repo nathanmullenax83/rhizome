@@ -167,7 +167,7 @@ namespace rhizome {
                 Thing *temp = lexer.next_thing(cap);
                 if( temp != NULL ) {
                     std::cout << "'";
-                    temp->serialize_to(std::cout);
+                    temp->serialize_to(0,std::cout);
                     std::cout << "' - ";
                     std::cout << temp->rhizome_type() << '\n';
                     delete temp;

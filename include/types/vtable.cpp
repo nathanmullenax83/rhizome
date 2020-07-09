@@ -1,5 +1,7 @@
 #include "vtable.hpp"
 
+using rhizome::core::indent;
+
 namespace rhizome {
     namespace types {
         VTable::VTable() {
@@ -43,7 +45,7 @@ namespace rhizome {
                 sig = t->rhizome_type();
             }
             
-            vtable.at(sig).insert(name,t);
+            vtable.at(sig)[name] = t;
         }
 
         string
@@ -52,19 +54,19 @@ namespace rhizome {
         }
 
         void
-        VTable::serialize_to( std::ostream &out ) const {
-            out << rhizome_type() << "{";
+        VTable::serialize_to( size_t level, std::ostream &out ) const {
+            out << indent(level) << rhizome_type() << " {\n";
             for( auto type_sets = vtable.begin(); type_sets != vtable.end(); type_sets++) {
                 // signature
-                out << type_sets->first;
-                out << ": {";
+                out << indent(level+1) << type_sets->first;
+                out << ": {\n";
                 for( auto elem = type_sets->second.begin(); elem!=type_sets->second.end(); elem++) {
-                    out << elem->first << ":";
-                    elem->second->serialize_to(out);
+                    out << indent(level+2) << elem->first << ":";
+                    elem->second->serialize_to(0, out);
                 }
-                out << "}";
+                out << indent(level+1) << "}";
             }
-            out << "}";
+            out << indent(level) << "}\n";
         }
 
         bool 
@@ -106,11 +108,10 @@ namespace rhizome {
                 return invoke( context, name, arg );
             } else {
                 stringstream err;
-                err << "Parameter ";
-                arg->serialize_to(err);
-                err << " does not satisfy constraint ";
-                arg_constraint->serialize_to(err);
-                err << ".";
+                err << "Parameter \n";
+                arg->serialize_to(1, err);
+                err << " does not satisfy constraint \n";
+                arg_constraint->serialize_to(1,err);
                 throw runtime_error(err.str());
             }
         }

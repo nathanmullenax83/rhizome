@@ -74,7 +74,7 @@ namespace rhizome {
 
             // virtual Pattern * make_pattern() const override;
             // virtual Pattern * make_concise_pattern() const override;
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to( size_t level, ostream &out ) const override;
             // virtual void deserialize_from( istream &in, IParser *parser ) override;
             virtual Thing * clone() const;
             virtual string rhizome_type() const override;

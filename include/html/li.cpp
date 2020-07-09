@@ -15,16 +15,14 @@ namespace rhizome {
         }
 
         void
-        LI::write_to( ostream &out, size_t indent ) {
+        LI::write_to( ostream &out, size_t indent )  const{
             string spacer(indent*4,' ');
             out << spacer << "<li>" << cdata << "</li>\n";
         }
 
         void
-        LI::serialize_to(ostream &out) const {
-            out << "li(\"";
-            out << cdata;
-            out << "\")";
+        LI::serialize_to(size_t level, ostream &out) const {
+            write_to(out,level);
         }
 
         Thing *

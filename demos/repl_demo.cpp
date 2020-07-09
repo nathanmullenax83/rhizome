@@ -30,7 +30,7 @@ namespace rhizome {
     namespace demo {
         string to_string( Thing *t ) {
             stringstream ss;
-            t->serialize_to(ss);
+            t->serialize_to(0,ss);
             return ss.str();
         }
 
@@ -38,7 +38,7 @@ namespace rhizome {
             std::cout << prompt << " (";
             for(size_t i=0; i<ts.size();++i) {
                 if( ts[i]!=NULL ) {
-                    ts[i]->serialize_to(std::cout);
+                    ts[i]->serialize_to(0,std::cout);
                 } else {
                     std::cout << "=--------> NULL\n";
                 }
@@ -88,7 +88,7 @@ namespace rhizome {
                                 assert( ts[i+1]->rhizome_type()=="Integer");
                                 q = q / (*((rhizome::types::Integer*)ts[i+1]));
                             } else {
-                                ts[i]->serialize_to(std::cerr);
+                                ts[i]->serialize_to(0,std::cerr);
                                 throw runtime_error("Invalid operator.");
 
                             }
@@ -145,7 +145,7 @@ namespace rhizome {
                     gx_literal("PRINT"), 
                     gx_non_terminal("NumericExpression")
                 }),[](deque<Thing*> ts){
-                    ts[1]->serialize_to(std::cout);
+                    ts[1]->serialize_to(0,std::cout);
                     return (Thing*)(new Tuple());
                 }),
                 gx_apply(
@@ -207,7 +207,7 @@ namespace rhizome {
                     }),
                     [&ctors](deque<Thing*> ts){
                         std::cout << "Matched rule ThingSpec.\n";
-                        auto stringify = []( Thing *t ) { stringstream ss; t->serialize_to(ss); return ss.str(); };
+                        auto stringify = []( Thing *t ) { stringstream ss; t->serialize_to(0,ss); return ss.str(); };
                         string name = stringify( ts[0] );
                         return (Thing*)ctors[name](ts[1]);
                     }
@@ -237,7 +237,7 @@ namespace rhizome {
             ctors["Str"] = []( Thing *arg ) {
                 std::cout << "String ctor.\n";
                 stringstream ss;
-                arg->serialize_to(ss);
+                arg->serialize_to(0,ss);
                 String *s = new String(ss.str());
                 return (Thing*)s;
             };

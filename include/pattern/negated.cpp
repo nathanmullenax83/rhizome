@@ -64,11 +64,12 @@ namespace rhizome {
         void
         Negated::serialize_to_cclass_context( std::ostream &out ) const {
             out << "~";
-            inner->serialize_to(out);
+            inner->serialize_to(0,out);
         }
 
         void
-        Negated::serialize_to(std::ostream &out) const {
+        Negated::serialize_to(size_t level, std::ostream &out) const {
+            (void)level;
             out << "[";
             serialize_to_cclass_context(out);
             out << "]";

@@ -9,25 +9,27 @@ namespace rhizome {
         }
 
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+
         void
         Literal::match( ILexer *lexer, GrammarFn lookup, stringstream &captured ) {
-            //static rhizome::log::Log log("literal_match");
+            (void)lookup; // don't need it here.
+
+            // Throw error if there are no more tokens and we are trying to 
+            // extract a non-empty /value/
             if( value != "" && !lexer->has_next_thing()) {
                 stringstream err;
                 err << "Cannot match literal '" << this->value << "' because there are no more tokens.";
                 throw runtime_error(err.str());
             }
+
+            // putback is to contain the literal extracted text (including whitespace)
             string putback;
+            // get the next token and record it in putback if it is not a match
             Thing *temp = lexer->next_thing(putback);
-            //log.info("Next thing (putback): ");
-            //log.info(putback);
-            //std::cout << "Value = " << putback << "\n";
+            
             if( temp!=NULL ) {
-               // std::cout << "Type = " << temp->rhizome_type() << "\n";
                 stringstream v;
-                temp->serialize_to(v);
+                temp->serialize_to(0,v);
                 string token_value = v.str();
                 
                 if( token_value != value) {
@@ -47,18 +49,19 @@ namespace rhizome {
 
         bool
         Literal::can_match( ILexer *lexer, GrammarFn lookup ) const {
+            (void)lookup; //unneeded
             if( !lexer->has_next_thing() ) return false;
 
             Thing *temp = (lexer->peek_next_thing(1,true))[0];
             
             stringstream v;
-            temp->serialize_to(v);
+            temp->serialize_to(0,v);
             delete temp;
             bool r =  v.str()==value;
             return r;
         }
 
-#pragma GCC diagnostic pop
+
 
         Gramex *
         Literal::clone_gramex(bool withmatches) const {
@@ -76,7 +79,8 @@ namespace rhizome {
         }
 
         void
-        Literal::serialize_to( std::ostream &out ) const {
+        Literal::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << "\"" << value << "\"";
         }
 
@@ -96,9 +100,7 @@ namespace rhizome {
             throw runtime_error("Nothing to invoke.");
         }
 
-        Literal * literal( string const &v ) {
-            return new Literal(v);
-        }
+        
 
     }
 }

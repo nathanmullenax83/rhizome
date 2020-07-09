@@ -1,3 +1,5 @@
+#include <cwctype>
+
 #include "console.hpp"
 
 namespace rhizome {
@@ -120,7 +122,7 @@ namespace rhizome {
 
         Console &
         Console::operator<< (Thing *t) {
-            t->serialize_to(console);
+            t->serialize_to(0,console);
             return *this;
         }
 
@@ -150,14 +152,47 @@ namespace rhizome {
 
         Console & Console::h1(string const &s) {
             std::wstring expanded = converter.from_bytes(s);
-            int w = 80;
-            int start = w/2 - expanded.length()/2;
+            
+            int start = width/2 - expanded.length()/2;
             std::string spacer(start-1,' ');
             std::wstring underbar(expanded.length(),L'―');
             console << "\n";
-            console << spacer << FG_WHITE_ON << " " << s << "\n";
+            console << spacer << FG_WHITE_ON << s << "\n";
             console << RESET_COLOR;
-            console << spacer << converter.to_bytes(underbar) << "\n\n";
+            console << spacer << converter.to_bytes(underbar) << "\n";
+            return *this;
+        }
+
+        Console & Console::para( string const &s ) {
+            std::wstring expanded = converter.from_bytes(s);
+            std::wstringstream ss;
+            ss << expanded;
+            std::wstringstream w;
+            size_t ll(0);
+            
+            wchar_t c;
+            console << "\n";
+            console << string(this->x,' ');
+            while( ss.get(c) ) {
+                if( !iswspace(c) ) {
+                    w.put(c);
+                } else {
+                    std::wstring word = w.str();
+                    if( ll + word.length() < width ) {
+                        console << converter.to_bytes(word);    
+                        console << " ";
+                        ll += word.length()+1;
+                    } else {
+                        console << "\n" << string(this->x,' ');
+                        console << converter.to_bytes(word);
+                        console << " ";
+                        ll = word.length() + 1;
+                    }
+                    w = std::wstringstream();
+                }
+            }
+            console << converter.to_bytes(w.str());
+            console << "\n\n";
             return *this;
         }
 
@@ -179,6 +214,14 @@ namespace rhizome {
             stringstream c;
             c << "\x1b[38" <<";" <<r << ";"<<g <<";" << b << "m";
             return c.str();
+        }
+
+        string
+        Console::get_line(string const &prompt) {
+            console << prompt;
+            string line;
+            std::getline(std::cin,line);
+            return line;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace rhizome {
             Section();
             ~Section();
 
-            virtual void write_to( ostream &out, size_t indent );
+            virtual void write_to( ostream &out, size_t indent ) const;
         };
     }
 }

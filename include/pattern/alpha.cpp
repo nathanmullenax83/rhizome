@@ -49,7 +49,8 @@ namespace rhizome {
         }
 
         void
-        Alpha::serialize_to( ostream &out ) const {
+        Alpha::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << "[";
             serialize_to_cclass_context(out);
             out << "]";

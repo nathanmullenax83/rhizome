@@ -74,7 +74,8 @@ namespace rhizome {
         }
 
         void
-        Dictionary::serialize_to( std::ostream &out ) const {
+        Dictionary::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             out << rhizome_type();
             out << "{\n";
             for( auto i=counts.begin(); i!=counts.end(); i++) {

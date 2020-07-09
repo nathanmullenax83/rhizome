@@ -1,4 +1,5 @@
 #include "section.hpp"
+using rhizome::core::indent;
 
 namespace rhizome {
     namespace html {
@@ -11,11 +12,10 @@ namespace rhizome {
         }
 
         void 
-        Section::write_to( ostream &out, size_t indent ) {
-            string spacer(indent*4,' ');
-            out << spacer << "<section>\n";
-            write_children(out,indent+1);
-            out << spacer << "</section>\n";
+        Section::write_to( ostream &out, size_t level ) const {
+            out << indent(level) << "<section>\n";
+            write_children(out,level+1);
+            out << indent(level) << "</section>\n";
         }
     }
 }

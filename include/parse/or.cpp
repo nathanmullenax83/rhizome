@@ -28,14 +28,14 @@ namespace rhizome {
                 out << "Clauses\n";
                 for(size_t i=0; i<clauses.size();++i) {
                     out << "\t" << i << ": ";
-                    clauses[i]->serialize_to(out);
+                    clauses[i]->serialize_to(1,out);
                     out << "\n";
                 }
                 out << "Matched tokens\n";
                 auto tokens = clone_matched_tokens();
                 for(size_t i=0; i<tokens.size(); ++i) {
                     out << "\t";
-                    tokens[i]->serialize_to(out);
+                    tokens[i]->serialize_to(1,out);
                     out << "\n";
                 }
             } catch ( std::exception *e ) {
@@ -104,9 +104,9 @@ namespace rhizome {
         }
 
         void
-        Or::serialize_to( ostream &out ) const {
+        Or::serialize_to( size_t level, ostream &out ) const {
             for(size_t i=0; i<clauses.size(); ++i) {
-                clauses[i]->serialize_to(out);
+                clauses[i]->serialize_to(level,out);
                 if( i<clauses.size()-1) {
                     out << "|";
                 }

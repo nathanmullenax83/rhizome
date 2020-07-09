@@ -16,7 +16,8 @@ namespace rhizome {
         }
 
         void
-        HTTPServer::serialize_to( ostream &out ) const {
+        HTTPServer::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << "httpserver(";
             // out << "#portno:" << port_no; // or something like it.
             out << ")";

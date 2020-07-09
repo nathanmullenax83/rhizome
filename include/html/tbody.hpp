@@ -21,8 +21,8 @@ namespace rhizome {
             TBody();
             ~TBody();
 
-            virtual void write_to( ostream &out, size_t indent );
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void write_to( ostream &out, size_t indent ) const;
+            virtual void serialize_to(size_t level, ostream &out ) const override;
             virtual Thing * clone() const override;
             virtual string rhizome_type() const override;
 

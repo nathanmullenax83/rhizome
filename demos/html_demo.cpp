@@ -26,7 +26,7 @@ namespace rhizome {
             
             doc.write_to(cout);
             cout << "\n\n";
-            doc.serialize_to(cout);
+            doc.serialize_to(0,cout);
             console.termios_getch(false);
             console.termios_getch(false);
         }

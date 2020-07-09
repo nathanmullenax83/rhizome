@@ -40,7 +40,8 @@ namespace rhizome {
         Token::token_class() const { return tname; }
 
         void
-        Token::serialize_to( ostream &out ) const {
+        Token::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << "Token(";
             out << tvalue << "," << tvalue;
             out << "," << line() << "," << column();

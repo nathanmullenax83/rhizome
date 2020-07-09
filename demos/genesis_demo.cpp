@@ -6,7 +6,7 @@ namespace rhizome {
             
             auto stringify = []( Thing const &t ) {
                 stringstream ss;
-                t.serialize_to(ss);
+                t.serialize_to(0,ss);
                 return ss.str();
             };
             Fraction f1( rt::Integer(-4),rt::Integer(2));
@@ -44,7 +44,7 @@ namespace rhizome {
             cb.display(console);
             console.putch('\n');
             
-            cb.serialize_to(std::cout);
+            cb.serialize_to(0,std::cout);
             fraction_test(console);
         }
     }

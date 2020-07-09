@@ -53,7 +53,7 @@ namespace rhizome {
             friend Integer operator* ( Integer const &a, Integer const &b );
             friend bool operator== (Integer const &a, Integer const &b );
 
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to( size_t level, ostream &out ) const override;
             /*
             virtual void deserialize_from( istream &in, IParser *parser ) override;*/
 

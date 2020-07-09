@@ -38,7 +38,7 @@ namespace rhizome {
                 if( temp->rhizome_type() != this->name ) {
                     stringstream ss;
                     ss << "Expected token of type " << name << ", but got " << temp->rhizome_type() <<" '";
-                    temp->serialize_to(ss);
+                    temp->serialize_to(0,ss);
                     ss << "'";
                     
                     delete temp;
@@ -70,7 +70,8 @@ namespace rhizome {
 
 
         void
-        MatchType::serialize_to( std::ostream &out ) const {
+        MatchType::serialize_to( size_t level, std::ostream &out ) const {
+            (void) level;
             out << "<" << name << ">";
         }
 

@@ -54,7 +54,8 @@ namespace rhizome {
         
 
         void
-        Beginning::serialize_to( ostream &out ) const {
+        Beginning::serialize_to( size_t level, ostream &out ) const {
+            (void)level;
             out << "^";
         }
 

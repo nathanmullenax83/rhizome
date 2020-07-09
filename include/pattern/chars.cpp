@@ -30,7 +30,8 @@ namespace rhizome {
             return w==rhizome_type()||w=="Pattern"||w=="Thing";
         }
 
-        void Chars::serialize_to( std::ostream &out ) const {
+        void Chars::serialize_to( size_t level, std::ostream &out ) const {
+            (void)level;
             //out << "{";
             for( auto i=cs.begin(); i!=cs.end(); i++) {
                 out.put(*i);

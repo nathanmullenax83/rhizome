@@ -51,7 +51,7 @@ namespace rhizome {
             Store(string const &path, IParser *p);
             virtual ~Store();
 
-            virtual void serialize_to( ostream &out ) const override;
+            virtual void serialize_to(size_t level, ostream &out ) const override;
             virtual Thing * clone() const override;
             virtual string rhizome_type() const override;
             virtual bool has_interface( string const &name ) override;
