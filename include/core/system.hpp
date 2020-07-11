@@ -56,13 +56,19 @@ namespace rhizome {
             // you can also use this shortcut to get the lexer
             ILexer * get_lexer();
 
+            // get the store
+            IStore * get_store();
+
             // or use this punch-through to parse by a particular starting rule.
             Thing * parse_thing( string const &start_rule );
             
             // or this one, if you are parsing from a particular source (say, a filestream)
             Thing * parse_thing( string const &start_rule, std::istream &in);
 
-            
+            // access to the store.
+            Thing * get( string const & name );
+            Thing * get_clone( string const &name );
+            System & set( string const &name, Thing *t);
 
         };
 

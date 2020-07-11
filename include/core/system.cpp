@@ -64,6 +64,11 @@ namespace rhizome {
         System::get_lexer() {
             return parser->get_lexer();
         }
+
+        IStore *
+        System::get_store() {
+            return store;
+        }
         
         void
         System::register_type( string const &name, Factory ctor, ParserSideEffect shim ) {
@@ -91,6 +96,20 @@ namespace rhizome {
             return parser->parse_thing( start_rule );
         }
 
-        
+        Thing *
+        System::get( string const &name ) {
+            return store->get(name);
+        }
+
+        Thing *
+        System::get_clone( string const &name ) {
+            return store->get_clone(name);
+        }
+
+        System &
+        System::set( string const &name, Thing *value ) {
+            store->set(name,value);
+            return *this;
+        }
     }
 }

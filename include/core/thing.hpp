@@ -7,6 +7,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <string>
 
 using std::ostream;
 using std::istream;
@@ -16,6 +17,7 @@ using std::map;
 using std::set;
 using std::function;
 using std::vector;
+using std::string;
 
 #include "i_token.hpp"
 
@@ -28,6 +30,8 @@ namespace rhizome {
         /// noun, maybe.
         class Thing {
         public:
+            
+
             /// Note: virtual destructor here so we can delete objects
             /// via thing pointers.
             virtual ~Thing() {};
