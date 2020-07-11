@@ -32,14 +32,15 @@ namespace rhizome {
             virtual bool can_transition( char c) const override;
             virtual bool accepted() const override;
             virtual void reset() override;
-            
-
-            virtual bool has_interface( string const &name ) override;
-            virtual Thing *invoke( Thing *context, string const &method, Thing *arg ) override;
-            virtual string rhizome_type() const override;
             virtual Pattern * clone_pattern(bool withstate) const override;
             virtual Thing * captured_plain() override;
             virtual Thing * captured_transformed() override;
+            // thing interface
+            virtual bool has_interface( string const &name ) override;
+            virtual Thing *invoke( Thing *context, string const &method, Thing *arg ) override;
+            virtual string rhizome_type() const override;
+
+            
 
         };
     }

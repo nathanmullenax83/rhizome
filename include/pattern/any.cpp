@@ -22,12 +22,12 @@ namespace rhizome {
         bool Any::accepted() const {
             return _valid && state==1;
         }
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+
         bool Any::can_transition(char c) const {
+            (void)c;
             return state==0;
         }
-#pragma GCC diagnostic pop
+
 
         void 
         Any::transition(char c) {
